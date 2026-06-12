@@ -24,7 +24,7 @@ export class SiddhamConverter {
     /** @type {SiddhamOptions} */
     static defaultOptions = {
         inputMethod: "ISO15919",
-        transliteration: "ISO15919",
+        transliteration: "IAST",
         ignoreSpacesAndHyphens: true,
     }
 

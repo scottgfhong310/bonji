@@ -79,14 +79,14 @@ bonji/
 ```js
 import { SiddhamConverter } from "./siddham-converter.js";
 
-const converter = new SiddhamConverter();           // 預設：輸入/輸出皆 ISO15919、忽略空格
+const converter = new SiddhamConverter();           // 預設：輸入法 ISO15919、拉丁轉寫 IAST、忽略空格
 const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
 // input:      "siddha;m"   （原樣回傳傳入的文字）
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
-// latin:      "siddhaṁ"
+// latin:      "siddhaṃ"    （IAST 預設用 ṃ；ISO15919 則為 ṁ）
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
 
-converter.setOptions({ transliteration: "IAST" });  // → 拉丁轉寫改用 ṃ（取代 ṁ）
+converter.setOptions({ transliteration: "ISO15919" });  // → 拉丁轉寫改用 ṁ（取代 ṃ）
 ```
 
 ### 日後更新 vendored 引擎

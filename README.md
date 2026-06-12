@@ -79,14 +79,14 @@ bonji/
 ```js
 import { SiddhamConverter } from "./siddham-converter.js";
 
-const converter = new SiddhamConverter();           // defaults: ISO15919 in/out, ignore spaces
+const converter = new SiddhamConverter();           // defaults: ISO15919 input, IAST transliteration, ignore spaces
 const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
 // input:      "siddha;m"   (the text passed in, echoed back)
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
-// latin:      "siddhaṁ"
+// latin:      "siddhaṃ"    (IAST default; ṃ — ISO15919 would be ṁ)
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
 
-converter.setOptions({ transliteration: "IAST" });  // → latin uses ṃ instead of ṁ
+converter.setOptions({ transliteration: "ISO15919" });  // → latin uses ṁ instead of ṃ
 ```
 
 ### Updating the vendored engine

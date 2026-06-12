@@ -1,10 +1,11 @@
 import { SiddhamConverter } from "../public/apps/bonji/siddham-converter.js"
 
-const c = new SiddhamConverter()
+const c = new SiddhamConverter()   // defaults: inputMethod ISO15919, transliteration IAST
 const cases = [
-  ["siddha;m", "𑖭𑖰𑖟𑖿𑖠𑖽", "siddhaṁ"],
+  // latin uses IAST (anusvāra = ṃ, not ISO15919 ṁ)
+  ["siddha;m", "𑖭𑖰𑖟𑖿𑖠𑖽", "siddhaṃ"],
   ["hrii.h",   "𑖮𑖿𑖨𑖱𑖾", "hrīḥ"],
-  ["stva;m",   "𑖭𑖿𑖝𑖿𑖪𑖽", "stvaṁ"],
+  ["stva;m",   "𑖭𑖿𑖝𑖿𑖪𑖽", "stvaṃ"],
   ["va~m",     "𑖪𑖼", "vam̐"],
   ["huu~m",    "𑖮𑖳𑖼", "hūm̐"],
 ]

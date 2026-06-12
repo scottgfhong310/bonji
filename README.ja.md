@@ -79,14 +79,14 @@ bonji/
 ```js
 import { SiddhamConverter } from "./siddham-converter.js";
 
-const converter = new SiddhamConverter();           // 既定：入出力とも ISO15919、スペース無視
+const converter = new SiddhamConverter();           // 既定：入力方式 ISO15919、ラテン翻字 IAST、スペース無視
 const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
 // input:      "siddha;m"   （渡したテキストをそのまま返す）
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
-// latin:      "siddhaṁ"
+// latin:      "siddhaṃ"    （IAST 既定は ṃ；ISO15919 なら ṁ）
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
 
-converter.setOptions({ transliteration: "IAST" });  // → ラテン翻字は ṃ（ṁ の代わり）
+converter.setOptions({ transliteration: "ISO15919" });  // → ラテン翻字は ṁ（ṃ の代わり）
 ```
 
 ### vendored エンジンの更新
