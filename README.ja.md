@@ -1,0 +1,98 @@
+# bonji — 悉曇（梵字）コンバーター
+
+[English](./README.md) ｜ [繁體中文](./README.zh-Hant.md) ｜ [日本語](./README.ja.md)
+
+**ASCII / IAST のローマ字転写**を **悉曇（Siddhaṁ）文字**・**ラテン翻字**・**Unicode コードポイント**に変換する単一ページ WebApp。すべてブラウザ内で動作します。
+
+悉曇エンジンは [mandel59/bonji-input](https://github.com/mandel59/bonji-input) を **vendoring（コピー同梱・無改変・MIT）** し、薄い防腐層 `SiddhamConverter` 経由でのみ利用します。
+
+本アプリは **nodeapp WebApp ファミリー** の一員です。共通規約とワークフローは
+<https://github.com/scottgfhong310/nodeapp-webapp-family>（`DESIGN_GUIDELINES.md`、`WORKFLOW.md`）にあります。
+
+## 機能
+
+- 2 カラム構成：左が入力、右が出力（狭い画面では縦積み）。
+- 任意の**タイトル**＋入力テキスト（どちらもコピー可）；入力と同時に変換：悉曇文字 · ラテン翻字 · Unicode コードポイント。
+- オプション：入力方式（ISO 15919 / Kyoto-Harvard）、ラテン翻字（ISO 15919 / IAST）、スペースとハイフンを無視。
+- **Noto Sans Siddham** フォント（SIL OFL）を同梱し、システムフォントなしでも悉曇を表示。
+- 三言語 UI（`zh-Hant` / `en` / `ja`、既定 `zh-Hant`）；ライト / ダークテーマ。
+- 各フィールドのコピーボタン（タイトル・入力・各出力）；サンプルチップ。
+- **JSON 書き出し** — 現在の結果をサーバーの `/download/bonji/` に `bonji-yyyyMMddHHmmss.json` として保存（`title`・`options`・入力・3 つの出力）；**ダウンロード**ボタンは先に書き出してからその JSON をダウンロード；**`dehaze` サイドパネル**が書き出しを降順で一覧、`delete_sweep` ボタンでフォルダを空に。
+- **保存した書き出しの読み戻し** — パネルの項目をクリックすると、その `title` / `options` / `input` をページに読み込み（そのファイルの `sourceFile` はオプションの下に表示）。調整して再度書き出すと新しいファイルになり、`sourceFile` に元のファイル名を記録します。
+
+> 変換エンジンはブラウザ内で完結します。JSON の書き出し／一覧は下記の Node バックエンドを使うため、この 2 機能のみサーバーが必要です（変換そのものは不要）。
+
+## 記法（一部の例）
+
+| 入力 | 結果 | | 入力 | 結果 |
+|---|---|---|---|---|
+| `;m` | ṁ | | `aa` | ā |
+| `.h` | ḥ | | `ii` | ī |
+| `~m` | m̐ | | `uu` | ū |
+
+例：`siddha;m` → 𑖭𑖰𑖟𑖿𑖠𑖽（`siddhaṁ`）、`na ma.h` → 𑖡𑖦𑖾（`na maḥ`）。
+
+## 実行
+
+```bash
+npm install && npm start          # → http://localhost:3000/apps/bonji/
+npm test                          # vendored エンジンを検証（5 ケース + コードポイント）
+```
+
+`PORT` 環境変数で既定の `3000` を上書きできます。
+
+## API
+
+レスポンスはファミリー共通の `{ ok }` 封筒です。
+
+| Method | Path | 説明 |
+|---|---|---|
+| `POST` | `/api/bonji/export` | `{ title, options, input, output, sourceFile }` を `public/download/bonji/` の `bonji-yyyyMMddHHmmss.json` として保存（`sourceFile`＝この内容の読み込み元／派生元、無ければ `null`）。`{ ok, filename, path }` を返す。 |
+| `GET` | `/api/bonji/downloads` | `public/download/bonji/` 内の JSON を降順で列挙。`{ ok, files: [{ name, size, mtime }] }` を返す。 |
+| `POST` | `/api/bonji/clear` | `public/download/bonji/` 内の全 JSON を削除（対象はサーバー側で固定）。`{ ok, removed }` を返す。 |
+
+書き出したファイルは `/download/bonji/<file>` で静的配信されます。
+
+## ディレクトリ構成
+
+```
+bonji/
+├─ app.js                          # Express：static + /api/bonji +（ / → 302 /apps/bonji/ ）+ PORT||3000
+├─ routes/bonji.js                 # POST /export、GET /downloads（{ ok } 封筒）
+├─ package.json · .gitignore · LICENSE
+├─ test/verify-siddham.mjs         # エンジン検証（npm test）
+└─ public/
+   ├─ download/bonji/.gitkeep      # 書き出した JSON はここに（内容は gitignore）
+   └─ apps/bonji/
+      ├─ index.html · bonji.css · bonji.js     # 構造 / スタイル / グルー（ESM module）
+      ├─ siddham-converter.js                  # 防腐層（唯一の悉曇インターフェース）
+      ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored エンジン（MIT・無改変）
+      ├─ fonts/{NotoSansSiddham-Regular.woff2, OFL.txt}
+      ├─ i18n.js · locales/{zh-Hant,en,ja}.js
+      └─ side-tool.css · materialize-dark.css
+```
+
+## コア（`SiddhamConverter`）の利用
+
+`siddham-converter.js` がアプリが import する**唯一**の変換インターフェースで、vendored エンジン内部には直接触れません。依存ゼロの ES module です：
+
+```js
+import { SiddhamConverter } from "./siddham-converter.js";
+
+const converter = new SiddhamConverter();           // 既定：入出力とも ISO15919、スペース無視
+const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
+// input:      "siddha;m"   （渡したテキストをそのまま返す）
+// siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
+// latin:      "siddhaṁ"
+// codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+
+converter.setOptions({ transliteration: "IAST" });  // → ラテン翻字は ṃ（ṁ の代わり）
+```
+
+### vendored エンジンの更新
+
+ピン留めした上流コミットは `public/apps/bonji/vendor/bonji-input/SOURCE.md` を参照。ソフト同期：上流とピン留めコミットを diff し、エンジン関連の修正のみ `vendor/bonji-input/` に適用、`npm test` を再実行、`SOURCE.md` を更新します。アプリは `SiddhamConverter` にのみ依存するため、上流の内部 API 変更があっても、そのラッパーの調整で済みます。
+
+## ライセンス
+
+MIT © 2026 Scott G.F. Hong。**bonji-input** 悉曇エンジン（MIT・© 2021 Ryusei Yamaguchi）と **Noto Sans Siddham**（SIL OFL 1.1）を同梱。[LICENSE](./LICENSE)、vendored の `LICENSE`/`SOURCE.md`、`fonts/OFL.txt` を参照。

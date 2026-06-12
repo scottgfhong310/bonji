@@ -1,0 +1,25 @@
+{
+  "name": "bonji",
+  "version": "1.0.0",
+  "description": "把 ASCII / IAST 羅馬轉寫轉成悉曇（Siddhaṁ）文字、拉丁轉寫與 Unicode 碼位的單頁 WebApp；vendored bonji-input 引擎，包在 SiddhamConverter 防腐層之後。",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node test/verify-siddham.mjs"
+  },
+  "keywords": [
+    "siddham",
+    "siddhaṁ",
+    "bonji",
+    "梵字",
+    "sanskrit",
+    "iast",
+    "express",
+    "materialize"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}
