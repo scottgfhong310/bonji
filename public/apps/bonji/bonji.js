@@ -399,6 +399,12 @@ import { SiddhamConverter } from "./siddham-converter.js";
       loadFile(this.getAttribute('data-file'));
     });
 
+    // 對照表：開新分頁（具名 → 重複點重用同一頁；script 開啟，故對照表可自行關閉回到本頁）
+    document.getElementById('setting-chart').addEventListener('click', function (e) {
+      e.preventDefault();
+      window.open(this.href, 'bonji-chart');
+    });
+
     // 右側工具列
     document.getElementById('setting-downloads').addEventListener('click', openDownloads);
     document.getElementById('setting-mode').addEventListener('click', toggleTheme);

@@ -167,6 +167,16 @@ import { SiddhamConverter } from "./siddham-converter.js";
     });
     document.getElementById('setting-lang').addEventListener('click', cycleLang);
 
+    // 回轉換器：若由某個 index.html 以新分頁開啟（有 opener）→ 聚焦該分頁並關閉本頁；
+    // 否則（直接開啟）沿用 href="./" 在本分頁導回 index。
+    document.getElementById('setting-home').addEventListener('click', function (e) {
+      if (window.opener && !window.opener.closed) {
+        e.preventDefault();
+        window.opener.focus();
+        window.close();
+      }
+    });
+
     // 點任一格 → 複製其輸入記法
     document.getElementById('chart-cols').addEventListener('click', function (e) {
       var cell = e.target.closest('.glyph-cell');
