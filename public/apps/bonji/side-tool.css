@@ -52,10 +52,11 @@ body.sidenav-open .side-tool {
 #setting-downloads      { top: var(--tool-top); }
 #setting-mode           { top: calc(var(--tool-top) + 1 * var(--tool-step)); }
 #setting-lang           { top: calc(var(--tool-top) + 2 * var(--tool-step)); }
-#setting-export         { top: calc(var(--tool-top) + 3 * var(--tool-step)); }
-#setting-download       { top: calc(var(--tool-top) + 4 * var(--tool-step)); }
-#setting-clear          { top: calc(var(--tool-top) + 5 * var(--tool-step)); }
-#setting-clear-downloads { top: calc(var(--tool-top) + 6 * var(--tool-step)); }
+#setting-chart          { top: calc(var(--tool-top) + 3 * var(--tool-step)); }
+#setting-export         { top: calc(var(--tool-top) + 4 * var(--tool-step)); }
+#setting-download       { top: calc(var(--tool-top) + 5 * var(--tool-step)); }
+#setting-clear          { top: calc(var(--tool-top) + 6 * var(--tool-step)); }
+#setting-clear-downloads { top: calc(var(--tool-top) + 7 * var(--tool-step)); }
 
 /* toggle 開啟狀態以 accent 色標示（保留供日後擴充） */
 .side-tool.active {

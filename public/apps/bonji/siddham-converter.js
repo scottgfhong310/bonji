@@ -75,6 +75,17 @@ export class SiddhamConverter {
             .join(" ")
     }
 
+    /**
+     * 原始 ascii → 拉丁轉寫（不經輸入前處理，直接轉；給字元對照表等需以「輸入記法」
+     * 直接取讀音的場合用。和 toSiddham 對稱）。
+     * @param {string} ascii
+     * @param {"ISO15919" | "IAST"} [transliteration]
+     * @returns {string}
+     */
+    static toLatin(ascii, transliteration = "IAST") {
+        return ascii2latin(ascii, { transliteration })
+    }
+
     /** @param {string} text @returns {string} */
     static toCodepoints(text) {
         return text.split("\n")

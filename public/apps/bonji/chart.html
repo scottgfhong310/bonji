@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title data-i18n-doctitle="chart.title">Bonji — 悉曇字元對照表</title>
+
+  <!-- 防主題閃爍：先讀 localStorage 設好 data-theme + light/dark-mode class（與轉換頁共用 bonji-theme） -->
+  <script>try { var t = localStorage.getItem('bonji-theme') || 'dark'; var r = document.documentElement; r.dataset.theme = t; r.classList.add(t === 'light' ? 'light-mode' : 'dark-mode'); } catch (e) {}</script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="./materialize-dark.css" />
+  <link rel="stylesheet" href="./bonji.css" />
+  <link rel="stylesheet" href="./side-tool.css" />
+  <link rel="stylesheet" href="./chart.css" />
+</head>
+
+<body>
+  <main>
+    <div class="chart-container">
+      <header class="app-header">
+        <h1 data-i18n="chart.title">悉曇字元對照表</h1>
+        <p class="subtitle" data-i18n="chart.subtitle">依 bonji-input 引擎；每欄一組對照（輸入記法 → 悉曇 → 拉丁）。點任一格可複製其輸入記法。</p>
+      </header>
+
+      <!-- 各欄（一欄一組）由 chart.js 依引擎產生 -->
+      <div id="chart-cols" class="chart-cols"></div>
+
+      <footer class="app-footer">
+        <span data-i18n-html="footer.credit">
+          悉曇轉換引擎：<a href="https://github.com/mandel59/bonji-input" target="_blank" rel="noopener">bonji-input</a>（MIT）。
+        </span>
+      </footer>
+    </div>
+  </main>
+
+  <!-- ===== 右側工具列 ===== -->
+  <div id="setting-mode" class="side-tool" data-i18n-title="tool.mode" title="切換 light / dark">
+    <i class="material-icons">dark_mode</i>
+  </div>
+  <div id="setting-lang" class="side-tool" data-i18n-title="tool.lang" title="Language">
+    <i class="material-icons">translate</i>
+  </div>
+  <a id="setting-home" class="side-tool" href="./" data-i18n-title="tool.home" title="回轉換器">
+    <i class="material-icons">keyboard</i>
+  </a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="./i18n.js"></script>
+  <script src="./locales/zh-Hant.js"></script>
+  <script src="./locales/en.js"></script>
+  <script src="./locales/ja.js"></script>
+  <script type="module" src="./chart.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+/* chart.css — 悉曇字元對照表頁面。主題 token / @font-face / .siddham-text / 卡片樣式
+ * 沿用 bonji.css；本檔只加對照表版面與本頁 side-tool 位置。 */
+
+.chart-container {
+  width: 92%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 一欄一組；窄螢幕自動換行堆疊 */
+.chart-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.chart-col {
+  flex: 1 1 240px;
+  min-width: 220px;
+  /* .card（bonji.css）已給 背景/邊框/圓角/padding */
+}
+
+.chart-col-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 2px 0 4px;
+  color: var(--text);
+}
+
+.chart-col-note {
+  font-size: .78rem;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+/* 每格：悉曇字 + 輸入記法 + 拉丁 */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+}
+
+.glyph-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, transform .06s;
+  user-select: none;
+}
+
+.glyph-cell:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.glyph-cell:active {
+  transform: translateY(1px);
+}
+
+.glyph-cell .g-glyph {
+  font-size: 2rem;
+  line-height: 1.35;
+}
+
+.glyph-cell .g-ascii {
+  font-size: .78rem;
+  color: var(--text);
+}
+
+.glyph-cell .g-latin {
+  font-size: .72rem;
+  color: var(--muted);
+}
+
+/* 本頁右側工具列順序：mode / lang / home（覆蓋 side-tool.css 內轉換頁的排序） */
+#setting-mode { top: var(--tool-top); }
+#setting-lang { top: calc(var(--tool-top) + 1 * var(--tool-step)); }
+#setting-home { top: calc(var(--tool-top) + 2 * var(--tool-step)); }
