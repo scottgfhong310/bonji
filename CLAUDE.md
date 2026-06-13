@@ -5,6 +5,8 @@
 本 app 屬於 **nodeapp WebApp 家族**；共同規範與流程在
 <https://github.com/scottgfhong310/nodeapp-webapp-family>（`DESIGN_GUIDELINES.md` 規範、`WORKFLOW.md` 流程）。**改動前請先讀那兩份，照其中 canon 做。**
 
+**本 app 特有的設計決議**（承襲家族規範之上）見 [`DESIGN.md`](./DESIGN.md)：架構/邊界、轉換管線、**空格與連字號政策**、對照表、`config.json` 後端開關、主題/toast、預設值、資料結構。改本 app 的轉換/對照表/後端行為前，先讀它。
+
 ## 結構
 
 ```
