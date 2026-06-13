@@ -17,6 +17,7 @@ import { SiddhamConverter } from "./siddham-converter.js";
   var THEME_KEY = 'bonji-theme';
   var API = '/api/bonji';
   var converter = new SiddhamConverter();
+  var backend = true;    // 是否使用後端 API（由 config.json 切換；關閉＝純前端 / 可純靜態）
 
   var $title = document.getElementById('bonji-title');
   var $input = document.getElementById('bonji-input');
@@ -80,6 +81,26 @@ import { SiddhamConverter } from "./siddham-converter.js";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  }
+
+  // 純前端下載一段文字（Blob；後端關閉時用）
+  function downloadText(name, text) {
+    var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name || 'download.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function timestamp(d) {
+    d = d || new Date();
+    return String(d.getFullYear()) + pad2(d.getMonth() + 1) + pad2(d.getDate()) +
+      pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
   }
 
   function formatSize(bytes) {
@@ -263,15 +284,30 @@ import { SiddhamConverter } from "./siddham-converter.js";
     });
   }
 
-  // 下載鈕：先 export，再下載剛產生的 bonji-yyyyMMddHHmmss.json
+  // 下載鈕：
+  //  - 後端開啟：先 export，再下載剛產生的 bonji-yyyyMMddHHmmss.json
+  //  - 後端關閉：純前端把 currentRecord 包成 JSON 用 Blob 下載（不碰伺服器）
   function downloadJson() {
-    doExport().then(function (resp) {
-      setIconDone(document.getElementById('setting-download'));
-      downloadUrl(resp.path, resp.filename);
-      M.toast({ html: I18n.t('toast.downloaded', { n: resp.filename }), classes: 'teal' });
-    }).catch(function (err) {
-      if (err) M.toast({ html: I18n.t('toast.exportFail', { m: err.message }), classes: 'red' });
-    });
+    if (backend) {
+      doExport().then(function (resp) {
+        setIconDone(document.getElementById('setting-download'));
+        downloadUrl(resp.path, resp.filename);
+        M.toast({ html: I18n.t('toast.downloaded', { n: resp.filename }), classes: 'teal' });
+      }).catch(function (err) {
+        if (err) M.toast({ html: I18n.t('toast.exportFail', { m: err.message }), classes: 'red' });
+      });
+      return;
+    }
+    var rec = currentRecord();
+    if (!hasContent(rec)) {
+      M.toast({ html: I18n.t('toast.nothingToExport'), classes: 'orange' });
+      return;
+    }
+    var name = 'bonji-' + timestamp() + '.json';
+    var out = Object.assign({ app: 'bonji', exportedAt: new Date().toISOString() }, rec);
+    downloadText(name, JSON.stringify(out, null, 2));
+    setIconDone(document.getElementById('setting-download'));
+    M.toast({ html: I18n.t('toast.downloaded', { n: name }), classes: 'teal' });
   }
 
   /* ---------- 匯出檔清單面板 ---------- */
@@ -415,6 +451,26 @@ import { SiddhamConverter } from "./siddham-converter.js";
     document.getElementById('setting-clear-downloads').addEventListener('click', clearDownloads);
   }
 
+  /* ---------- 設定（config.json：後端開關） ---------- */
+
+  // 讀 ./config.json 決定是否使用後端 API。
+  //  - backend !== false → 用後端（預設）
+  //  - 明確 false，或讀不到 config（多半代表無伺服器）→ 純前端
+  function loadConfig() {
+    return fetch('./config.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (c) { backend = !(c && c.backend === false); })
+      .catch(function () { backend = false; });
+  }
+
+  // 依 backend 顯示/隱藏「依賴後端」的工具（清單 / 匯出到伺服器 / 清空匯出夾）
+  function applyBackendMode() {
+    ['setting-downloads', 'setting-export', 'setting-clear-downloads'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = backend ? '' : 'none';
+    });
+  }
+
   /* ---------- 初始化 ---------- */
 
   function init() {
@@ -442,6 +498,10 @@ import { SiddhamConverter } from "./siddham-converter.js";
 
     bindEvents();
     renderSource();
+
+    // 讀 config 後套用後端模式（隱藏/顯示伺服器相關工具）
+    loadConfig().then(applyBackendMode);
+
     convert();
   }
 
