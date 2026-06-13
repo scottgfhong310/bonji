@@ -53,6 +53,46 @@ npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼�
 
 匯出檔以 `/download/bonji/<file>` 靜態提供。
 
+## JSON 結構
+
+本專案有兩種 JSON 結構。
+
+**`SiddhamConverter.convert(input)` → 結果** — 瀏覽器內的轉換結果（由 library 回傳，也用來填 UI）：
+
+```jsonc
+{
+  "input":      "siddha;m",          // 原樣回傳的輸入文字
+  "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // 悉曇文字
+  "latin":      "siddhaṃ",           // 拉丁轉寫（預設 IAST；可選 ISO 15919）
+  "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  //            `siddham` 的 Unicode 碼位，以空格分隔（每行輸入對應一行）
+}
+```
+
+**`bonji-yyyyMMddHHmmss.json`** — 匯出檔（由 `POST /api/bonji/export` 寫出；檔名時間戳由 server 產生）。把三項輸出收在 `output` 之下，並加上 metadata：
+
+```jsonc
+{
+  "app":        "bonji",
+  "exportedAt": "2026-06-13T01:25:59.123Z", // ISO 8601、UTC
+  "sourceFile": "bonji-20260613092011.json",// 本內容載自/衍生自的匯出檔，無則 null
+  "title":      "心經種子字",                 // 選填，使用者輸入
+  "options": {
+    "inputMethod":            "ISO15919",   // "ISO15919" | "KH"
+    "transliteration":        "IAST",       // "ISO15919" | "IAST"
+    "ignoreSpacesAndHyphens": true
+  },
+  "input":  "siddha;m",
+  "output": {
+    "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
+    "latin":      "siddhaṃ",
+    "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  }
+}
+```
+
+> `output` 是 `convert()` 的三項輸出（`siddham` / `latin` / `codepoints`）；`input` 放在頂層。`app`、`exportedAt`、`sourceFile`、`title`、`options` 是匯出時加上的 metadata。
+
 ## 目錄結構
 
 ```

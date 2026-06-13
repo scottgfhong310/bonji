@@ -53,6 +53,46 @@ npm test                          # vendored エンジンを検証（5 ケース
 
 書き出したファイルは `/download/bonji/<file>` で静的配信されます。
 
+## JSON 構造
+
+本プロジェクトには 2 つの JSON 構造があります。
+
+**`SiddhamConverter.convert(input)` → 結果** — ブラウザ内の変換結果（ライブラリが返し、UI にも反映）：
+
+```jsonc
+{
+  "input":      "siddha;m",          // 渡した入力テキスト（そのまま返す）
+  "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // 悉曇文字
+  "latin":      "siddhaṃ",           // ラテン翻字（既定 IAST；ISO 15919 も可）
+  "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  //            `siddham` の Unicode コードポイント、スペース区切り（入力 1 行ごとに 1 行）
+}
+```
+
+**`bonji-yyyyMMddHHmmss.json`** — 書き出しレコード（`POST /api/bonji/export` が出力；ファイル名のタイムスタンプはサーバー生成）。3 つの出力を `output` にまとめ、メタデータを付加：
+
+```jsonc
+{
+  "app":        "bonji",
+  "exportedAt": "2026-06-13T01:25:59.123Z", // ISO 8601、UTC
+  "sourceFile": "bonji-20260613092011.json",// この内容の読み込み元／派生元、無ければ null
+  "title":      "心經種子字",                 // 任意、ユーザー入力
+  "options": {
+    "inputMethod":            "ISO15919",   // "ISO15919" | "KH"
+    "transliteration":        "IAST",       // "ISO15919" | "IAST"
+    "ignoreSpacesAndHyphens": true
+  },
+  "input":  "siddha;m",
+  "output": {
+    "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
+    "latin":      "siddhaṃ",
+    "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  }
+}
+```
+
+> `output` は `convert()` の 3 出力（`siddham` / `latin` / `codepoints`）；`input` はトップレベル。`app`・`exportedAt`・`sourceFile`・`title`・`options` は書き出し時に付くメタデータです。
+
 ## ディレクトリ構成
 
 ```

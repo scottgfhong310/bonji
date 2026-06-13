@@ -53,6 +53,46 @@ All responses use the family `{ ok }` envelope.
 
 Exported files are served statically at `/download/bonji/<file>`.
 
+## JSON shapes
+
+Two JSON structures appear in this project.
+
+**`SiddhamConverter.convert(input)` → result** — the in-browser conversion result (returned by the library; also drives the UI):
+
+```jsonc
+{
+  "input":      "siddha;m",          // the input text, echoed back
+  "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // Siddhaṁ script
+  "latin":      "siddhaṃ",           // Latin transliteration (IAST by default; ISO 15919 optional)
+  "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  //            code points of `siddham`, space-separated (one line per input line)
+}
+```
+
+**`bonji-yyyyMMddHHmmss.json`** — an exported record (written by `POST /api/bonji/export`; the filename timestamp is server-generated). It nests the three outputs under `output` and adds metadata:
+
+```jsonc
+{
+  "app":        "bonji",
+  "exportedAt": "2026-06-13T01:25:59.123Z", // ISO 8601, UTC
+  "sourceFile": "bonji-20260613092011.json",// the export this was loaded/derived from, or null
+  "title":      "心經種子字",                 // optional, user-entered
+  "options": {
+    "inputMethod":            "ISO15919",   // "ISO15919" | "KH"
+    "transliteration":        "IAST",       // "ISO15919" | "IAST"
+    "ignoreSpacesAndHyphens": true
+  },
+  "input":  "siddha;m",
+  "output": {
+    "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
+    "latin":      "siddhaṃ",
+    "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
+  }
+}
+```
+
+> `output` holds the three outputs from `convert()` (`siddham` / `latin` / `codepoints`); `input` stays at the top level. `app`, `exportedAt`, `sourceFile`, `title` and `options` are metadata added by the export.
+
 ## Structure
 
 ```
