@@ -80,8 +80,3 @@
   font-size: .72rem;
   color: var(--muted);
 }
-
-/* 本頁右側工具列順序：mode / lang / home（覆蓋 side-tool.css 內轉換頁的排序） */
-#setting-mode { top: var(--tool-top); }
-#setting-lang { top: calc(var(--tool-top) + 1 * var(--tool-step)); }
-#setting-home { top: calc(var(--tool-top) + 2 * var(--tool-step)); }

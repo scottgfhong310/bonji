@@ -1,17 +1,25 @@
-/* bonji 右側浮動工具列（家族招牌元件）
+/* 右側浮動工具列（家族招牌元件）
  * 垂直一排圓形按鈕，顏色以 CSS 變數驅動，隨 light / dark 主題切換。
+ * 用 flex 容器自動堆疊（不綁固定 ID 數量/順序），多頁不同工具集也不會錯位。
  */
 
 :root {
   --tool-top: 25vh;   /* 第一顆 icon 約位於頁高 1/4 處 */
   --tool-size: 46px;  /* icon 直徑 */
   --tool-gap: 9px;    /* icon 之間的間距 */
-  --tool-step: calc(var(--tool-size) + var(--tool-gap));
+}
+
+.side-tools {
+  position: fixed;
+  right: 16px;
+  top: var(--tool-top);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tool-gap);
+  z-index: 1002;
 }
 
 .side-tool {
-  position: fixed;
-  right: 16px;
   width: var(--tool-size);
   height: var(--tool-size);
   display: flex;
@@ -19,7 +27,6 @@
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1002;
   color: var(--tool-fg);
   background: var(--tool-bg);
   border: 1px solid var(--border);
@@ -29,7 +36,7 @@
 }
 
 /* 匯出檔側欄開啟時，隱藏整排工具；收起後再淡入 */
-body.sidenav-open .side-tool {
+body.sidenav-open .side-tools {
   opacity: 0;
   pointer-events: none;
 }
@@ -48,16 +55,6 @@ body.sidenav-open .side-tool {
   line-height: 1;
 }
 
-/* 由上而下排列：第一顆在頁高 1/4，之後每顆間隔 --tool-step */
-#setting-downloads      { top: var(--tool-top); }
-#setting-mode           { top: calc(var(--tool-top) + 1 * var(--tool-step)); }
-#setting-lang           { top: calc(var(--tool-top) + 2 * var(--tool-step)); }
-#setting-chart          { top: calc(var(--tool-top) + 3 * var(--tool-step)); }
-#setting-export         { top: calc(var(--tool-top) + 4 * var(--tool-step)); }
-#setting-download       { top: calc(var(--tool-top) + 5 * var(--tool-step)); }
-#setting-clear          { top: calc(var(--tool-top) + 6 * var(--tool-step)); }
-#setting-clear-downloads { top: calc(var(--tool-top) + 7 * var(--tool-step)); }
-
 /* toggle 開啟狀態以 accent 色標示（保留供日後擴充） */
 .side-tool.active {
   color: var(--accent);
@@ -72,7 +69,7 @@ body.sidenav-open .side-tool {
 
 /* 列印時隱藏所有工具 */
 @media print {
-  .side-tool {
+  .side-tools {
     display: none !important;
   }
 }
