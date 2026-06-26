@@ -67,6 +67,16 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 > 記法是描述**輸入**的（ISO 15919 基底），與**輸出**拉丁轉寫的選擇（IAST/ISO15919）是兩件事——例如 `;m` 記法寫成 ṁ，但預設輸出 IAST 時 anusvara 顯示為 ṃ。
 
+### 4.1 補充符號（引擎未涵蓋者，在 ACL 補上）
+
+`BonjiInput.xlsx` 有些 `fd_code` 不在 vendored 引擎的記法裡，直接餵引擎會被拆散（如 `*1`→`𑗄`+`1`、`o2x`→`𑖌𑗆x`）。引擎**不可改**（canon），故在 `siddham-converter.js` 的 `convert()` 補上一層處理：把這些 code 先換成**私用區 sentinel**（`U+E000…`）餵給引擎（引擎原樣 echo），轉出後再把 sentinel 換回對應的悉曇字 / 拉丁。三類：
+
+- **章節 / 裝飾符號**（`*0`–`*7`、`o2`/`o2x`/`ox2`/`ox3`/`ox4`/`oxx` → `U+115CA…U+115D7`）：獨立、不接字。`latin` 照 bonji 既有慣例＝**悉曇字本身**（如 `--`→latin `𑗁`）；`ascii` 保留 code（可回填）。
+- **virama** `:-`（`U+115BF`）：悉曇用 **◌ 載體**顯示（`◌𑖿`，同對照表 §7.1）；`latin` 放 **◌**（virama 無獨立音值，bonji 平常的 virama 也只在裸子音裡、對 latin 零貢獻）。
+- **替代母音符號** `_u` / `_uu`（`U+115DC` / `U+115DD`，依附於前一子音）：注入「base 母音 `u`/`uu` + sentinel」讓引擎**正確接到前一子音**（`k_u`→`𑖎𑗜`，而非裸子音 `𑖎𑖿`＋符號），再把產生的常規母音符號換成替代字形；單獨時加 ◌ 載體（`◌𑗜`）。`latin` 用乾淨的 **`u`/`ū`**——替代形的「識別」交給悉曇字 / ASCII 記法（`_u`）/ 碼位（`U+115DC`）三者，不擠進 latin。
+
+只在 `convert()` 處理（轉換器 / 輔助輸入走這條）；靜態 `toSiddham`/`toLatin` 是給引擎導出的 `chart.html` 用、不涉這些 code，故不動。無補充 code 的輸入完全不受影響。
+
 ---
 
 ## 5. 空格與連字號政策（Space & hyphen）— 本 app 的核心設計

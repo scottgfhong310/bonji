@@ -5,6 +5,72 @@
 
 import { ascii2latin, ascii2siddham, ascii2symbol, latin2ascii } from "./vendor/bonji-input/siddham.js"
 
+// ── 補充符號（引擎未涵蓋；於本 ACL 補上，不改 vendored 引擎）────────────────────
+// 來源：BonjiInput.xlsx 的章節/裝飾符號、virama、替代母音符號。引擎會把這些 code 拆散
+// （如 "*1"→𑗄+"1"），故先把每個 code 換成一個私用區 sentinel 餵給引擎（引擎原樣 echo），
+// 轉出後再把 sentinel 換回對應字形 / 拉丁。詳見 DESIGN §4「補充符號」。
+const DOTTED = "◌" // ◌ 點圈載體（顯示用，與對照表 §7.1 一致）
+
+// 章節 / 裝飾符號 + virama（皆獨立、不接字）。latin 照 bonji 慣例＝悉曇字本身；
+// virama 例外：悉曇用 ◌ 載體、latin 放 ◌。
+const EXTRA_MARK = {
+    "*1": "\u{115CA}", "*2": "\u{115CB}", "*3": "\u{115CC}", "*4": "\u{115CD}",
+    "*5": "\u{115CE}", "*6": "\u{115D5}", "*7": "\u{115D6}", "*0": "\u{115D7}",
+    "o2": "\u{115CF}", "o2x": "\u{115D0}", "ox2": "\u{115D1}", "ox3": "\u{115D2}",
+    "ox4": "\u{115D3}", "oxx": "\u{115D4}",
+    ":-": DOTTED + "\u{115BF}", // virama 𑖿 on ◌
+}
+const EXTRA_MARK_LATIN = { ":-": DOTTED } // 未列者：latin = 悉曇字本身（同 EXTRA_MARK）
+
+// 替代母音符號（依附於前一子音）。注入「base 母音 + sentinel」讓引擎正確接字，轉出後把
+// 產生的常規母音符號換成替代字形；latin 用乾淨的 u/ū（替代形的識別交給悉曇/記法/碼位）。
+const EXTRA_VSIGN = {
+    "_u":  { base: "u",  dep: "\u{115B2}", indep: "\u{11584}", alt: "\u{115DC}" },
+    "_uu": { base: "uu", dep: "\u{115B3}", indep: "\u{11585}", alt: "\u{115DD}" },
+}
+
+const EXTRA_CODES = [...Object.keys(EXTRA_MARK), ...Object.keys(EXTRA_VSIGN)]
+    .sort((a, b) => b.length - a.length) // 長到短：*1 先於 *、_uu 先於 _u、o2x 先於 o2
+const EXTRA_RE = new RegExp(
+    EXTRA_CODES.map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g")
+
+/** input 內的補充 code → 私用區 sentinel；回傳 { text, map:(sentinel→code) }。 */
+function encodeExtras(input) {
+    const map = new Map()
+    let n = 0
+    const text = input.replace(EXTRA_RE, (code) => {
+        const s = String.fromCodePoint(0xE000 + (n++)) // BMP 私用區，引擎原樣 echo
+        map.set(s, code)
+        return code in EXTRA_MARK ? s : EXTRA_VSIGN[code].base + s
+    })
+    return { text, map }
+}
+function decodeExtrasSiddham(siddham, map) {
+    for (const [s, code] of map) {
+        if (code in EXTRA_MARK) { siddham = siddham.split(s).join(EXTRA_MARK[code]); continue }
+        const v = EXTRA_VSIGN[code]
+        siddham = siddham.split(v.dep + s).join(v.alt)        // 接子音：常規母音符號 → 替代
+            .split(v.indep + s).join(DOTTED + v.alt)          // 單獨：◌ + 替代
+            .split(s).join("")                                // 殘留 sentinel 保險清除
+    }
+    return siddham
+}
+function decodeExtrasLatin(latin, map) {
+    for (const [s, code] of map) {
+        const lat = code in EXTRA_MARK ? (EXTRA_MARK_LATIN[code] ?? EXTRA_MARK[code]) : ""
+        latin = latin.split(s).join(lat) // 母音符號：去掉 sentinel（引擎已給乾淨的 u/ū）
+    }
+    return latin
+}
+function decodeExtrasAscii(ascii, map) {
+    for (const [s, code] of map) {
+        ascii = code in EXTRA_MARK
+            ? ascii.split(s).join(code)
+            : ascii.split(EXTRA_VSIGN[code].base + s).join(code).split(s).join("")
+    }
+    return ascii
+}
+
 /**
  * @typedef {Object} SiddhamOptions
  * @property {"ISO15919" | "KH"}   inputMethod
@@ -44,9 +110,16 @@ export class SiddhamConverter {
     /** @param {string} input @returns {SiddhamResult} */
     convert(input) {
         const { inputMethod, transliteration, ignoreSpacesAndHyphens } = this.options
-        const ascii = latin2ascii(ascii2symbol(input), { inputMethod })
-        const siddham = SiddhamConverter.toSiddham(ascii, ignoreSpacesAndHyphens)
-        const latin = ascii2latin(ascii, { transliteration })
+        const { text, map } = encodeExtras(input) // 補充符號：先換成 sentinel（見檔首）
+        const asciiRaw = latin2ascii(ascii2symbol(text), { inputMethod })
+        let siddham = SiddhamConverter.toSiddham(asciiRaw, ignoreSpacesAndHyphens)
+        let latin = ascii2latin(asciiRaw, { transliteration })
+        let ascii = asciiRaw
+        if (map.size) {
+            siddham = decodeExtrasSiddham(siddham, map)
+            latin = decodeExtrasLatin(latin, map)
+            ascii = decodeExtrasAscii(asciiRaw, map)
+        }
         const codepoints = SiddhamConverter.toCodepoints(siddham)
         return { input, ascii, siddham, latin, codepoints }
     }
