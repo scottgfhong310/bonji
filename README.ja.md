@@ -12,13 +12,14 @@
 ## 機能
 
 - 2 カラム構成：左が入力、右が出力（狭い画面では縦積み）。
-- 任意の**タイトル**＋入力テキスト（どちらもコピー可）；入力と同時に変換：悉曇文字 · ラテン翻字 · Unicode コードポイント。
+- 任意の**タイトル**＋入力テキスト（どちらもコピー可）；入力と同時に変換、5 つのコピー可能な出力：悉曇文字 · ラテン翻字 · ASCII 表記（例 ṁ/ṃ → `;m`）· Unicode コードポイント · **HTML スニペット**（`<span class="siddham" data-latin="{latin}">{siddham}</span>`、1 行 1 つ、経典整理用）。
 - オプション：入力方式（ISO 15919 / Kyoto-Harvard）、ラテン翻字（ISO 15919 / IAST）、スペースとハイフンを無視。
 - **Noto Sans Siddham** フォント（SIL OFL）を同梱し、システムフォントなしでも悉曇を表示。
 - 三言語 UI（`zh-Hant` / `en` / `ja`、既定 `zh-Hant`）；ライト / ダークテーマ。
 - 各フィールドのコピーボタン（タイトル・入力・各出力）；サンプルチップ。
 - **JSON 書き出し** — 現在の結果をサーバーの `/download/bonji/` に `bonji-yyyyMMddHHmmss.json` として保存（`title`・`options`・入力・3 つの出力）；**ダウンロード**ボタンは先に書き出してからその JSON をダウンロード；**`dehaze` サイドパネル**が書き出しを降順で一覧、`delete_sweep` ボタンでフォルダを空に。
 - **保存した書き出しの読み戻し** — パネルの項目をクリックすると、その `title` / `options` / `input` をページに読み込み（そのファイルの `sourceFile` はオプションの下に表示）。調整して再度書き出すと新しいファイルになり、`sourceFile` に元のファイル名を記録します。
+- **対照表ページ**（サイドツール・新規タブで開く）：`table_chart` **字母対照表**（`chart.html`、エンジン由来：記法 → 悉曇 / ラテン）と `menu_book` **字形対照表**（`catalog.html`、`BonjiInput.xlsx` 準拠：母音 / 子音 / 異体字 / 記号 / 体文 / 接続 / 上下接続、各セルは元フォントで表示：Unicode 悉曇 · Mojikyo · UniSiddham）。セルをクリックで記法をコピー。
 
 > 変換エンジンはブラウザ内で完結します。JSON の書き出し／一覧は下記の Node バックエンドを使うため、この 2 機能のみサーバーが必要です（変換そのものは不要）。
 
@@ -61,7 +62,8 @@ npm test                          # vendored エンジンを検証（5 ケース
 
 ```jsonc
 {
-  "input":      "siddha;m",          // 渡した入力テキスト（そのまま返す）
+  "input":      "siddhaṃ",           // 渡した入力テキスト（そのまま返す）
+  "ascii":      "siddha;m",          // 共通 ASCII 表記（IAST/ISO 15919 → ASCII、例 ṁ/ṃ → ;m；改行も保持）
   "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // 悉曇文字
   "latin":      "siddhaṃ",           // ラテン翻字（既定 IAST；ISO 15919 も可）
   "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
@@ -82,7 +84,7 @@ npm test                          # vendored エンジンを検証（5 ケース
     "transliteration":        "IAST",       // "ISO15919" | "IAST"
     "ignoreSpacesAndHyphens": true
   },
-  "input":  "siddha;m",
+  "input":  "siddha;m",                     // 正規化 ASCII 表記（IAST/ISO 15919 → ASCII、例 ṁ/ṃ → ;m）
   "output": {
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
@@ -91,7 +93,7 @@ npm test                          # vendored エンジンを検証（5 ケース
 }
 ```
 
-> `output` は `convert()` の 3 出力（`siddham` / `latin` / `codepoints`）；`input` はトップレベル。`app`・`exportedAt`・`sourceFile`・`title`・`options` は書き出し時に付くメタデータです。
+> 書き出しは **`input` を正規化 ASCII 表記で保存**（例：`siddhaṃ` と打っても `siddha;m` で保存）し、可搬・再入力しやすくします。`output` は 3 出力（`siddham` / `latin` / `codepoints`）；`app`・`exportedAt`・`sourceFile`・`title`・`options` は書き出しメタデータ。（ライブラリの `convert()` は生の `input` を返し、ASCII は別途 `ascii` で提供。）
 
 ## ディレクトリ構成
 
@@ -120,8 +122,9 @@ bonji/
 import { SiddhamConverter } from "./siddham-converter.js";
 
 const converter = new SiddhamConverter();           // 既定：入力方式 ISO15919、ラテン翻字 IAST、スペース無視
-const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
-// input:      "siddha;m"   （渡したテキストをそのまま返す）
+const { input, ascii, siddham, latin, codepoints } = converter.convert("siddhaṃ");
+// input:      "siddhaṃ"    （渡したテキストをそのまま返す）
+// ascii:      "siddha;m"   （共通 ASCII 表記；IAST/ISO 15919 → ASCII、例 ṁ/ṃ → ;m；改行も保持）
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
 // latin:      "siddhaṃ"    （IAST 既定は ṃ；ISO15919 なら ṁ）
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"

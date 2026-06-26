@@ -15,6 +15,7 @@ import { ascii2latin, ascii2siddham, ascii2symbol, latin2ascii } from "./vendor/
 /**
  * @typedef {Object} SiddhamResult
  * @property {string} input      輸入文字（原樣回傳）
+ * @property {string} ascii      共用 ascii 輸入記法（latin2ascii 正規化後；如 ṁ/ṃ → ;m，保留換行）
  * @property {string} siddham    悉曇文字
  * @property {string} latin      拼音字元（拉丁轉寫）
  * @property {string} codepoints 悉曇文字對應的 Unicode 碼位
@@ -47,7 +48,7 @@ export class SiddhamConverter {
         const siddham = SiddhamConverter.toSiddham(ascii, ignoreSpacesAndHyphens)
         const latin = ascii2latin(ascii, { transliteration })
         const codepoints = SiddhamConverter.toCodepoints(siddham)
-        return { input, siddham, latin, codepoints }
+        return { input, ascii, siddham, latin, codepoints }
     }
 
     /**

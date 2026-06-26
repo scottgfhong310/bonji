@@ -136,6 +136,26 @@
 
             <div class="out-block">
               <div class="out-head">
+                <span class="out-label" data-i18n="out.ascii">ASCII 記法</span>
+                <a href="#!" class="out-copy" data-copy="out-ascii" data-i18n-title="tool.copy" title="複製">
+                  <i class="material-icons">content_copy</i>
+                </a>
+              </div>
+              <div id="out-ascii" class="out-value mono ascii-text"></div>
+            </div>
+
+            <div class="out-block">
+              <div class="out-head">
+                <span class="out-label" data-i18n="out.html">HTML 片段</span>
+                <a href="#!" class="out-copy" data-copy="out-html" data-i18n-title="tool.copy" title="複製">
+                  <i class="material-icons">content_copy</i>
+                </a>
+              </div>
+              <div id="out-html" class="out-value mono html-text"></div>
+            </div>
+
+            <div class="out-block">
+              <div class="out-head">
                 <span class="out-label" data-i18n="out.codepoints">Unicode 碼位</span>
                 <a href="#!" class="out-copy" data-copy="out-codepoints" data-i18n-title="tool.copy" title="複製">
                   <i class="material-icons">content_copy</i>
@@ -168,6 +188,9 @@
     </div>
     <a id="setting-chart" class="side-tool" href="./chart.html" target="bonji-chart" rel="opener" data-i18n-title="tool.chart" title="字元對照表">
       <i class="material-icons">table_chart</i>
+    </a>
+    <a id="setting-catalog" class="side-tool" href="./catalog.html" target="bonji-catalog" rel="opener" data-i18n-title="tool.catalog" title="字型對照表">
+      <i class="material-icons">menu_book</i>
     </a>
     <div id="setting-export" class="side-tool" data-i18n-title="tool.export" title="匯出 JSON 到 /download/bonji/">
       <i class="material-icons">data_object</i>

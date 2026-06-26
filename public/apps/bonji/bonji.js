@@ -27,7 +27,9 @@ import { SiddhamConverter } from "./siddham-converter.js";
   var outEls = {
     siddham: document.getElementById('out-siddham'),
     latin: document.getElementById('out-latin'),
-    codepoints: document.getElementById('out-codepoints')
+    ascii: document.getElementById('out-ascii'),
+    codepoints: document.getElementById('out-codepoints'),
+    html: document.getElementById('out-html')
   };
 
   var state = { theme: 'dark' };
@@ -121,13 +123,38 @@ import { SiddhamConverter } from "./siddham-converter.js";
     });
   }
 
+  function escAttr(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  function escText(s) {
+    return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+  }
+
+  // 經文整理用的 HTML 片段：每行一個
+  //   <span class="siddham" data-latin="{latin}">{siddham}</span>
+  // 空行（如尾端換行）略過。
+  function buildSpanHtml(siddham, latin) {
+    var sl = String(siddham).split('\n');
+    var ll = String(latin).split('\n');
+    var n = Math.max(sl.length, ll.length);
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var s = sl[i] || '', l = ll[i] || '';
+      if (s === '' && l === '') continue;
+      out.push('<span class="siddham" data-latin="' + escAttr(l) + '">' + escText(s) + '</span>');
+    }
+    return out.join('\n');
+  }
+
   function convert() {
     readOptions();
     var input = $input.value;
     if (!input) {
       outEls.siddham.textContent = '';
       outEls.latin.textContent = '';
+      outEls.ascii.textContent = '';
       outEls.codepoints.textContent = '';
+      outEls.html.textContent = '';
       return;
     }
     var r;
@@ -140,7 +167,9 @@ import { SiddhamConverter } from "./siddham-converter.js";
     }
     outEls.siddham.textContent = r.siddham;
     outEls.latin.textContent = r.latin;
+    outEls.ascii.textContent = r.ascii;
     outEls.codepoints.textContent = r.codepoints;
+    outEls.html.textContent = buildSpanHtml(r.siddham, r.latin);
   }
 
   // 目前的「來源 + 標題 + 選項 + 輸入 + 三項輸出」（供匯出用）
@@ -153,7 +182,8 @@ import { SiddhamConverter } from "./siddham-converter.js";
         transliteration: $translit.value,
         ignoreSpacesAndHyphens: $ignoreSpaces.checked
       },
-      input: $input.value,
+      // 匯出時 input 一律用正規化後的 ASCII 記法（如 ṁ/ṃ → ;m），故不另存 output.ascii
+      input: outEls.ascii.textContent,
       output: {
         siddham: outEls.siddham.textContent,
         latin: outEls.latin.textContent,
@@ -435,10 +465,14 @@ import { SiddhamConverter } from "./siddham-converter.js";
       loadFile(this.getAttribute('data-file'));
     });
 
-    // 對照表：開新分頁（具名 → 重複點重用同一頁；script 開啟，故對照表可自行關閉回到本頁）
+    // 對照表 / 字型對照表：開新分頁（具名 → 重複點重用同一頁；script 開啟，故子頁可自行關閉回到本頁）
     document.getElementById('setting-chart').addEventListener('click', function (e) {
       e.preventDefault();
       window.open(this.href, 'bonji-chart');
+    });
+    document.getElementById('setting-catalog').addEventListener('click', function (e) {
+      e.preventDefault();
+      window.open(this.href, 'bonji-catalog');
     });
 
     // 右側工具列

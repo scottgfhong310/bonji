@@ -1,0 +1,112 @@
+/* catalog.css — 悉曇字型對照表（依 BonjiInput.xlsx）。
+ * 主題 token / 卡片 / .siddham-text 沿用 bonji.css；side-tools 用共用 side-tool.css。
+ * 本檔加：mojikyo / uniSiddham 字型 @font-face、欄位版面、依字型上色的字格。 */
+
+/* mojikyo119 → Mojikm13.TTF（fd_char 是 CJK 碼位，在此字型內顯示為悉曇字形） */
+@font-face {
+  font-family: 'Mojikyo M13';
+  src: url('./fonts/Mojikm13.TTF') format('truetype');
+  font-display: swap;
+}
+/* uniSiddham → UniSiddham.ttf */
+@font-face {
+  font-family: 'UniSiddham';
+  src: url('./fonts/UniSiddham.ttf') format('truetype');
+  font-display: swap;
+}
+
+.catalog-container {
+  width: 92%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* 一欄一類；窄螢幕自動換行堆疊 */
+.catalog-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.catalog-col {
+  flex: 1 1 260px;
+  min-width: 240px;
+  /* .card（bonji.css）已給 背景/邊框/圓角/padding */
+}
+
+.catalog-col-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 2px 0 2px;
+  color: var(--text);
+}
+
+.catalog-col-sub {
+  font-size: .76rem;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.gc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, transform .06s;
+  user-select: none;
+}
+
+.gc:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.gc:active {
+  transform: translateY(1px);
+}
+
+.gc-char {
+  font-size: 2.1rem;
+  line-height: 1.4;
+}
+
+/* 依 fd_group 套字型 */
+.gc-char.f-siddham {
+  font-family: 'Noto Sans Siddham', serif;
+}
+.gc-char.f-mojikyo {
+  font-family: 'Mojikyo M13', serif;
+}
+.gc-char.f-unisiddham {
+  font-family: 'UniSiddham', serif;
+}
+
+.gc-code {
+  font-size: .78rem;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  min-height: 1em;
+  word-break: break-all;
+}
+
+/* 字型小標（僅 mojikyo / uniSiddham 標出，siddham 不標以免雜亂） */
+.gc-group {
+  font-size: .62rem;
+  letter-spacing: .03em;
+  color: var(--muted);
+  opacity: .8;
+}

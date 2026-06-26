@@ -12,13 +12,14 @@ Part of the **nodeapp WebApp family** — shared conventions and workflow live a
 ## Features
 
 - Two-column layout: input on the left, output on the right (stacks on narrow screens).
-- An optional **title** field plus the input text (both copyable); live conversion as you type — Siddhaṁ script · Latin transliteration · Unicode code points.
+- An optional **title** field plus the input text (both copyable); live conversion as you type — five copyable outputs: Siddhaṁ script · Latin transliteration · ASCII notation (e.g. ṁ/ṃ → `;m`) · Unicode code points · an **HTML snippet** (`<span class="siddham" data-latin="{latin}">{siddham}</span>`, one per line — for typesetting scriptural texts).
 - Options: input method (ISO 15919 / Kyoto-Harvard), transliteration (ISO 15919 / IAST), ignore spaces & hyphens.
 - Bundled **Noto Sans Siddham** webfont (SIL OFL) so the script renders without a system font.
 - Trilingual UI (`zh-Hant` / `en` / `ja`, default `zh-Hant`); light / dark theme.
 - Per-field copy buttons (title input + each output); example chips.
 - **JSON export** — save the current result to the server as `bonji-yyyyMMddHHmmss.json` under `/download/bonji/` (captures `title`, `options`, input and the three outputs); the **download** button exports first and then downloads that JSON; a **`dehaze` side panel** lists exports newest-first and a `delete_sweep` button clears the folder.
 - **Round-trip a saved export** — click an entry in the panel to load its `title` / `options` / `input` back into the page (the loaded file's `sourceFile` is shown below the options); tweak and export again to get a new file that records the file it came from in `sourceFile`.
+- **Reference pages** (side-tools, open in a new tab): a `table_chart` **character chart** (`chart.html`, engine-derived: notation → Siddhaṁ / Latin) and a `menu_book` **font catalog** (`catalog.html`, from `BonjiInput.xlsx` — one column per category: vowel / consonant / variant / symbol / bindu / ligature / upper- & lower-ligature, each glyph rendered in its source font: Unicode Siddham · Mojikyo · UniSiddham). Click any cell to copy its notation.
 
 > The conversion engine runs entirely in the browser. JSON export / listing use the Node backend below, so those two features need the server (the converter itself does not).
 
@@ -61,7 +62,8 @@ Two JSON structures appear in this project.
 
 ```jsonc
 {
-  "input":      "siddha;m",          // the input text, echoed back
+  "input":      "siddhaṃ",           // the input text, echoed back
+  "ascii":      "siddha;m",          // canonical ASCII notation (IAST/ISO 15919 → ASCII, e.g. ṁ/ṃ → ;m; newlines kept)
   "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // Siddhaṁ script
   "latin":      "siddhaṃ",           // Latin transliteration (IAST by default; ISO 15919 optional)
   "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
@@ -82,7 +84,7 @@ Two JSON structures appear in this project.
     "transliteration":        "IAST",       // "ISO15919" | "IAST"
     "ignoreSpacesAndHyphens": true
   },
-  "input":  "siddha;m",
+  "input":  "siddha;m",                     // normalized ASCII notation (IAST/ISO 15919 → ASCII, e.g. ṁ/ṃ → ;m)
   "output": {
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
@@ -91,7 +93,7 @@ Two JSON structures appear in this project.
 }
 ```
 
-> `output` holds the three outputs from `convert()` (`siddham` / `latin` / `codepoints`); `input` stays at the top level. `app`, `exportedAt`, `sourceFile`, `title` and `options` are metadata added by the export.
+> The export stores **`input` as the normalized ASCII notation** (e.g. a typed `siddhaṃ` is saved as `siddha;m`), so the file is portable and re-typeable. `output` holds the three outputs `siddham` / `latin` / `codepoints`; `app`, `exportedAt`, `sourceFile`, `title` and `options` are export metadata. (The library's `convert()` instead echoes the raw `input` and exposes the ASCII separately as `ascii`.)
 
 ## Structure
 
@@ -120,8 +122,9 @@ bonji/
 import { SiddhamConverter } from "./siddham-converter.js";
 
 const converter = new SiddhamConverter();           // defaults: ISO15919 input, IAST transliteration, ignore spaces
-const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
-// input:      "siddha;m"   (the text passed in, echoed back)
+const { input, ascii, siddham, latin, codepoints } = converter.convert("siddhaṃ");
+// input:      "siddhaṃ"    (the text passed in, echoed back)
+// ascii:      "siddha;m"   (canonical ASCII notation; IAST/ISO 15919 → ASCII, e.g. ṁ/ṃ → ;m; newlines kept)
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
 // latin:      "siddhaṃ"    (IAST default; ṃ — ISO15919 would be ṁ)
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"

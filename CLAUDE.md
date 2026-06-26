@@ -15,10 +15,14 @@ routes/bonji.js                     # POST /api/bonji/export、GET /api/bonji/do
 test/verify-siddham.mjs             # 引擎驗證（npm test）
 public/download/bonji/.gitkeep      # 匯出的 JSON 落在這（內容不進版控）
 public/apps/bonji/                  # 前端（服務於 /apps/bonji/）
-├─ index.html · bonji.css · bonji.js          # 結構 / 樣式 / 膠水（bonji.js 是 ESM module）
+├─ index.html · bonji.css · bonji.js          # 轉換頁：結構 / 樣式 / 膠水（bonji.js 是 ESM module）
+├─ chart.html · chart.css · chart.js          # 字元對照表（引擎導出；DESIGN §7.1）
+├─ catalog.html · catalog.css · catalog.js    # 字型對照表（依 BonjiInput.xlsx；DESIGN §7.2）
 ├─ siddham-converter.js                       # 防腐層：唯一對外悉曇介面（ESM、不碰 DOM）
+├─ config.json                                # 後端開關 { backend: true|false }
+├─ data/{catalog.json, BonjiInput.xlsx}       # catalog 資料（catalog.json 由 xlsx 生成、xlsx 為來源）
 ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT、勿改邏輯）
-├─ fonts/{NotoSansSiddham-Regular.woff2, OFL.txt}        # 內嵌悉曇字型（SIL OFL）
+├─ fonts/{NotoSansSiddham-Regular.woff2+OFL.txt, Mojikm13.TTF, UniSiddham.ttf}  # 悉曇/Mojikyo/UniSiddham 字型
 ├─ side-tool.css · materialize-dark.css
 └─ i18n.js · locales/{zh-Hant,en,ja}.js
 ```
@@ -37,7 +41,8 @@ npm test                            # 驗證 vendored 引擎（5 筆 OK + 碼位
 - **主題（重要）**：CSS 變數 light/dark，預設 dark；**materialize-dark.css 以 `html.light-mode` class 標記淺色**（否則系統偏好為深色時會強制深色）。`applyTheme` 同時設 `data-theme` **與** `light-mode`/`dark-mode` class；防閃爍開機腳本也要一起設 class。bonji 是家族首個實際採用共用 `materialize-dark.css` 的 app。
 - **字型**：悉曇須內嵌 `Noto Sans Siddham`（`@font-face`，CDN 無可靠來源），否則輸出是缺字方塊。
 - **i18n**：`i18n.js` 引擎 + `locales/*.js`，`data-i18n` 屬性，預設 `zh-Hant`，三語齊備。
-- **API（`routes/bonji.js`，`{ ok }` 信封）**：`POST /api/bonji/export` 把 `{ title, options, input, output, sourceFile }` 存成 `public/download/bonji/bonji-yyyyMMddHHmmss.json`（檔名由 server 產生；options 即三選項，非 `parameters`；`sourceFile` 記來源檔名、server 端 `basename` 後存入、無則 `null`）；`GET /api/bonji/downloads` 降冪列出該夾；`POST /api/bonji/clear` 清空該夾（目標寫死在 server，前端 `confirm()` 二次確認）。匯出檔以 `/download/bonji/<file>` 靜態提供。**側邊「下載」鈕＝先 export 再下載剛產生的 JSON**。**點清單項目＝把該檔 title/options/input 載回頁面並重算**；前端以 `loadedFrom`（載入或上次匯出的檔名）追蹤血緣，再匯出時寫進新檔的 `sourceFile`。因有此 API，**轉換可純前端，但匯出 / 列表需要本 Node server**（非純靜態 / 非 GitHub Pages）。
+- **API（`routes/bonji.js`，`{ ok }` 信封）**：`POST /api/bonji/export` 把 `{ title, options, input, output, sourceFile }` 存成 `public/download/bonji/bonji-yyyyMMddHHmmss.json`（檔名由 server 產生；options 即三選項，非 `parameters`；**`input` 一律存正規化 ASCII 記法**＝`convert()` 的 `ascii`，如 ṁ/ṃ → ;m，故 `output` 只有 siddham/latin/codepoints、不另存 ascii；`sourceFile` 記來源檔名、server 端 `basename` 後存入、無則 `null`）；`GET /api/bonji/downloads` 降冪列出該夾；`POST /api/bonji/clear` 清空該夾（目標寫死在 server，前端 `confirm()` 二次確認）。匯出檔以 `/download/bonji/<file>` 靜態提供。**側邊「下載」鈕＝先 export 再下載剛產生的 JSON**。**點清單項目＝把該檔 title/options/input 載回頁面並重算**；前端以 `loadedFrom`（載入或上次匯出的檔名）追蹤血緣，再匯出時寫進新檔的 `sourceFile`。因有此 API，**轉換可純前端，但匯出 / 列表需要本 Node server**（非純靜態 / 非 GitHub Pages）。
 - **後端開關 `config.json`**：`public/apps/bonji/config.json` 的 `{ "backend": true|false }` 由 `bonji.js` 在 `init` 讀取（`loadConfig`）。`true`（預設）＝用後端（匯出/清單/載回/清空、下載＝先匯出再下載）；`false`＝純前端（隱藏 `setting-downloads`/`setting-export`/`setting-clear-downloads` 三工具、下載改 Blob、不打 `/api`），可純靜態託管。讀不到 config 視為 `false`（無伺服器）。後端 route 永遠掛著、`false` 時閒置不被呼叫。（沿用 tibetan-siddham 的做法。）
-- **UI**：左欄有「標題」textarea ＋輸入 textarea（皆可複製）；options 下方有 `#source-row`，載入匯出檔時顯示該檔的 `sourceFile`（無來源則隱藏）。`SiddhamConverter.convert()` 回傳 `{ input, siddham, latin, codepoints }`（含原輸入）。右側工具列用 flex 容器 `.side-tools`（與 tibetan-siddham 對齊，隱藏工具不留空位）。
+- **UI**：左欄有「標題」textarea ＋輸入 textarea（皆可複製）；options 下方有 `#source-row`，載入匯出檔時顯示該檔的 `sourceFile`（無來源則隱藏）。`SiddhamConverter.convert()` 回傳 `{ input, ascii, siddham, latin, codepoints }`（`ascii` ＝正規化共用記法，如 ṁ/ṃ → ;m、保留換行）。UI 五項可複製輸出：悉曇 / 拉丁 / ASCII 記法 / Unicode 碼位 / **HTML 片段**（每行 `<span class="siddham" data-latin="{latin}">{siddham}</span>`，供經文整理；由 `bonji.js` 的 `buildSpanHtml` 組出，**屬呈現層、不放進 converter**）。右側工具列用 flex 容器 `.side-tools`（與 tibetan-siddham 對齊，隱藏工具不留空位）。
+- **兩支對照表頁**（皆新分頁開啟，DESIGN §7）：`chart.html`（引擎即時導出）與 `catalog.html`（**依 `BonjiInput.xlsx`** 策展，含異體字/上下接續，跨三字型）。catalog 的多字型是關鍵：`fd_group` = `siddham`(Noto Sans Siddham) / `mojikyo119`(**Mojikm13.TTF**，fd_char 是 CJK 碼位、在該字型內顯示為悉曇) / `uniSiddham`(UniSiddham.ttf)；以 `@font-face` + class 套用。改 catalog 資料＝改 `data/BonjiInput.xlsx` → 重生 `data/catalog.json`（Python stdlib zip+xml，無 openpyxl）。**注意：Mojikm13.TTF / UniSiddham.ttf 約 6 MB，僅 catalog 頁載入；發佈前確認字型授權可再散布。**
 - **更新引擎**：見 `vendor/bonji-input/SOURCE.md`（釘選 commit `0a7eadd…`）與 README 的「更新 vendored 引擎」。

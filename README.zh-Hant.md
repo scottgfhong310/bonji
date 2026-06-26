@@ -12,13 +12,14 @@
 ## 功能
 
 - 兩欄版面：左欄輸入、右欄輸出（窄螢幕自動疊起）。
-- 可填**標題**＋輸入文字（皆可複製）；邊打邊轉：悉曇文字 · 拉丁轉寫 · Unicode 碼位。
+- 可填**標題**＋輸入文字（皆可複製）；邊打邊轉，五項可複製輸出：悉曇文字 · 拉丁轉寫 · ASCII 記法（如 ṁ/ṃ → `;m`）· Unicode 碼位 · **HTML 片段**（`<span class="siddham" data-latin="{latin}">{siddham}</span>`，每行一個，供經文典籍整理）。
 - 選項：輸入法（ISO 15919 / Kyoto-Harvard）、拉丁轉寫（ISO 15919 / IAST）、忽略空格與連字號。
 - 內嵌 **Noto Sans Siddham** 字型（SIL OFL），無需系統字型也能顯示悉曇。
 - 三語介面（`zh-Hant` / `en` / `ja`，預設 `zh-Hant`）；light / dark 主題。
 - 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。
 - **JSON 匯出** — 把目前結果存到伺服器 `/download/bonji/`，檔名 `bonji-yyyyMMddHHmmss.json`（含 `title`、`options`、輸入與三項輸出）；**下載**鈕會先匯出再下載該 JSON；**`dehaze` 側欄**以降冪列出匯出檔，`delete_sweep` 鈕可清空該夾。
 - **載回已存檔** — 點側欄中的項目可把該檔的 `title` / `options` / `input` 載回頁面（該檔的 `sourceFile` 會顯示在 options 下方）；調整後再匯出會產生新檔，並在 `sourceFile` 記下它的來源檔名。
+- **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo · UniSiddham）。點格可複製記法。
 
 > 轉換引擎完全在瀏覽器執行；JSON 匯出／列表用下方的 Node 後端，故這兩項功能需要伺服器（轉換本身不需要）。
 
@@ -61,7 +62,8 @@ npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼�
 
 ```jsonc
 {
-  "input":      "siddha;m",          // 原樣回傳的輸入文字
+  "input":      "siddhaṃ",           // 原樣回傳的輸入文字
+  "ascii":      "siddha;m",          // 共用 ASCII 記法（IAST/ISO 15919 → ASCII，如 ṁ/ṃ → ;m；保留換行）
   "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",          // 悉曇文字
   "latin":      "siddhaṃ",           // 拉丁轉寫（預設 IAST；可選 ISO 15919）
   "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
@@ -82,7 +84,7 @@ npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼�
     "transliteration":        "IAST",       // "ISO15919" | "IAST"
     "ignoreSpacesAndHyphens": true
   },
-  "input":  "siddha;m",
+  "input":  "siddha;m",                     // 正規化 ASCII 記法（IAST/ISO 15919 → ASCII，如 ṁ/ṃ → ;m）
   "output": {
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
@@ -91,7 +93,7 @@ npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼�
 }
 ```
 
-> `output` 是 `convert()` 的三項輸出（`siddham` / `latin` / `codepoints`）；`input` 放在頂層。`app`、`exportedAt`、`sourceFile`、`title`、`options` 是匯出時加上的 metadata。
+> 匯出檔的 **`input` 一律存成正規化 ASCII 記法**（如打 `siddhaṃ` 會存成 `siddha;m`），便於攜帶與重打。`output` 是三項輸出（`siddham` / `latin` / `codepoints`）；`app`、`exportedAt`、`sourceFile`、`title`、`options` 是匯出 metadata。（library 的 `convert()` 則回傳原始 `input`，另以 `ascii` 欄提供 ASCII。）
 
 ## 目錄結構
 
@@ -120,8 +122,9 @@ bonji/
 import { SiddhamConverter } from "./siddham-converter.js";
 
 const converter = new SiddhamConverter();           // 預設：輸入法 ISO15919、拉丁轉寫 IAST、忽略空格
-const { input, siddham, latin, codepoints } = converter.convert("siddha;m");
-// input:      "siddha;m"   （原樣回傳傳入的文字）
+const { input, ascii, siddham, latin, codepoints } = converter.convert("siddhaṃ");
+// input:      "siddhaṃ"    （原樣回傳傳入的文字）
+// ascii:      "siddha;m"   （共用 ASCII 記法；IAST/ISO 15919 → ASCII，如 ṁ/ṃ → ;m；保留換行）
 // siddham:    "𑖭𑖰𑖟𑖿𑖠𑖽"
 // latin:      "siddhaṃ"    （IAST 預設用 ṃ；ISO15919 則為 ṁ）
 // codepoints: "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"

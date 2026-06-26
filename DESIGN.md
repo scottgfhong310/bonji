@@ -8,7 +8,7 @@
 
 ## 1. 一句話定位
 
-把**羅馬轉寫的梵字**（ASCII / IAST，如 `siddha;m`）一次轉成 **悉曇（Siddhaṁ）文字 ／ 拉丁轉寫 ／ Unicode 碼位**，全在瀏覽器內完成。bonji 是家族第一支 vendoring [mandel59/bonji-input](https://github.com/mandel59/bonji-input) 悉曇引擎的 app；姊妹作 `tibetan-siddham` 在其上再加藏文核心。
+把**羅馬轉寫的梵字**（ASCII / IAST，如 `siddha;m`）一次轉成 **悉曇（Siddhaṁ）文字 ／ 拉丁轉寫 ／ ASCII 記法 ／ Unicode 碼位**（外加可貼進經文的 **HTML 片段**，共 5 項可複製輸出），全在瀏覽器內完成。另有兩支對照表頁（§7）。bonji 是家族第一支 vendoring [mandel59/bonji-input](https://github.com/mandel59/bonji-input) 悉曇引擎的 app；姊妹作 `tibetan-siddham` 在其上再加藏文核心。
 
 ---
 
@@ -17,25 +17,26 @@
 三層，由上而下依賴：
 
 ```
-index.html / chart.html              ← 純結構
+index.html · chart.html · catalog.html     ← 純結構
   │
-bonji.js / chart.js                  ← 控制器（glue）：碰 DOM、事件、i18n、主題、導覽、後端呼叫
-  │  （只 import↓）
-siddham-converter.js                 ← 防腐層 ACL：唯一對外轉換介面（純邏輯、不碰 DOM）
-  │            └── vendor/bonji-input/siddham.js   ← vendored 悉曇引擎（MIT、原樣不改）
+bonji.js · chart.js                         ← 控制器（碰 DOM、事件、i18n、主題、導覽、後端）
+  │  （只 import↓）                           catalog.js ─→ data/catalog.json（純資料，不經 converter）
+siddham-converter.js                        ← 防腐層 ACL：唯一對外轉換介面（純邏輯、不碰 DOM）
+  │
+vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、原樣不改）
 ```
 
 **邊界紀律（硬約束）**：
 
-- App 其餘程式（控制器、對照表 `chart.js`）**只** import `siddham-converter.js`，**絕不**直接 import `vendor/bonji-input/siddham.js`。
+- 轉換相關的程式（控制器 `bonji.js` / `chart.js`）**只** import `siddham-converter.js`，**絕不**直接 import `vendor/bonji-input/siddham.js`。`catalog.js` 連 converter 都不碰——它只 fetch `data/catalog.json`（純資料頁，§7.2）。
 - 升級 vendored 引擎 → 只動 wrapper（ACL）。引擎是外來的、會被整支替換；對 UI 應呈現**單一穩定介面**——這就是 ACL 的職責。
 - 釘選版本見 `vendor/bonji-input/SOURCE.md`（commit `0a7eadd…`）。更新＝對上游與釘選 commit 做 diff、只挑引擎相關修正套回 `vendor/`、重跑 `npm test`、更新 `SOURCE.md`。
 
 **`SiddhamConverter` 介面**：
 
-- `new SiddhamConverter(options?)` · `setOptions(patch)` · `convert(input) → { input, siddham, latin, codepoints }`
+- `new SiddhamConverter(options?)` · `setOptions(patch)` · `convert(input) → { input, ascii, siddham, latin, codepoints }`（`ascii` ＝正規化後的共用記法，如 ṁ/ṃ → ;m、保留換行）
 - 靜態（吃**原始 ascii**、不經輸入前處理；給對照表等用）：`toSiddham(ascii, ignore)`、`toLatin(ascii, transliteration)`、`toCodepoints(text)`
-- 預設選項：`{ inputMethod: "ISO15919", transliteration: "IAST", ignoreSpacesAndHyphens: true }`（§7）
+- 預設選項：`{ inputMethod: "ISO15919", transliteration: "IAST", ignoreSpacesAndHyphens: true }`（§12）
 
 **偏離家族 §4.2 字面之處**：核心不是 IIFE→`window.XxxLib`，而是**原生 ESM**（converter / 控制器都 `export`，以 `<script type="module">` 載入）。理由：vendored 引擎本身是 ESM 且 canon 禁止改它，故全鏈走 ESM；仍 zero-build、CDN-first。守其**精神**（純核心、零依賴、不碰 DOM），與 `tibetan-siddham` 一致。jQuery / Materialize / Lodash / I18n 仍是 classic CDN globals。
 
@@ -54,8 +55,9 @@ siddham-converter.js                 ← 防腐層 ACL：唯一對外轉換介�
   → toCodepoints(悉曇)  → codepoints（§6）
 ```
 
-- **ascii 是樞紐記法**：悉曇與拉丁都從同一份 `ascii` 產生，確保同源不漂移。
+- **ascii 是樞紐記法**：悉曇與拉丁都從同一份 `ascii` 產生，確保同源不漂移。這份 `ascii` 也**直接對外**（`convert()` 結果的 `ascii` 欄、UI「ASCII 記法」輸出）：把 IAST / ISO 15919 的羅馬字正規化成 bonji-input 記法（如 `ṁ`/`ṃ` → `;m`），並**保留換行**。
 - **不含天城體（Devanāgarī）**：引擎的 `devanagari.js`（含 runtime `fetch`）**未 vendored**（`INCLUDE_DEVANAGARI=false`）。故 bonji 只吃 ASCII/IAST，且引擎**無執行期 fetch**、無 async 載入（比 `tibetan-siddham` 少一步 `await ready()`）。
+- **HTML 片段＝呈現層**：經文整理用的輸出 `<span class="siddham" data-latin="{latin}">{siddham}</span>`（每行一個、空行略過、屬性與內容皆 HTML escape）由 `bonji.js` 的 `buildSpanHtml(siddham, latin)` 從 `convert()` 的 siddham/latin 組出——**屬呈現格式，不放進 `SiddhamConverter`**（守 ACL「純轉換、不碰呈現」的邊界）。它是 UI 複製輸出，**不**進 `convert()` 結果或匯出 JSON。
 
 ---
 
@@ -104,7 +106,11 @@ siddham-converter.js                 ← 防腐層 ACL：唯一對外轉換介�
 
 ---
 
-## 7. 字元對照表頁（chart.html）
+## 7. 對照表頁（chart.html · catalog.html）
+
+兩支對照表頁，皆以新分頁開啟、樣式承襲轉換頁；**資料來源不同**：chart 由引擎即時導出，catalog 由策展的 `BonjiInput.xlsx` 而來。
+
+### 7.1 chart.html — 字元對照表（引擎導出）
 
 - **版面**：一**欄一組**（子音 / 獨立母音 / 母音符號 / 符號），響應式 grid。每格＝**悉曇字 ＋ 輸入記法 ＋ 拉丁(IAST)**；點格複製其輸入記法。
 - **資料來源＝引擎**：全部經 `SiddhamConverter` 導出（**不**直接 import 引擎、**不**複製 maps）：
@@ -112,7 +118,21 @@ siddham-converter.js                 ← 防腐層 ACL：唯一對外轉換介�
   - 獨立母音 `toSiddham(key)`；母音符號以 `toSiddham("k"+key)` 附在 𑖎 ka 示範；
   - 符號 `toSiddham(key)` 前綴點圈 `◌`(U+25CC) 當載體；virama 取 `toSiddham("k")` 末碼位再加 `◌`。
   - **為何用 `toSiddham/toLatin` 而非 `convert()`**：`convert()` 會跑 `latin2ascii` 輸入前處理，會誤判少數原始記法鍵（如 `.l` 被當成 `,l`）；`toSiddham/toLatin` 吃原始 ascii、不前處理，才忠實。
-- **導覽**：轉換頁的「對照表」鈕以 `window.open(href, 'bonji-chart')`（**具名、script 開啟**）開新分頁——具名可重用同一頁、script 開啟才能被自身 `close()`；對照表「返回」若有 `opener` 就 `focus()`＋`close()` 關回原分頁，否則就地導回 `index.html`。
+
+### 7.2 catalog.html — 字型對照表（依 BonjiInput.xlsx）
+
+- **定位**：策展的字元目錄，含 chart 沒有的**異體字 / 上接續 / 下接續**，且**跨三種字型**。八類（一類一欄）：母音 vowel · 子音 consonant · 異體字 variant · 符號 symbol · 體文 bindu · 接續 ligature · 上接續 ligature_u · 下接續 ligature_l。每格＝**字 ＋ 輸入記法 ＋ 字型標**。
+- **資料管線**：`BonjiInput.xlsx`（source of truth，8 個 sheet ＝ 8 類；欄位 `fd_idx / fd_catalog / fd_group / fd_code / fd_char`）→ 以 Python stdlib（zip + xml，無 openpyxl）抽出 → `data/catalog.json`（`{categories:[{id, entries:[{code, char, group}]}]}`）。`catalog.js` fetch 此 JSON 渲染（純資料、**不經 converter**）。改資料＝改 xlsx → 重生 catalog.json。`data/BonjiInput.xlsx` 一併附在 repo 作來源。
+- **多字型渲染（關鍵）**：`fd_group` 決定字型 ——
+  - `siddham` → `Noto Sans Siddham`（Unicode U+115xx）；
+  - `mojikyo119` → `Mojikm13.TTF`（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
+  - `uniSiddham` → `UniSiddham.ttf`。
+  以 `@font-face` 宣告 `'Mojikyo M13'` / `'UniSiddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 6 MB（TTF 未子集化）**，僅 catalog 頁載入；主轉換頁不受影響。
+- **導覽**：同 chart——轉換頁 `window.open(href, 'bonji-catalog')` 具名新分頁；返回鈕有 `opener` 則 `focus()`＋`close()`。
+
+### 7.3 兩頁共通導覽
+
+轉換頁「對照表」鈕以 `window.open(href, '<name>')`（**具名、script 開啟**）開新分頁——具名可重用同一頁、script 開啟才能被自身 `close()`；子頁「返回」若有 `opener` 就 `focus()`＋`close()` 關回原分頁，否則就地導回 `index.html`。
 
 ---
 
@@ -130,20 +150,25 @@ siddham-converter.js                 ← 防腐層 ACL：唯一對外轉換介�
 
 ## 9. 資料結構（Data structures）
 
-兩份對外 JSON 的完整結構見 `README.md`「JSON shapes」一節：(1) `convert()` 回傳 `{ input, siddham, latin, codepoints }`、(2) 匯出檔 `bonji-yyyyMMddHHmmss.json`（`app / exportedAt / sourceFile / title / options{…} / input / output{…}`）。純前端模式的 Blob 下載與匯出檔同形狀。
+兩份對外 JSON 的完整結構見 `README.md`「JSON shapes」一節：(1) `convert()` 回傳 `{ input, ascii, siddham, latin, codepoints }`（`input` 為原始輸入、`ascii` 為正規化記法）、(2) 匯出檔 `bonji-yyyyMMddHHmmss.json`（`app / exportedAt / sourceFile / title / options{…} / input / output{ siddham, latin, codepoints }`）。**匯出檔的 `input` 一律存正規化 ASCII 記法**（即 `convert()` 的 `ascii`，如 ṁ/ṃ → ;m），故不另存 `output.ascii`。純前端模式的 Blob 下載與匯出檔同形狀。
 
 ---
 
-## 10. 主題與 toast（Theme & toast）
+## 10. UI（主題 / toast / side-tools）
 
 - **bonji 是家族首個實際採用共用 `materialize-dark.css` 的 app**，並於此踩到並收斂一個坑：它以 **`html.light-mode` class** 標記淺色，且未指定時會跟隨系統 `prefers-color-scheme: dark`。故只設 `data-theme="light"` 不夠——`applyTheme` 與防閃爍開機腳本須**同時** toggle `data-theme` 與 `light-mode`/`dark-mode` class。此發現已回灌家族 `DESIGN_GUIDELINES.md §5.1`。
 - **toast 文字色（僅淺色模式調整、底色不動）**：有色彩 class（green/teal/orange/red 以及中灰 `grey` `#9e9e9e`）→ **白字**；無色彩 class 的預設淺灰底（`#eee`，如語言切換）→ **深字**。深色模式維持 materialize-dark 現況。規則放在 `bonji.css`、以 `#toast-container .toast` 提高優先級。
+- **side-tools**：用 flex 容器 `.side-tools`（與 `tibetan-siddham` 對齊；**DOM 順序＝排列順序**，隱藏工具不留空位，故 `config.json` 關後端時隱藏三鈕也不錯位）。轉換頁九鈕：清單 `dehaze` · 主題 `dark_mode` · 語言 `translate` · 字元對照表 `table_chart` · 字型對照表 `menu_book` · 匯出 `data_object` · 下載 `download` · 清除輸入 `clear` · 清空匯出夾 `delete_sweep`。對照表頁三鈕：返回 `arrow_back` · 主題 · 語言。
 
 ---
 
 ## 11. 字型（Fonts）
 
-悉曇須內嵌 `Noto Sans Siddham`（**woff2**，47KB，`@font-face`；CDN 無可靠來源），否則 U+115xx 在一般系統字型是缺字方塊。授權 SIL OFL（`fonts/OFL.txt`）。
+皆 `@font-face` 內嵌（CDN 無可靠來源），否則缺字方塊：
+
+- **`Noto Sans Siddham`**（**woff2**，~47 KB；SIL OFL，見 `fonts/OFL.txt`）：**所有頁**的 Unicode 悉曇（U+115xx）。
+- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`UniSiddham.ttf`**（~3.5 MB）：**僅 catalog 頁**載入（§7.2 多字型；`@font-face` 名 `'Mojikyo M13'` / `'UniSiddham'`）。TTF 未子集化（本機無 woff2 工具）。主轉換頁 / chart 頁不載這兩個。
+- ⚠️ **發佈到公開 repo 前須確認 `Mojikm13.TTF` / `UniSiddham.ttf` 的授權可再散布**（兩者約 6 MB）。若不可，選項：catalog 僅留 InProgress、或把 TTF `.gitignore` 不進公開 repo。
 
 ---
 
