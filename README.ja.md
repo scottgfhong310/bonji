@@ -106,10 +106,14 @@ bonji/
 └─ public/
    ├─ download/bonji/.gitkeep      # 書き出した JSON はここに（内容は gitignore）
    └─ apps/bonji/
-      ├─ index.html · bonji.css · bonji.js     # 構造 / スタイル / グルー（ESM module）
+      ├─ index.html · bonji.css · bonji.js     # 変換ページ：構造 / スタイル / グルー（ESM module）
+      ├─ chart.html · chart.css · chart.js     # 字母対照表（エンジン由来）
+      ├─ catalog.html · catalog.css · catalog.js   # 字形対照表（BonjiInput.xlsx 準拠）
       ├─ siddham-converter.js                  # 防腐層（唯一の悉曇インターフェース）
+      ├─ config.json                           # バックエンド切替 { backend: true|false }
+      ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog データ（catalog.json は xlsx から生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored エンジン（MIT・無改変）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2, OFL.txt}
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # 悉曇 / Mojikyo / UniSiddham（catalog フォント約 6 MB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```

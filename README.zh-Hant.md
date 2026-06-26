@@ -106,10 +106,14 @@ bonji/
 └─ public/
    ├─ download/bonji/.gitkeep      # 匯出的 JSON 落在這（內容不進版控）
    └─ apps/bonji/
-      ├─ index.html · bonji.css · bonji.js     # 結構 / 樣式 / 膠水（ESM module）
+      ├─ index.html · bonji.css · bonji.js     # 轉換頁：結構 / 樣式 / 膠水（ESM module）
+      ├─ chart.html · chart.css · chart.js     # 字元對照表（引擎導出）
+      ├─ catalog.html · catalog.css · catalog.js   # 字型對照表（依 BonjiInput.xlsx）
       ├─ siddham-converter.js                  # 防腐層（唯一對外悉曇介面）
+      ├─ config.json                           # 後端開關 { backend: true|false }
+      ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog 資料（catalog.json 由 xlsx 生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT，未改動）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2, OFL.txt}
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # 悉曇 / Mojikyo / UniSiddham（catalog 字型約 6 MB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```

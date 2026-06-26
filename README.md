@@ -106,10 +106,14 @@ bonji/
 └─ public/
    ├─ download/bonji/.gitkeep      # exported JSON lands here (contents gitignored)
    └─ apps/bonji/
-      ├─ index.html · bonji.css · bonji.js     # structure / styles / glue (ESM module)
+      ├─ index.html · bonji.css · bonji.js     # converter page: structure / styles / glue (ESM module)
+      ├─ chart.html · chart.css · chart.js     # character chart (engine-derived)
+      ├─ catalog.html · catalog.css · catalog.js   # font catalog (from BonjiInput.xlsx)
       ├─ siddham-converter.js                  # anti-corruption layer (the ONLY Siddhaṁ interface)
+      ├─ config.json                           # backend toggle { backend: true|false }
+      ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog data (catalog.json generated from the xlsx)
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored engine (MIT, unmodified)
-      ├─ fonts/{NotoSansSiddham-Regular.woff2, OFL.txt}
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # Siddhaṁ / Mojikyo / UniSiddham (catalog fonts ~6 MB)
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```
