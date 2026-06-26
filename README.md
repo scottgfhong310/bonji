@@ -19,7 +19,7 @@ Part of the **nodeapp WebApp family** — shared conventions and workflow live a
 - Per-field copy buttons (title input + each output); example chips.
 - **JSON export** — save the current result to the server as `bonji-yyyyMMddHHmmss.json` under `/download/bonji/` (captures `title`, `options`, input and the three outputs); the **download** button exports first and then downloads that JSON; a **`dehaze` side panel** lists exports newest-first and a `delete_sweep` button clears the folder.
 - **Round-trip a saved export** — click an entry in the panel to load its `title` / `options` / `input` back into the page (the loaded file's `sourceFile` is shown below the options); tweak and export again to get a new file that records the file it came from in `sourceFile`.
-- **Reference pages** (side-tools, open in a new tab): a `table_chart` **character chart** (`chart.html`, engine-derived: notation → Siddhaṁ / Latin) and a `menu_book` **font catalog** (`catalog.html`, from `BonjiInput.xlsx` — one column per category: vowel / consonant / variant / symbol / bindu / ligature / upper- & lower-ligature, each glyph rendered in its source font: Unicode Siddham · Mojikyo · UniSiddham). Click any cell to copy its notation.
+- **Reference pages** (side-tools, open in a new tab): a `table_chart` **character chart** (`chart.html`, engine-derived: notation → Siddhaṁ / Latin) and a `menu_book` **font catalog** (`catalog.html`, from `BonjiInput.xlsx` — one column per category: vowel / consonant / variant / symbol / bindu / ligature / upper- & lower-ligature, each glyph rendered in its source font: Unicode Siddham · Mojikyo · Siddham). Click any cell to copy its notation.
 
 > The conversion engine runs entirely in the browser. JSON export / listing use the Node backend below, so those two features need the server (the converter itself does not).
 
@@ -113,7 +113,7 @@ bonji/
       ├─ config.json                           # backend toggle { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog data (catalog.json generated from the xlsx)
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored engine (MIT, unmodified)
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # Siddhaṁ / Mojikyo / UniSiddham (catalog fonts ~6 MB)
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # Siddhaṁ / Mojikyo / Siddham (catalog fonts ~7.5 MB)
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```

@@ -8,10 +8,10 @@
   src: url('./fonts/Mojikm13.TTF') format('truetype');
   font-display: swap;
 }
-/* uniSiddham → UniSiddham.ttf */
+/* uniSiddham → Siddham.ttf（fd_char 同為 CJK 碼位，在此字型內顯示為悉曇字形） */
 @font-face {
-  font-family: 'UniSiddham';
-  src: url('./fonts/UniSiddham.ttf') format('truetype');
+  font-family: 'Siddham';
+  src: url('./fonts/Siddham.ttf') format('truetype');
   font-display: swap;
 }
 
@@ -92,7 +92,7 @@
   font-family: 'Mojikyo M13', serif;
 }
 .gc-char.f-unisiddham {
-  font-family: 'UniSiddham', serif;
+  font-family: 'Siddham', serif;
 }
 
 .gc-code {

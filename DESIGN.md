@@ -126,8 +126,8 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 - **多字型渲染（關鍵）**：`fd_group` 決定字型 ——
   - `siddham` → `Noto Sans Siddham`（Unicode U+115xx）；
   - `mojikyo119` → `Mojikm13.TTF`（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
-  - `uniSiddham` → `UniSiddham.ttf`。
-  以 `@font-face` 宣告 `'Mojikyo M13'` / `'UniSiddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 6 MB（TTF 未子集化）**，僅 catalog 頁載入；主轉換頁不受影響。
+  - `uniSiddham` → `Siddham.ttf`（**`fd_char` 同為 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）。
+  以 `@font-face` 宣告 `'Mojikyo M13'` / `'Siddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 7.5 MB（TTF 未子集化）**，僅 catalog 頁載入；主轉換頁不受影響。
 - **導覽**：同 chart——轉換頁 `window.open(href, 'bonji-catalog')` 具名新分頁；返回鈕有 `opener` 則 `focus()`＋`close()`。
 
 ### 7.3 兩頁共通導覽
@@ -167,8 +167,8 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 皆 `@font-face` 內嵌（CDN 無可靠來源），否則缺字方塊：
 
 - **`Noto Sans Siddham`**（**woff2**，~47 KB；SIL OFL，見 `fonts/OFL.txt`）：**所有頁**的 Unicode 悉曇（U+115xx）。
-- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`UniSiddham.ttf`**（~3.5 MB）：**僅 catalog 頁**載入（§7.2 多字型；`@font-face` 名 `'Mojikyo M13'` / `'UniSiddham'`）。TTF 未子集化（本機無 woff2 工具）。主轉換頁 / chart 頁不載這兩個。
-- ⚠️ **發佈到公開 repo 前須確認 `Mojikm13.TTF` / `UniSiddham.ttf` 的授權可再散布**（兩者約 6 MB）。若不可，選項：catalog 僅留 InProgress、或把 TTF `.gitignore` 不進公開 repo。
+- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`Siddham.ttf`**（~4.8 MB）：**僅 catalog 頁**載入（§7.2 多字型；`@font-face` 名 `'Mojikyo M13'` / `'Siddham'`）。TTF 未子集化（本機無 woff2 工具）。主轉換頁 / chart 頁不載這兩個。
+- ⚠️ **發佈到公開 repo 前須確認 `Mojikm13.TTF` / `Siddham.ttf` 的授權可再散布**（兩者約 7.5 MB）。若不可，選項：catalog 僅留 InProgress、或把 TTF `.gitignore` 不進公開 repo。
 
 ---
 

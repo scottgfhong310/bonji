@@ -19,7 +19,7 @@
 - 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。
 - **JSON 匯出** — 把目前結果存到伺服器 `/download/bonji/`，檔名 `bonji-yyyyMMddHHmmss.json`（含 `title`、`options`、輸入與三項輸出）；**下載**鈕會先匯出再下載該 JSON；**`dehaze` 側欄**以降冪列出匯出檔，`delete_sweep` 鈕可清空該夾。
 - **載回已存檔** — 點側欄中的項目可把該檔的 `title` / `options` / `input` 載回頁面（該檔的 `sourceFile` 會顯示在 options 下方）；調整後再匯出會產生新檔，並在 `sourceFile` 記下它的來源檔名。
-- **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo · UniSiddham）。點格可複製記法。
+- **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo · Siddham）。點格可複製記法。
 
 > 轉換引擎完全在瀏覽器執行；JSON 匯出／列表用下方的 Node 後端，故這兩項功能需要伺服器（轉換本身不需要）。
 
@@ -113,7 +113,7 @@ bonji/
       ├─ config.json                           # 後端開關 { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog 資料（catalog.json 由 xlsx 生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT，未改動）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # 悉曇 / Mojikyo / UniSiddham（catalog 字型約 6 MB）
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # 悉曇 / Mojikyo / Siddham（catalog 字型約 7.5 MB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```

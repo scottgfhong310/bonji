@@ -19,7 +19,7 @@
 - 各フィールドのコピーボタン（タイトル・入力・各出力）；サンプルチップ。
 - **JSON 書き出し** — 現在の結果をサーバーの `/download/bonji/` に `bonji-yyyyMMddHHmmss.json` として保存（`title`・`options`・入力・3 つの出力）；**ダウンロード**ボタンは先に書き出してからその JSON をダウンロード；**`dehaze` サイドパネル**が書き出しを降順で一覧、`delete_sweep` ボタンでフォルダを空に。
 - **保存した書き出しの読み戻し** — パネルの項目をクリックすると、その `title` / `options` / `input` をページに読み込み（そのファイルの `sourceFile` はオプションの下に表示）。調整して再度書き出すと新しいファイルになり、`sourceFile` に元のファイル名を記録します。
-- **対照表ページ**（サイドツール・新規タブで開く）：`table_chart` **字母対照表**（`chart.html`、エンジン由来：記法 → 悉曇 / ラテン）と `menu_book` **字形対照表**（`catalog.html`、`BonjiInput.xlsx` 準拠：母音 / 子音 / 異体字 / 記号 / 体文 / 接続 / 上下接続、各セルは元フォントで表示：Unicode 悉曇 · Mojikyo · UniSiddham）。セルをクリックで記法をコピー。
+- **対照表ページ**（サイドツール・新規タブで開く）：`table_chart` **字母対照表**（`chart.html`、エンジン由来：記法 → 悉曇 / ラテン）と `menu_book` **字形対照表**（`catalog.html`、`BonjiInput.xlsx` 準拠：母音 / 子音 / 異体字 / 記号 / 体文 / 接続 / 上下接続、各セルは元フォントで表示：Unicode 悉曇 · Mojikyo · Siddham）。セルをクリックで記法をコピー。
 
 > 変換エンジンはブラウザ内で完結します。JSON の書き出し／一覧は下記の Node バックエンドを使うため、この 2 機能のみサーバーが必要です（変換そのものは不要）。
 
@@ -113,7 +113,7 @@ bonji/
       ├─ config.json                           # バックエンド切替 { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog データ（catalog.json は xlsx から生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored エンジン（MIT・無改変）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, UniSiddham.ttf}   # 悉曇 / Mojikyo / UniSiddham（catalog フォント約 6 MB）
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # 悉曇 / Mojikyo / Siddham（catalog フォント約 7.5 MB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```

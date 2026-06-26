@@ -2,7 +2,7 @@
  * catalog.js — 悉曇字型對照表（依 data/catalog.json，源自 BonjiInput.xlsx）。ESM module。
  *
  * 一類一欄；每格依 fd_group 套字型顯示 fd_char（siddham=Noto Sans Siddham、
- * mojikyo119=Mojikm13.TTF、uniSiddham=UniSiddham.ttf），並列出輸入記法 fd_code。
+ * mojikyo119=Mojikm13.TTF、uniSiddham=Siddham.ttf），並列出輸入記法 fd_code。
  * 純資料頁，不經 SiddhamConverter（glyph 直接取自表）。
  */
 
@@ -11,7 +11,7 @@
 
   var THEME_KEY = 'bonji-theme';
   var FONT_CLASS = { siddham: 'f-siddham', mojikyo119: 'f-mojikyo', uniSiddham: 'f-unisiddham' };
-  var FONT_LABEL = { siddham: '', mojikyo119: 'Mojikyo', uniSiddham: 'UniSiddham' };
+  var FONT_LABEL = { siddham: '', mojikyo119: 'Mojikyo', uniSiddham: 'Siddham' };
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
