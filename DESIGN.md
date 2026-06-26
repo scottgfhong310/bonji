@@ -108,7 +108,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 ## 7. 對照表頁（chart.html · catalog.html）
 
-兩支對照表頁，皆以新分頁開啟、樣式承襲轉換頁；**資料來源不同**：chart 由引擎即時導出，catalog 由策展的 `BonjiInput.xlsx` 而來。
+兩支對照表頁，皆以新分頁開啟、樣式承襲轉換頁；**資料來源不同**：chart 由引擎即時導出，catalog 由策展的 `BonjiInput.xlsx` 而來。另外，轉換頁內嵌的「輔助輸入」面板（§7.4）也取用同一份 `catalog.json`。
 
 ### 7.1 chart.html — 字元對照表（引擎導出）
 
@@ -127,12 +127,23 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
   - `siddham` → `Noto Sans Siddham`（Unicode U+115xx）；
   - `mojikyo119` → `Mojikm13.TTF`（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
   - `uniSiddham` → `Siddham.ttf`（**`fd_char` 同為 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）。
-  以 `@font-face` 宣告 `'Mojikyo M13'` / `'Siddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 7.5 MB（TTF 未子集化）**，僅 catalog 頁載入；主轉換頁不受影響。
+  以 `@font-face` 宣告 `'Mojikyo M13'` / `'Siddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 7.5 MB（TTF 未子集化）**，由 catalog 頁與轉換頁「輔助輸入」面板（§7.4）載入；後者 **lazy**——面板未開不抓，轉換頁初始仍只有 47 KB 的 Noto。
 - **導覽**：同 chart——轉換頁 `window.open(href, 'bonji-catalog')` 具名新分頁；返回鈕有 `opener` 則 `focus()`＋`close()`。
 
 ### 7.3 兩頁共通導覽
 
 轉換頁「對照表」鈕以 `window.open(href, '<name>')`（**具名、script 開啟**）開新分頁——具名可重用同一頁、script 開啟才能被自身 `close()`；子頁「返回」若有 `opener` 就 `focus()`＋`close()` 關回原分頁，否則就地導回 `index.html`。
+
+### 7.4 輔助輸入面板（index.html）— catalog.json 的第三個取用者
+
+整理 / 比對文獻時用的字形選盤，**嵌在轉換頁**（非獨立頁），由 `assist.js` + `assist.css` 實作。整理流程：看著來源字形、在面板認出它、點一下就把記法插進輸入框。
+
+- **同源不另存**：直接 fetch `data/catalog.json`（8 類、278 格），與 catalog 頁同資料、不經 converter。類別 chips ＋ 記法搜尋（依 `code` 子字串）過濾；異體字（無 `code`）標灰、僅供參考不可插入。
+- **插入即重轉**：點一格 → 把其 `fd_code` 插入 `#bonji-input` 游標處 → **派發 `input` 事件**，`bonji.js` 既有的 `input` 監聽即時重轉（並順手 `M.textareaAutoResize` / `updateTextFields`）。
+- **底部輔助鈕**：dock 底固定一排（不隨字形捲動）空格 / 換行 / 連字號，分別插入 `' '` / `'\n'` / `'-'`（`-` 為詞組分隔、`' '` 為音節邊界，見 §5）。走同一條 `insertAtCursor` 路徑。
+- **與控制器解耦**：`assist.js` 是 classic IIFE、**不 import 任何模組**（用全域 I18n / M），只碰 `#bonji-input` 與 `#setting-assist`；與 ACL / `bonji.js` 零耦合，純靠 DOM 事件溝通。
+- **字型 lazy**：面板預設收合（`hidden`）→ 字形未渲染 → 那兩個 TTF 不下載；首次開啟才抓（§11）。開關狀態存 `localStorage`（`bonji-assist-open`）。
+- **版面（固定在右側、覆蓋式）**：`position: fixed`、滿版高、內部捲動，由 `keyboard` 鈕開關、`localStorage` 記狀態。**不推主畫面**（覆蓋右側、輸入區位置不動）；開啟時隱藏 `side-tools`（`body.assist-open`）並貼齊右緣（`right: 12px`）。標題列兩顆鈕：**⋮ 切換工具列**（toggle `body.assist-tools` 顯示/隱藏 side-tools；顯示時 dock 自動讓到 `right: 70px` 以免被工具列蓋住）、**× 關閉**（side-tools 隱藏時仍能關閉面板）。
 
 ---
 
@@ -167,7 +178,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 皆 `@font-face` 內嵌（CDN 無可靠來源），否則缺字方塊：
 
 - **`Noto Sans Siddham`**（**woff2**，~47 KB；SIL OFL，見 `fonts/OFL.txt`）：**所有頁**的 Unicode 悉曇（U+115xx）。
-- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`Siddham.ttf`**（~4.8 MB）：**僅 catalog 頁**載入（§7.2 多字型；`@font-face` 名 `'Mojikyo M13'` / `'Siddham'`）。TTF 未子集化（本機無 woff2 工具）。主轉換頁 / chart 頁不載這兩個。
+- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`Siddham.ttf`**（~4.8 MB）：catalog 頁載入；轉換頁的「輔助輸入」面板（§7.4）也用，但 **lazy**——面板未開不抓。（`@font-face` 名 `'Mojikyo M13'` / `'Siddham'`；TTF 未子集化、本機無 woff2 工具。chart 頁不載。）
 - ⚠️ **發佈到公開 repo 前須確認 `Mojikm13.TTF` / `Siddham.ttf` 的授權可再散布**（兩者約 7.5 MB）。若不可，選項：catalog 僅留 InProgress、或把 TTF `.gitignore` 不進公開 repo。
 
 ---

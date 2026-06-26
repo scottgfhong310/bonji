@@ -1,0 +1,252 @@
+/* assist.css — 輔助輸入字形選盤（index.html）。資料同 catalog.html（data/catalog.json）。
+ * 主題 token / 卡片沿用 bonji.css。
+ * 下面兩個 TTF 以 @font-face 宣告但「面板未開＝display:none＝字形未渲染」故不會下載；
+ * 第一次打開面板才實際抓字型（lazy，自動）。Noto Sans Siddham 的 @font-face 在 bonji.css。 */
+
+@font-face {
+  font-family: 'Mojikyo M13';
+  src: url('./fonts/Mojikm13.TTF') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Siddham';
+  src: url('./fonts/Siddham.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* 固定在右側的 dock（覆蓋層，不推主畫面）。
+ * 開啟時隱藏 side-tools、dock 貼齊右緣（right:12）；按面板上的「工具列」鈕可再叫出
+ * side-tools，此時 dock 自動讓出空間（right:70）避免被工具列蓋住。
+ * 開關鈕 .side-tool.active 的樣式在 side-tool.css，這裡不重複。 */
+.assist-panel {
+  position: fixed;
+  top: 12px;
+  right: 12px;            /* 預設貼齊右緣（side-tools 已隱藏） */
+  bottom: 12px;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;       /* 內部 .assist-scroll 自行捲動 */
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .4);
+  transition: right .15s ease;
+}
+.assist-panel[hidden] {
+  display: none;
+}
+
+/* 開啟輔助輸入時隱藏 side-tools；按面板「工具列」鈕（body.assist-tools）再叫回來 */
+body.assist-open .side-tools {
+  opacity: 0;
+  pointer-events: none;
+}
+body.assist-open.assist-tools .side-tools {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* 工具列叫回來時，dock 讓出右側那一條以免被蓋住 */
+body.assist-open.assist-tools .assist-panel {
+  right: 70px;
+}
+
+.assist-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+.assist-title {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.assist-head-actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;        /* 推到標題列最右 */
+}
+.assist-iconbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.assist-iconbtn:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+.assist-iconbtn.active {
+  color: var(--accent);
+}
+.assist-iconbtn i.material-icons {
+  font-size: 20px;
+}
+.assist-search {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 10px;
+  font-size: .85rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  outline: none;
+}
+.assist-search:focus {
+  border-color: var(--accent);
+}
+
+.assist-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+}
+.assist-cat {
+  cursor: pointer;
+  font-size: .76rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+  user-select: none;
+  white-space: nowrap;
+}
+.assist-cat.active {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.assist-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.assist-section[hidden] {
+  display: none;
+}
+.assist-section-title {
+  font-size: .72rem;
+  color: var(--muted);
+  margin: 8px 0 6px;
+}
+.assist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .1s, background .1s, transform .05s;
+  user-select: none;
+}
+.ia:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.ia:active {
+  transform: translateY(1px);
+}
+.ia[hidden] {
+  display: none;
+}
+/* 無對應記法（異體字）：僅供參考、不可插入 */
+.ia.noinput {
+  cursor: default;
+  opacity: .5;
+}
+.ia.noinput:hover {
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.ia-char {
+  font-size: 1.7rem;
+  line-height: 1.35;
+}
+.ia-char.f-siddham {
+  font-family: 'Noto Sans Siddham', serif;
+}
+.ia-char.f-mojikyo {
+  font-family: 'Mojikyo M13', serif;
+}
+.ia-char.f-unisiddham {
+  font-family: 'Siddham', serif;
+}
+.ia-code {
+  font-size: .68rem;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  min-height: 1em;
+  word-break: break-all;
+}
+
+.assist-empty {
+  color: var(--muted);
+  font-size: .82rem;
+  padding: 8px 2px;
+}
+
+/* 底部輔助按鈕列：空格 / 換行 / 連字號（固定在 dock 底、不隨字形捲動） */
+.assist-controls {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.assist-ctrl {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: .8rem;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .1s, background .1s, transform .05s;
+}
+.assist-ctrl:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.assist-ctrl:active {
+  transform: translateY(1px);
+}
+.assist-ctrl i.material-icons {
+  font-size: 18px;
+  color: var(--muted);
+}
