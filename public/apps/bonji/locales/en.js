@@ -22,6 +22,7 @@ I18n.register('en', {
   'tool.copyInput': 'Copy input',
   'tool.mode': 'Toggle light / dark',
   'tool.lang': 'Language',
+  'toast.lang': 'Switched to {name}',
   'tool.export': 'Export JSON to /download/bonji/',
   'tool.downloads': 'Exported files',
   'tool.download': 'Download JSON (exports first)',
