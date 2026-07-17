@@ -22,6 +22,7 @@ I18n.register('zh-Hant', {
   'tool.copyInput': '複製輸入',
   'tool.mode': '切換 light / dark',
   'tool.lang': '語言',
+  'tool.clearFilter': '清除',
   'toast.lang': '已切換為 {name}',
   'tool.export': '匯出 JSON 到 /download/bonji/',
   'tool.downloads': '匯出檔清單',

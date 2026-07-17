@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="./bonji.css" />
   <link rel="stylesheet" href="./side-tool.css" />
   <link rel="stylesheet" href="./assist.css" />
+  <link rel="stylesheet" href="./filter-clear.css" />   <!-- 共用 utility：搜尋框「清除」× 鈕 -->
 </head>
 
 <body>
@@ -191,7 +192,7 @@
       </span>
     </div>
     <input id="assist-search" type="search" class="assist-search browser-default" autocomplete="off"
-      data-i18n-placeholder="assist.search" />
+      data-i18n-placeholder="assist.search" data-filter-clear />
     <div id="assist-cats" class="assist-cats"></div>
     <div class="assist-scroll">
       <div id="assist-body"></div>
@@ -254,6 +255,8 @@
   <script src="./locales/zh-Hant.js"></script>
   <script src="./locales/en.js"></script>
   <script src="./locales/ja.js"></script>
+
+  <script src="./filter-clear.js"></script>   <!-- 共用 utility：搜尋框清除鈕 -->
 
   <!-- 輔助輸入選盤（classic：用全域 I18n / M；操作 #bonji-input 並派發 input 事件，與 bonji.js 解耦） -->
   <script src="./assist.js"></script>
