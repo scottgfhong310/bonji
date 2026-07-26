@@ -40,14 +40,8 @@ import { SiddhamConverter } from "./siddham-converter.js";
 
   /* ---------- 工具 ---------- */
 
-  // 點擊回饋：icon 暫時變 check 800ms 再還原（家族標準微回饋）
-  function setIconDone(el) {
-    var icon = el.querySelector('i.material-icons');
-    if (!icon) return;
-    var orig = icon.textContent;
-    icon.textContent = 'check';
-    setTimeout(function () { icon.textContent = orig; }, 800);
-  }
+  // 點擊回饋：icon 暫時變 check 800ms 再還原（家族共用 side-tool.js，§5.5）
+  var setIconDone = window.SideTool.setIconDone;
 
   function copyText(text) {
     // 後備：execCommand（用於 clipboard API 不存在、或被沙箱/權限拒絕時）

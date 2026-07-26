@@ -24,7 +24,7 @@ public/apps/bonji/                  # 前端（服務於 /apps/bonji/）
 ├─ data/{catalog.json, BonjiInput.xlsx}       # catalog 資料（catalog.json 由 xlsx 生成、xlsx 為來源）
 ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT、勿改邏輯）
 ├─ fonts/{NotoSansSiddham-Regular.woff2+OFL.txt, Mojikm13.TTF, Siddham.ttf}  # 悉曇/Mojikyo/Siddham 字型
-├─ side-tool.css · materialize-dark.css
+├─ side-tool.css · side-tool.js · materialize-dark.css   # 家族共用側鍵（樣式＋setIconDone 行為；權威版＝家族 repo，§5.5）
 └─ i18n.js · locales/{zh-Hant,en,ja}.js
 ```
 
