@@ -22,6 +22,7 @@ I18n.register('ja', {
   'tool.copyInput': '入力をコピー',
   'tool.mode': 'ライト / ダーク切替',
   'tool.lang': '言語',
+  'tool.more': 'その他のツール',
   'tool.clearFilter': 'クリア',
   'toast.lang': '{name} に切り替えました',
   'tool.export': 'JSON を /download/bonji/ に書き出し',
