@@ -27,6 +27,11 @@
   --tool-fg: #e8eaf0;
   --overlay: rgba(10, 14, 22, 0.84);
   --drop-border: #3a4252;
+  /* 缺本機字型的提示（catalog / 輔助輸入，見 font-availability.js）。
+   * 對 --card-bg 10.92:1、對 --surface-2 9.36:1，兩者皆過 AA 4.5。 */
+  --warn: #ffb74d;
+  --warn-bg: rgba(255, 183, 77, 0.10);
+  --warn-border: rgba(255, 183, 77, 0.38);
 }
 
 [data-theme="light"] {
@@ -42,6 +47,10 @@
   --tool-fg: #1f2328;
   --overlay: rgba(240, 243, 247, 0.86);
   --drop-border: #c4ccd6;
+  /* 淺色底下亮琥珀會糊掉，故壓成暗琥珀：對 #ffffff 5.93:1、對 --surface-2 5.23:1。 */
+  --warn: #8a5a00;
+  --warn-bg: rgba(138, 90, 0, 0.08);
+  --warn-border: rgba(138, 90, 0, 0.34);
 }
 
 html,
@@ -406,4 +415,105 @@ html.light-mode #toast-container .toast.grey,
 /* toast 列印時不出現（雖無列印需求，保持家族一致） */
 @media print {
   #toast-container { display: none !important; }
+}
+
+/* ===== 缺本機字型的說明區塊（catalog.html / 輔助輸入面板共用） =====
+ * markup 由 font-availability.js 的 noticeHtml() 產生（純字串），兩處插入點不同、樣式同一份。
+ * 只有「確定沒裝」才會出現；測不出來（無 FontFace API）不出——見該檔 probe() 的三態說明。 */
+.fontnote {
+  display: block;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--warn-border);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: var(--warn-bg);
+  color: var(--text);
+}
+
+.fontnote-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--warn);
+}
+
+.fontnote-head .material-icons {
+  font-size: 1.1rem;
+}
+
+/* ⚠️ color 要自己寫，不能靠 .fontnote-head 繼承下來：共用件 materialize-dark.css 有一條
+ * `body, p, span, li, td, th, label, …{ color: var(--mz-text) }`，而**直接命中的規則
+ * 一律勝過繼承值**（跟特異性無關）。少了這一行，標題在淺色下會變成 #212121、
+ * 深色下變成淺灰——旁邊的 icon 卻還是琥珀色（<i> 不在那條選擇器裡），於是同一列
+ * 兩個顏色。⚠️ 深色模式下它看起來只是「不夠亮」，不像壞掉，所以只有淺色量得出來。 */
+.fontnote-title {
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--warn);
+}
+
+.fontnote-intro {
+  margin: 6px 0 8px;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.fontnote-list {
+  margin: 0;
+  padding: 0 0 0 2px;
+  list-style: none;
+}
+
+.fontnote-item {
+  margin: 0 0 8px;
+  font-size: .8rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.fontnote-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 字型名是要照著去裝的東西，故用等寬並吃 --text（不是 --muted）——它是這段裡唯一要照抄的字串 */
+.fontnote-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.fontnote-count {
+  color: var(--warn);
+  font-size: .74rem;
+}
+
+/* 同上：<span> 會被 materialize-dark.css 直接命中，故明寫 color 而非靠 .fontnote-item 繼承 */
+.fontnote-desc {
+  display: block;
+  color: var(--muted);
+}
+
+.fontnote-link {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.fontnote-foot {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+/* ===== 缺字型時標記受影響的字格 =====
+ * ⚠️ 這不是裝飾。那兩支字型的 fd_char 是真的 CJK 碼位，沒裝時字格會顯示成
+ * **一般漢字**而不是缺字方塊——看起來完全正常卻是錯的字。只掛一個 banner
+ * 不夠，得讓每一個受影響的字格自己看得出來「這格現在顯示的不是它該顯示的東西」。 */
+body.font-missing-mojikyo .f-mojikyo,
+body.font-missing-siddam .f-unisiddham {
+  opacity: .45;
+  text-decoration: line-through;
+  text-decoration-color: var(--warn);
+  text-decoration-thickness: 2px;
 }

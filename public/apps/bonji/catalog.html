@@ -26,12 +26,15 @@
         <p class="subtitle" data-i18n="catalog.subtitle">依 BonjiInput.xlsx；一欄一類（母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上接續 / 下接續）。每格依其字型顯示。點格可複製輸入記法。</p>
       </header>
 
+      <!-- 缺本機字型時的說明（由 catalog.js 透過 BonjiFonts.noticeHtml 填入；有裝則保持空） -->
+      <div id="font-notice"></div>
+
       <!-- 各欄（一類一欄）由 catalog.js 依 data/catalog.json 產生 -->
       <div id="catalog-cols" class="catalog-cols"></div>
 
       <footer class="app-footer">
         <span data-i18n-html="catalog.credit">
-          字型：Unicode 悉曇 <a href="https://github.com/mandel59/bonji-input" target="_blank" rel="noopener">Noto Sans Siddham</a>（OFL）、Mojikyo（Mojikm13.TTF）、Siddham（Siddham.ttf）。
+          字型：Unicode 悉曇 <a href="https://github.com/mandel59/bonji-input" target="_blank" rel="noopener">Noto Sans Siddham</a>（OFL，隨程式附上）；Mojikyo M119 與 Siddam 讀取<strong>本機安裝</strong>的版本，未隨程式散布。
         </span>
       </footer>
     </div>
@@ -56,6 +59,7 @@
   <script src="./locales/en.js"></script>
   <script src="./locales/ja.js"></script>
   <script src="./side-tool.js"></script>   <!-- 共用 utility：側鍵行為（check 微回饋＋溢出收納） -->
+  <script src="./font-availability.js"></script>   <!-- 本機字型偵測 + 缺字型說明（classic → window.BonjiFonts） -->
   <script type="module" src="./catalog.js"></script>
 </body>
 

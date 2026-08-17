@@ -135,9 +135,11 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 - **資料管線**：`BonjiInput.xlsx`（source of truth，8 個 sheet ＝ 8 類；欄位 `fd_idx / fd_catalog / fd_group / fd_code / fd_char`）→ 以 Python stdlib（zip + xml，無 openpyxl）抽出 → `data/catalog.json`（`{categories:[{id, entries:[{code, char, group}]}]}`）。`catalog.js` fetch 此 JSON 渲染（純資料、**不經 converter**）。改資料＝改 xlsx → 重生 catalog.json。`data/BonjiInput.xlsx` 一併附在 repo 作來源。
 - **多字型渲染（關鍵）**：`fd_group` 決定字型 ——
   - `siddham` → `Noto Sans Siddham`（Unicode U+115xx）；
-  - `mojikyo119` → `Mojikm13.TTF`（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
-  - `uniSiddham` → `Siddham.ttf`（**`fd_char` 同為 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）。
-  以 `@font-face` 宣告 `'Mojikyo M13'` / `'Siddham'`（TTF，本機無 woff2 工具），CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。**字型約 7.5 MB（TTF 未子集化）**，由 catalog 頁與轉換頁「輔助輸入」面板（§7.4）載入；後者 **lazy**——面板未開不抓，轉換頁初始仍只有 47 KB 的 Noto。
+  - `mojikyo119` → **`Mojikyo M119`**（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
+  - `uniSiddham` → **`Siddam`**（**`fd_char` 同為 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）。
+  以 `@font-face { src: local(...) }` 宣告，CSS class `.f-mojikyo` / `.f-unisiddham` / `.f-siddham` 套到字格。
+  ⚠️ **後兩支不隨 repo 散布、讀使用者本機安裝的版本**（授權判定見 §11.1）——名字是字型的**真名**不是檔名，
+  偵測不到時出說明並把受影響的字格標出來（§11.2）。轉換頁初始只有 47 KB 的 Noto（那兩支本來就不下載）。
 - **導覽**：同 chart——轉換頁 `window.open(href, 'bonji-catalog')` 具名新分頁；返回鈕有 `opener` 則 `focus()`＋`close()`。
 
 ### 7.3 兩頁共通導覽
@@ -152,7 +154,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 - **插入即重轉**：點一格 → 把其 `fd_code` 插入 `#bonji-input` 游標處 → **派發 `input` 事件**，`bonji.js` 既有的 `input` 監聽即時重轉（並順手 `M.textareaAutoResize` / `updateTextFields`）。
 - **底部輔助鈕**：dock 底固定一排（不隨字形捲動）空格 / 換行 / 連字號，分別插入 `' '` / `'\n'` / `'-'`（`-` 為詞組分隔、`' '` 為音節邊界，見 §5）。走同一條 `insertAtCursor` 路徑。
 - **與控制器解耦**：`assist.js` 是 classic IIFE、**不 import 任何模組**（用全域 I18n / M），只碰 `#bonji-input` 與 `#setting-assist`；與 ACL / `bonji.js` 零耦合，純靠 DOM 事件溝通。
-- **字型 lazy**：面板預設收合（`hidden`）→ 字形未渲染 → 那兩個 TTF 不下載；首次開啟才抓（§11）。開關狀態存 `localStorage`（`bonji-assist-open`）。
+- **字型**：那兩支讀本機安裝的版本（§11），**沒有東西要下載**——舊版「面板未開＝不抓 TTF（lazy）」的說法已不成立、也不再需要。偵測不到時，說明區塊插在捲動區內的字形區之上（`#assist-font-notice`），受影響的字格加刪節線。⚠️ **這裡尤其要標**：面板的用途是「看著來源字形、在面板裡認出它」，而沒裝字型時那些格顯示的是一般漢字，認出來的會是**錯的字**。開關狀態存 `localStorage`（`bonji-assist-open`）。
 - **版面（固定在右側、覆蓋式）**：`position: fixed`、滿版高、內部捲動，由 `keyboard` 鈕開關、`localStorage` 記狀態。**不推主畫面**（覆蓋右側、輸入區位置不動）；開啟時隱藏 `side-tools`（`body.assist-open`）並貼齊右緣（`right: 12px`）。標題列兩顆鈕：**⋮ 切換工具列**（toggle `body.assist-tools` 顯示/隱藏 side-tools；顯示時 dock 自動讓到 `right: 70px` 以免被工具列蓋住）、**× 關閉**（side-tools 隱藏時仍能關閉面板）。
 
 ---
@@ -185,11 +187,70 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 ## 11. 字型（Fonts）
 
-皆 `@font-face` 內嵌（CDN 無可靠來源），否則缺字方塊：
+字型分**兩種取得方式**，而分野就是「這支字型准不准我們再散布」：
 
-- **`Noto Sans Siddham`**（**woff2**，~47 KB；SIL OFL，見 `fonts/OFL.txt`）：**所有頁**的 Unicode 悉曇（U+115xx）。
-- **`Mojikm13.TTF`**（Mojikyo，~2.7 MB）、**`Siddham.ttf`**（~4.8 MB）：catalog 頁載入；轉換頁的「輔助輸入」面板（§7.4）也用，但 **lazy**——面板未開不抓。（`@font-face` 名 `'Mojikyo M13'` / `'Siddham'`；TTF 未子集化、本機無 woff2 工具。chart 頁不載。）
-- ⚠️ **發佈到公開 repo 前須確認 `Mojikm13.TTF` / `Siddham.ttf` 的授權可再散布**（兩者約 7.5 MB）。若不可，選項：catalog 僅留 InProgress、或把 TTF `.gitignore` 不進公開 repo。
+- **隨程式附上（bundle）**——`Noto Sans Siddham`（**woff2**，~47 KB）：**所有頁**的 Unicode 悉曇（U+115xx），
+  以 `@font-face` 內嵌（CDN 無可靠來源），否則缺字方塊。**它的授權寫在它自己身上**：
+  name13 ＝ SIL OFL 1.1、name14 ＝ `https://scripts.sil.org/OFL`，並附 `fonts/OFL.txt`。
+- **讀本機安裝（local）**——`Mojikyo M119`、`Siddam`：catalog 頁（§7.2）與轉換頁的「輔助輸入」面板（§7.4）用；
+  chart 頁不載。`@font-face { src: local(...) }`，**repo 內不放字型檔**（見下）。
+
+### 11.1 為什麼那兩支不隨 repo 散布〔2026-08-17 定案〕
+
+本 repo 是 **public**。字型是二進位著作物，收進來就是對全世界再散布。逐支查證（一手證據，非推測）：
+
+| 字型 | 字型內說了什麼 | 發佈者說了什麼 |
+| --- | --- | --- |
+| `Mojikm13.TTF`（family **`Mojikyo M119`**） | name0 ＝ `Copyright(c)1998-2010 AI-NET.Corporation.All rights reserved.`、商標 `Mojikyo` | 文字鏡研究会 **2019-02-12 解散**、官網關閉，**無官方發佈管道** |
+| `Siddham.ttf`（family **`Siddam`**，CBETA） | Copyright 欄只有 `CBETA` 四個字，**無條款、無授權 URL** | CBETA 下載頁對該檔**無任何授權條款**（站台的 CC BY-NC-SA 3.0 TW 是**網站**的授權，且為 **NC**，未言明涵蓋字型二進位） |
+| `NotoSansSiddham-Regular.woff2` | name13 ＝ SIL OFL 1.1、name14 ＝ OFL URL | — |
+
+⚠️ **兩個容易讀反的地方，各記一次：**
+
+1. **`OS/2 fsType`（本二支為 0x0000 / 0x0008）不是散布許可。** 那一欄回答的是
+   「能不能把字型**嵌進文件／PDF**」，**不構成**任何再散布權。
+2. **沒有授權條款 ≠ 可以散布。** 著作權預設保留，要有**明示授予**才有散布權。
+   **對照就是證據**：可散布的字型會把授權寫在自己身上（Noto 有 name13／name14），這兩支沒有。
+   **一個著作權人姓名不是一份授權。**
+
+**Mojikyo 風險等級最高**——它是唯一**明示保留權利**的那一支。
+
+判定依據與家族層級的先例見
+`My Projects/Siddham/SIDDHAM_DOMAIN_GOVERNANCE.md` §9.2〔owner 2026-08-17 拍板〕。
+兩支字型已自版控**與 git 歷史**移除，並列進 `.gitignore`（理由逐條寫在該檔）。
+
+### 11.2 落地方式與兩個坑
+
+- **`local()` 用的是字型自己 name table 裡的真名，不是檔名**（實查 TTF 得出）：
+  `Mojikyo M119`（PostScript `Mojikyo_M119`）、`Siddam`（**一個 `h`**）。
+  ⚠️ 舊版 `@font-face` 宣告的 `'Mojikyo M13'` / `'Siddham'` 是**照檔名取的別名**——
+  對 `url()` 可行（名字自己取的），對 `local()` 會**完全找不到**。檔名 `Mojikm13.TTF` 本身就誤導；
+  `catalog.json` 的 group 名 `mojikyo119` 才一直是對的。full name 與 PostScript name 都列，
+  因為不同平台曝出來的名字不同。
+- **偵測不到就講清楚，不留白**（`font-availability.js` → `window.BonjiFonts`）：
+  catalog 頁與輔助輸入面板各有一個插入點，說明區塊由 `noticeHtml()` 產生（純字串，同家族
+  `buildSpanHtml` 的做法）。**Siddam 附 CBETA 下載連結**（那正是 CBETA 自己的散布方式——
+  它的下載頁就是叫人裝進系統字型）；**Mojikyo 刻意不附連結**，只說明現況——
+  ⚠️ 指向第三方鏡像等於重做我們正在移除的那件事。
+- ⚠️ **失敗模式比「豆腐字」嚴重，所以偵測不是裝飾。** 那兩支字型的 `fd_char` 是**真的 CJK 碼位**
+  （乾 U+4E7E、侃 U+4F83、焐 U+7110…），只在該字型內才長成悉曇字形。沒裝時字格
+  **不會**變成缺字方塊，而是顯示**一般漢字**——看起來完全正常、卻是錯的字。
+  故除了說明區塊，還把受影響的 **151 格**（mojikyo 149 ＋ uniSiddham 2）以
+  `body.font-missing-*` ＋ 刪節線標出來。
+- ⚠️ **不可用 canvas 量寬度偵測**（常見手法，在這裡會**靜默給出錯的答案**）：漢字字形幾乎
+  一律全形（advance ＝ 1em），同一個 CJK 碼位在 `Mojikyo M119` 與在任何後備漢字字型裡
+  量到的寬度**相同**，於是「沒裝」會被判成「有裝」。改用 `FontFace` ＋ `local()`：
+  載得起來就是有裝，載不起來就是沒裝，不靠啟發式。
+- **三態不是兩態**：`probe()` 回 `true` / `false` / **`null`（環境無 `FontFace` API，測不出來）**。
+  ⚠️ `null` 不可當成 `false`——那會對著一個其實看得到字形的使用者喊「你沒裝字型」。只有確定
+  `false` 才出說明、才標字格。
+- ⚠️ **`.fontnote-title` / `.fontnote-desc` 的 `color` 要自己寫，不能靠父層繼承**：共用件
+  `materialize-dark.css` 有一條 `body, p, span, li, td, th, label, …{ color: var(--mz-text) }`，
+  而**直接命中的規則一律勝過繼承值**（與特異性無關）。少了那兩行，標題在淺色下會變成
+  `#212121`、深色下變成淺灰，而旁邊的 icon 還是琥珀色（`<i>` 不在那條選擇器裡）——
+  **深色下它只是「不夠亮」、不像壞掉，所以只有淺色量得出來**。
+- **「面板未開＝不下載字型（lazy）」這條已不成立、也不再需要**：改讀本機安裝後**沒有東西要下載**，
+  轉換頁初始成本與面板開不開無關（§7.4 的舊敘述同批改掉）。
 
 ---
 

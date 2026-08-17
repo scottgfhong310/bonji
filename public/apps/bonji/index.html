@@ -195,6 +195,9 @@
       data-i18n-placeholder="assist.search" data-filter-clear />
     <div id="assist-cats" class="assist-cats"></div>
     <div class="assist-scroll">
+      <!-- 缺本機字型時的說明（由 assist.js 透過 BonjiFonts.noticeHtml 填入；有裝則保持空）。
+           放在捲動區之內：它是隨字形一起讀的說明，不該佔掉固定面板的高度。 -->
+      <div id="assist-font-notice"></div>
       <div id="assist-body"></div>
     </div>
     <!-- 輔助按鈕：插入 空格 / 換行 / 連字號（- 為詞組分隔，見 §5） -->
@@ -258,7 +261,10 @@
 
   <script src="./filter-clear.js"></script>   <!-- 共用 utility：搜尋框清除鈕 -->
 
-  <!-- 輔助輸入選盤（classic：用全域 I18n / M；操作 #bonji-input 並派發 input 事件，與 bonji.js 解耦） -->
+  <!-- 本機字型偵測 + 缺字型說明（classic → window.BonjiFonts）。⚠️ 必須早於 assist.js。 -->
+  <script src="./font-availability.js"></script>
+
+  <!-- 輔助輸入選盤（classic：用全域 I18n / M / BonjiFonts；操作 #bonji-input 並派發 input 事件，與 bonji.js 解耦） -->
   <script src="./assist.js"></script>
 
   <!-- 頁面控制器（ESM module：import SiddhamConverter 防腐層；module 天然 defer） -->

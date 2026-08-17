@@ -19,8 +19,8 @@
 - 各フィールドのコピーボタン（タイトル・入力・各出力）；サンプルチップ。
 - **JSON 書き出し** — 現在の結果をサーバーの `/download/bonji/` に `bonji-yyyyMMddHHmmss.json` として保存（`title`・`options`・入力・3 つの出力）；**ダウンロード**ボタンは先に書き出してからその JSON をダウンロード；**`dehaze` サイドパネル**が書き出しを降順で一覧、`delete_sweep` ボタンでフォルダを空に。
 - **保存した書き出しの読み戻し** — パネルの項目をクリックすると、その `title` / `options` / `input` をページに読み込み（そのファイルの `sourceFile` はオプションの下に表示）。調整して再度書き出すと新しいファイルになり、`sourceFile` に元のファイル名を記録します。
-- **対照表ページ**（サイドツール・新規タブで開く）：`table_chart` **字母対照表**（`chart.html`、エンジン由来：記法 → 悉曇 / ラテン）と `menu_book` **字形対照表**（`catalog.html`、`BonjiInput.xlsx` 準拠：母音 / 子音 / 異体字 / 記号 / 体文 / 接続 / 上下接続、各セルは元フォントで表示：Unicode 悉曇 · Mojikyo · Siddham）。セルをクリックで記法をコピー。
-- **入力補助**（`keyboard` サイドツール）：**右側に固定**する字形パレット（開閉可）。`catalog.json` 準拠——カテゴリ別閲覧または記法検索し、字形をクリックでその ASCII 記法をカーソル位置に挿入（即時再変換）。開くとサイドツールを隠して右端に固定——本文は動かさず上に重ねる方式。パネルの ⋮ でツールを再表示、× で閉じる。最下部のボタンでスペース / 改行 / ハイフン（`-` は語群区切り）を挿入。文献の整理・対照時、字形を見て選ぶだけ。対照表フォントは初回展開時に遅延読み込み。
+- **対照表ページ**（サイドツール・新規タブで開く）：`table_chart` **字母対照表**（`chart.html`、エンジン由来：記法 → 悉曇 / ラテン）と `menu_book` **字形対照表**（`catalog.html`、`BonjiInput.xlsx` 準拠：母音 / 子音 / 異体字 / 記号 / 体文 / 接続 / 上下接続、各セルは元フォントで表示：Unicode 悉曇 · Mojikyo M119 · Siddam）。セルをクリックで記法をコピー。後者 2 つは**お使いの端末にインストール済み**のものを参照し、同梱していません（〈フォント〉参照）。
+- **入力補助**（`keyboard` サイドツール）：**右側に固定**する字形パレット（開閉可）。`catalog.json` 準拠——カテゴリ別閲覧または記法検索し、字形をクリックでその ASCII 記法をカーソル位置に挿入（即時再変換）。開くとサイドツールを隠して右端に固定——本文は動かさず上に重ねる方式。パネルの ⋮ でツールを再表示、× で閉じる。最下部のボタンでスペース / 改行 / ハイフン（`-` は語群区切り）を挿入。文献の整理・対照時、字形を見て選ぶだけ。対照表フォントはローカルにインストール済みのものを参照するため、ダウンロードは発生しません。
 
 > 変換エンジンはブラウザ内で完結します。JSON の書き出し／一覧は下記の Node バックエンドを使うため、この 2 機能のみサーバーが必要です（変換そのものは不要）。
 
@@ -114,7 +114,8 @@ bonji/
       ├─ config.json                           # バックエンド切替 { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog データ（catalog.json は xlsx から生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored エンジン（MIT・無改変）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # 悉曇 / Mojikyo / Siddham（catalog フォント約 7.5 MB）
+      ├─ font-availability.js                 # ローカルフォント検出＋不足時の案内（→ window.BonjiFonts）
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # 再配布可能なもののみ同梱（OFL、約 47 KB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```
@@ -144,3 +145,7 @@ converter.setOptions({ transliteration: "ISO15919" });  // → ラテン翻字�
 ## ライセンス
 
 MIT © 2026 Scott G.F. Hong。**bonji-input** 悉曇エンジン（MIT・© 2021 Ryusei Yamaguchi）と **Noto Sans Siddham**（SIL OFL 1.1）を同梱。[LICENSE](./LICENSE)、vendored の `LICENSE`/`SOURCE.md`、`fonts/OFL.txt` を参照。
+
+### フォント
+
+**`Mojikyo M119` と `Siddam` は本 repo に同梱していません**。`@font-face { src: local(...) }` でお使いのシステムにインストールされたものを参照します。いずれも再配布は許諾されていません——今昔文字鏡フォントは name table 自体に `All rights reserved` と記載され、CBETA のフォントには授権条項が一切ありません。⚠️ 誤読しやすい 2 点——`OS/2 fsType` は**文書／PDF への埋め込み**の可否であって**再配布の許諾ではない**こと、そして**授権条項が無い ≠ 再配布してよい**こと（著作権は既定で留保）。再配布可能なフォントは Noto のように自らライセンスを明記しています。`Siddam` は [CBETA のダウンロードページ](https://archive2.cbeta.org/download/cbreader.php)から入手できます。文字鏡研究会は 2019 年に解散し公式の配布経路はありません。未インストールでも壊れません——該当セルは通常の漢字にフォールバックし、UI 上で明示されます。判断の詳細は [`DESIGN.md`](./DESIGN.md) §11 を参照。

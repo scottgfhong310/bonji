@@ -1,9 +1,9 @@
 /**
  * catalog.js — 悉曇字型對照表（依 data/catalog.json，源自 BonjiInput.xlsx）。ESM module。
  *
- * 一類一欄；每格依 fd_group 套字型顯示 fd_char（siddham=Noto Sans Siddham、
- * mojikyo119=Mojikm13.TTF、uniSiddham=Siddham.ttf），並列出輸入記法 fd_code。
- * 純資料頁，不經 SiddhamConverter（glyph 直接取自表）。
+ * 一類一欄；每格依 fd_group 套字型顯示 fd_char（siddham=Noto Sans Siddham〔內嵌〕、
+ * mojikyo119=Mojikyo M119、uniSiddham=Siddam〔後兩者讀**本機安裝**的版本，見 DESIGN.md §11〕），
+ * 並列出輸入記法 fd_code。純資料頁，不經 SiddhamConverter（glyph 直接取自表）。
  */
 
 (function () {
@@ -62,11 +62,25 @@
     I18n.apply(document); // 翻譯欄標題 / 文件標題
   }
 
+  /* ---------- 本機字型 ----------
+   * 缺字型時字格會顯示成一般漢字（不是缺字方塊），故除了說明區塊還要把受影響的
+   * 字格標出來——兩件事都由 BonjiFonts 統一決定，見 font-availability.js 檔頭。 */
+
+  function checkFonts(data) {
+    if (!window.BonjiFonts) return;
+    var counts = BonjiFonts.countByGroup(data);
+    BonjiFonts.detect().then(function (results) {
+      BonjiFonts.markMissing(results);
+      var host = document.getElementById('font-notice');
+      if (host) host.innerHTML = BonjiFonts.noticeHtml(results, counts);
+    });
+  }
+
   function load() {
     var root = document.getElementById('catalog-cols');
     fetch('./data/catalog.json', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(render)
+      .then(function (data) { render(data); checkFonts(data); })
       .catch(function (err) {
         root.innerHTML = '<p class="catalog-col-sub">' + I18n.t('catalog.loadFail', { m: escapeHtml(err.message) }) + '</p>';
       });

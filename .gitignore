@@ -15,3 +15,33 @@ Thumbs.db
 # 匯出的 JSON（保留資料夾結構，不追蹤內容）
 /public/download/bonji/*
 !/public/download/bonji/.gitkeep
+
+# ── 字型：刻意不收，以及理由 ──────────────────────────────────────
+# 本 repo 是 **public**。字型是二進位著作物，收進來就是對全世界再散布。
+# 判定依據見 DESIGN.md §11 與
+# 「My Projects/Siddham/SIDDHAM_DOMAIN_GOVERNANCE.md」§9.2〔owner 2026-08-17 拍板〕。
+#
+# ⚠️ 兩個容易讀反的地方，各記一次：
+#   1. `OS/2 fsType`（本二支為 0x0000 / 0x0008）回答的是「能不能**嵌進文件／PDF**」，
+#      **不是散布許可**。
+#   2. **沒有授權條款 ≠ 可以散布。** 著作權預設保留，要有**明示授予**才有散布權。
+#      對照就是證據：可散布的字型會把授權寫在自己身上（Noto 的 name13／name14），
+#      這兩支沒有。**一個著作權人姓名不是一份授權。**
+#
+# public/apps/bonji/fonts/Mojikm13.TTF（2.7MB，family `Mojikyo M119`）
+#   — 字型內 name0 ＝ `Copyright(c)1998-2010 AI-NET.Corporation.All rights reserved.`、
+#     商標 `Mojikyo`。**明示保留權利**，風險等級最高。
+#     文字鏡研究会 2019-02-12 解散、官網關閉，**無官方發佈管道**（故 app 內不附連結，
+#     只說明現況——指向第三方鏡像等於重做我們正在移除的那件事）。
+#
+# public/apps/bonji/fonts/Siddham.ttf（4.8MB，family `Siddam`，CBETA）
+#   — 字型內 Copyright 欄只有 `CBETA` 四個字，**無條款、無授權 URL**；
+#     CBETA 下載頁對該檔亦無任何授權條款（站台的 CC BY-NC-SA 3.0 TW 是**網站**的授權，
+#     且為 **NC**，未言明涵蓋字型二進位）。
+#   — 改讀本機安裝版（`@font-face { src: local('Siddam') }`），**那正是 CBETA 自己的
+#     散布方式**：它的下載頁就是叫人裝進系統字型。
+#
+# ⚠️ NotoSansSiddham-Regular.woff2 **不在此列、照常收錄**：它 name13 寫明 SIL OFL 1.1、
+#    name14 指向 https://scripts.sil.org/OFL，並附 fonts/OFL.txt。可散布的長這樣。
+/public/apps/bonji/fonts/Mojikm13.TTF
+/public/apps/bonji/fonts/Siddham.ttf

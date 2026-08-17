@@ -2,16 +2,21 @@
  * 主題 token / 卡片 / .siddham-text 沿用 bonji.css；side-tools 用共用 side-tool.css。
  * 本檔加：mojikyo / uniSiddham 字型 @font-face、欄位版面、依字型上色的字格。 */
 
-/* mojikyo119 → Mojikm13.TTF（fd_char 是 CJK 碼位，在此字型內顯示為悉曇字形） */
+/* ⚠️ 這兩支字型**不隨 repo 散布**（授權不允許，見 DESIGN.md §11），改讀使用者本機
+ * 安裝的版本。名字是實查字型 name table 得出的**真名**、不是檔名——舊版宣告的
+ * 'Mojikyo M13' / 'Siddham' 是照檔名取的別名，對 url() 可行，對 local() 會找不到。
+ * 兩個名字都列：full name 與 PostScript name 在不同平台曝出來的不一樣。 */
+
+/* mojikyo119 → Mojikyo M119（fd_char 是 CJK 碼位，在此字型內顯示為悉曇字形） */
 @font-face {
-  font-family: 'Mojikyo M13';
-  src: url('./fonts/Mojikm13.TTF') format('truetype');
+  font-family: 'Mojikyo M119';
+  src: local('Mojikyo M119'), local('Mojikyo_M119');
   font-display: swap;
 }
-/* uniSiddham → Siddham.ttf（fd_char 同為 CJK 碼位，在此字型內顯示為悉曇字形） */
+/* uniSiddham → Siddam（CBETA；fd_char 同為 CJK 碼位，在此字型內顯示為悉曇字形） */
 @font-face {
-  font-family: 'Siddham';
-  src: url('./fonts/Siddham.ttf') format('truetype');
+  font-family: 'Siddam';
+  src: local('Siddam');
   font-display: swap;
 }
 
@@ -89,10 +94,10 @@
   font-family: 'Noto Sans Siddham', serif;
 }
 .gc-char.f-mojikyo {
-  font-family: 'Mojikyo M13', serif;
+  font-family: 'Mojikyo M119', serif;
 }
 .gc-char.f-unisiddham {
-  font-family: 'Siddham', serif;
+  font-family: 'Siddam', serif;
 }
 
 .gc-code {

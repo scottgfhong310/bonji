@@ -1,16 +1,20 @@
 /* assist.css — 輔助輸入字形選盤（index.html）。資料同 catalog.html（data/catalog.json）。
- * 主題 token / 卡片沿用 bonji.css。
- * 下面兩個 TTF 以 @font-face 宣告但「面板未開＝display:none＝字形未渲染」故不會下載；
- * 第一次打開面板才實際抓字型（lazy，自動）。Noto Sans Siddham 的 @font-face 在 bonji.css。 */
+ * 主題 token / 卡片沿用 bonji.css（缺字型的說明區塊 .fontnote 樣式也在那裡）。
+ * Noto Sans Siddham 的 @font-face 在 bonji.css。
+ *
+ * ⚠️ 舊註解寫的「面板未開＝不下載字型（lazy）」已不成立、也不再需要：那兩支字型
+ * 現在讀本機安裝的版本（src: local()），**沒有任何東西要下載**，轉換頁初始成本
+ * 與面板開不開無關。改動理由見 DESIGN.md §11。 */
 
+/* ⚠️ 名字是實查字型 name table 得出的真名、不是檔名——見 catalog.css 同段說明。 */
 @font-face {
-  font-family: 'Mojikyo M13';
-  src: url('./fonts/Mojikm13.TTF') format('truetype');
+  font-family: 'Mojikyo M119';
+  src: local('Mojikyo M119'), local('Mojikyo_M119');
   font-display: swap;
 }
 @font-face {
-  font-family: 'Siddham';
-  src: url('./fonts/Siddham.ttf') format('truetype');
+  font-family: 'Siddam';
+  src: local('Siddam');
   font-display: swap;
 }
 
@@ -195,10 +199,10 @@ body.assist-open.assist-tools .assist-panel {
   font-family: 'Noto Sans Siddham', serif;
 }
 .ia-char.f-mojikyo {
-  font-family: 'Mojikyo M13', serif;
+  font-family: 'Mojikyo M119', serif;
 }
 .ia-char.f-unisiddham {
-  font-family: 'Siddham', serif;
+  font-family: 'Siddam', serif;
 }
 .ia-code {
   font-size: .68rem;

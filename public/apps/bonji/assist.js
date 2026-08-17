@@ -6,7 +6,10 @@
  *
  * 與 bonji.js 解耦：只操作 #bonji-input 並派發 'input' 事件——bonji.js 既有的
  * `$input.addEventListener('input', convert)` 會自動即時重轉。本檔不 import 任何模組，
- * 用全域 I18n / M（classic script，置於 locales 之後、bonji.js module 之前）。
+ * 用全域 I18n / M / BonjiFonts（classic script，置於 locales 之後、bonji.js module 之前）。
+ *
+ * ⚠️ 舊註解說的「面板首開才 lazy 抓那兩支 TTF」已不成立：字型改讀本機安裝的版本
+ * （src: local()），沒有東西要下載。缺字型的處置見 checkFonts()。
  */
 (function () {
   'use strict';
@@ -94,11 +97,24 @@
     }
   }
 
+  /* 缺本機字型時：說明區塊插在字形區之上，並把受影響的字格標出來。
+   * ⚠️ 這裡尤其要標——面板的用途是「看著來源字形、在面板裡認出它」，而沒裝字型時
+   * 那些格顯示的是一般漢字，認出來的會是錯的字。規則見 font-availability.js。 */
+  function checkFonts(data) {
+    if (!window.BonjiFonts) return;
+    var counts = BonjiFonts.countByGroup(data);
+    BonjiFonts.detect().then(function (results) {
+      BonjiFonts.markMissing(results);
+      var host = document.getElementById('assist-font-notice');
+      if (host) host.innerHTML = BonjiFonts.noticeHtml(results, counts);
+    });
+  }
+
   function load() {
     if (loaded) return Promise.resolve();
     return fetch('./data/catalog.json', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (d) { render(d); loaded = true; applyFilter(); })
+      .then(function (d) { render(d); loaded = true; applyFilter(); checkFonts(d); })
       .catch(function (err) {
         body.innerHTML = '<p class="assist-empty">' + escapeHtml(err.message) + '</p>';
       });

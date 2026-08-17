@@ -1,9 +1,9 @@
 {
  "source": "BonjiInput.xlsx",
  "fonts": {
-  "siddham": "Noto Sans Siddham (Unicode)",
-  "mojikyo119": "Mojikm13.TTF",
-  "uniSiddham": "Siddham.ttf"
+  "siddham": "Noto Sans Siddham (Unicode, bundled)",
+  "mojikyo119": "Mojikyo M119 (local install)",
+  "uniSiddham": "Siddam (local install)"
  },
  "categories": [
   {

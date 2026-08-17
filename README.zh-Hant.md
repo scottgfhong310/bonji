@@ -19,8 +19,8 @@
 - 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。
 - **JSON 匯出** — 把目前結果存到伺服器 `/download/bonji/`，檔名 `bonji-yyyyMMddHHmmss.json`（含 `title`、`options`、輸入與三項輸出）；**下載**鈕會先匯出再下載該 JSON；**`dehaze` 側欄**以降冪列出匯出檔，`delete_sweep` 鈕可清空該夾。
 - **載回已存檔** — 點側欄中的項目可把該檔的 `title` / `options` / `input` 載回頁面（該檔的 `sourceFile` 會顯示在 options 下方）；調整後再匯出會產生新檔，並在 `sourceFile` 記下它的來源檔名。
-- **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo · Siddham）。點格可複製記法。
-- **輔助輸入**（`keyboard` 側邊工具）：**固定在右側**的字形選盤（可開關），與 `catalog.json` 同源——可依類別瀏覽或搜尋記法，點字形即把其 ASCII 記法插入游標處（即時重轉）。開啟時會隱藏側邊工具列、把面板貼齊右緣——採覆蓋、不擠動版面（輸入區位置不變）；面板上的 ⋮ 鈕可再叫出工具列，× 關閉；底部一排鈕可插入 空格 / 換行 / 連字號（`-` 為詞組分隔）。整理 / 比對文獻時，認出字形、點一下就好，省去背記法；兩個對照表字型於首次開啟面板時才 lazy 載入。
+- **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo M119 · Siddam）。點格可複製記法。後兩者**讀你電腦上安裝的版本**、未隨程式散布，見〈字型〉。
+- **輔助輸入**（`keyboard` 側邊工具）：**固定在右側**的字形選盤（可開關），與 `catalog.json` 同源——可依類別瀏覽或搜尋記法，點字形即把其 ASCII 記法插入游標處（即時重轉）。開啟時會隱藏側邊工具列、把面板貼齊右緣——採覆蓋、不擠動版面（輸入區位置不變）；面板上的 ⋮ 鈕可再叫出工具列，× 關閉；底部一排鈕可插入 空格 / 換行 / 連字號（`-` 為詞組分隔）。整理 / 比對文獻時，認出字形、點一下就好，省去背記法；兩個對照表字型讀本機安裝的版本，沒有東西要下載。
 
 > 轉換引擎完全在瀏覽器執行；JSON 匯出／列表用下方的 Node 後端，故這兩項功能需要伺服器（轉換本身不需要）。
 
@@ -114,7 +114,8 @@ bonji/
       ├─ config.json                           # 後端開關 { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog 資料（catalog.json 由 xlsx 生成）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT，未改動）
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # 悉曇 / Mojikyo / Siddham（catalog 字型約 7.5 MB）
+      ├─ font-availability.js                 # 本機字型偵測＋缺字型說明（→ window.BonjiFonts）
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # 只收可散布的那一支（OFL，約 47 KB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```
@@ -144,3 +145,7 @@ converter.setOptions({ transliteration: "ISO15919" });  // → 拉丁轉寫改�
 ## 授權
 
 MIT © 2026 Scott G.F. Hong。內含 **bonji-input** 悉曇引擎（MIT，© 2021 Ryusei Yamaguchi）與 **Noto Sans Siddham**（SIL OFL 1.1）。見 [LICENSE](./LICENSE)、vendored 的 `LICENSE`/`SOURCE.md` 與 `fonts/OFL.txt`。
+
+### 字型
+
+**`Mojikyo M119` 與 `Siddam` 刻意不隨本 repo 散布**，改以 `@font-face { src: local(...) }` 讀你系統上安裝的版本。兩者都沒有授予再散布權：Mojikyo 字型自己的 name table 寫著 `All rights reserved`，CBETA 那支則完全沒有授權條款。⚠️ 兩個容易讀反的地方——`OS/2 fsType` 講的是**能不能嵌進文件／PDF**，**不是**散布許可；而**沒有授權條款 ≠ 可以散布**（著作權預設保留）。可散布的字型會把授權寫在自己身上，Noto 就是。`Siddam` 可自 [CBETA 下載頁](https://archive2.cbeta.org/download/cbreader.php)取得；文字鏡研究会已於 2019 年解散，無官方管道。沒裝也不會壞——那些字格會退成一般漢字，介面會標出來。完整判定見 [`DESIGN.md`](./DESIGN.md) §11。

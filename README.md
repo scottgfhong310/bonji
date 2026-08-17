@@ -19,8 +19,8 @@ Part of the **nodeapp WebApp family** — shared conventions and workflow live a
 - Per-field copy buttons (title input + each output); example chips.
 - **JSON export** — save the current result to the server as `bonji-yyyyMMddHHmmss.json` under `/download/bonji/` (captures `title`, `options`, input and the three outputs); the **download** button exports first and then downloads that JSON; a **`dehaze` side panel** lists exports newest-first and a `delete_sweep` button clears the folder.
 - **Round-trip a saved export** — click an entry in the panel to load its `title` / `options` / `input` back into the page (the loaded file's `sourceFile` is shown below the options); tweak and export again to get a new file that records the file it came from in `sourceFile`.
-- **Reference pages** (side-tools, open in a new tab): a `table_chart` **character chart** (`chart.html`, engine-derived: notation → Siddhaṁ / Latin) and a `menu_book` **font catalog** (`catalog.html`, from `BonjiInput.xlsx` — one column per category: vowel / consonant / variant / symbol / bindu / ligature / upper- & lower-ligature, each glyph rendered in its source font: Unicode Siddham · Mojikyo · Siddham). Click any cell to copy its notation.
-- **Input assist** (`keyboard` side-tool): a glyph palette **docked on the right** (toggle), fed by the same `catalog.json` — browse by category or search by notation, then click a glyph to insert its ASCII notation at the cursor (re-converts live). Opening it hides the side-tools and pins the palette to the right edge — it overlays the page rather than reflowing it (the input area stays put). A ⋮ button on the panel brings the side-tools back, and × closes it. A footer row inserts space / newline / dash (`-` = word-group separator). For transcribing / collating from source texts: recognize the shape, click, done. The two catalog fonts load lazily on first open.
+- **Reference pages** (side-tools, open in a new tab): a `table_chart` **character chart** (`chart.html`, engine-derived: notation → Siddhaṁ / Latin) and a `menu_book` **font catalog** (`catalog.html`, from `BonjiInput.xlsx` — one column per category: vowel / consonant / variant / symbol / bindu / ligature / upper- & lower-ligature, each glyph rendered in its source font: Unicode Siddham · Mojikyo M119 · Siddam). Click any cell to copy its notation. The latter two are **read from your locally installed copies** and are not bundled — see [Fonts](#fonts).
+- **Input assist** (`keyboard` side-tool): a glyph palette **docked on the right** (toggle), fed by the same `catalog.json` — browse by category or search by notation, then click a glyph to insert its ASCII notation at the cursor (re-converts live). Opening it hides the side-tools and pins the palette to the right edge — it overlays the page rather than reflowing it (the input area stays put). A ⋮ button on the panel brings the side-tools back, and × closes it. A footer row inserts space / newline / dash (`-` = word-group separator). For transcribing / collating from source texts: recognize the shape, click, done. The two catalog fonts are read from your local install, so nothing is downloaded.
 
 > The conversion engine runs entirely in the browser. JSON export / listing use the Node backend below, so those two features need the server (the converter itself does not).
 
@@ -114,7 +114,8 @@ bonji/
       ├─ config.json                           # backend toggle { backend: true|false }
       ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog data (catalog.json generated from the xlsx)
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored engine (MIT, unmodified)
-      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt, Mojikm13.TTF, Siddham.ttf}   # Siddhaṁ / Mojikyo / Siddham (catalog fonts ~7.5 MB)
+      ├─ font-availability.js                 # local-font detection + missing-font notice (→ window.BonjiFonts)
+      ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # only the redistributable one (OFL, ~47 KB)
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
       └─ side-tool.css · materialize-dark.css
 ```
@@ -144,3 +145,7 @@ See `public/apps/bonji/vendor/bonji-input/SOURCE.md` for the pinned upstream com
 ## License
 
 MIT © 2026 Scott G.F. Hong. Bundles the **bonji-input** Siddhaṁ engine (MIT, © 2021 Ryusei Yamaguchi) and **Noto Sans Siddham** (SIL OFL 1.1). See [LICENSE](./LICENSE), the vendored `LICENSE`/`SOURCE.md`, and `fonts/OFL.txt`.
+
+### Fonts
+
+**`Mojikyo M119` and `Siddam` are deliberately not distributed with this repo** and are read from your system-installed copies via `@font-face { src: local(...) }`. Neither grants redistribution rights: the Mojikyō font's own name table says `All rights reserved`, and the CBETA font carries no licence terms at all. ⚠️ Two things that are easy to read backwards — `OS/2 fsType` describes *document embedding*, **not** a redistribution licence; and **no licence terms ≠ free to redistribute** (copyright is reserved by default). A redistributable font states its licence on itself, as Noto does. `Siddam` is available from [CBETA's download page](https://archive2.cbeta.org/download/cbreader.php); the Mojikyō Institute dissolved in 2019 and has no official channel. Without them the catalog still works — those cells fall back to ordinary Han characters and are flagged in the UI. Full reasoning in [`DESIGN.md`](./DESIGN.md) §11.
