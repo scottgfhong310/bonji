@@ -16,10 +16,26 @@ Thumbs.db
 /public/download/bonji/*
 !/public/download/bonji/.gitkeep
 
-# ── 字型：刻意不收，以及理由 ──────────────────────────────────────
+# ── 字型：deny-by-default（預設全擋，再逐支放行）──────────────────
 # 本 repo 是 **public**。字型是二進位著作物，收進來就是對全世界再散布。
 # 判定依據見 DESIGN.md §11 與
 # 「My Projects/Siddham/SIDDHAM_DOMAIN_GOVERNANCE.md」§9.2〔owner 2026-08-17 拍板〕。
+#
+# ⚠️ **方向是刻意選的，因為兩種漏法的代價不對稱：**
+#   · 逐檔列舉漏掉一支 → 沒有授權的字型被推上 public repo，
+#     **而且不會有任何東西報錯**。這不是假設——`UniSiddham.ttf` 就是這樣漏的：
+#     它不在工作樹、只在 git 歷史裡，照著資料夾列的清單**整個看不到它**。
+#   · deny-by-default 漏放行一支 → 那支字型不進版控，**fresh clone 一跑就缺字**，
+#     吵、但看得見、當場改得掉。
+#   **擋錯了會被發現，放錯了不會**——所以預設要擋。
+#
+# ⚠️ **範圍是整個 repo、不只 `fonts/`**：問題從來不是「那個資料夾裡有什麼」，
+#    是「這個 repo 散布過什麼」。字型放到別的目錄一樣要擋。
+# ⚠️ 兩個 gitignore 的實作細節，免得日後改壞：
+#   · 這裡擋的是**副檔名**不是目錄。若改寫成擋目錄（`fonts/`），
+#     **底下就再也 `!` 放行不回來**（git 不會走進被忽略的目錄）；要擋內容得寫 `fonts/*`。
+#   · `.gitignore` **管不到已追蹤的檔案**。下面那支 Noto 早已在版控裡，
+#     `!` 是寫給「日後被刪掉再加回來」那一刻看的，也把意圖講明白。
 #
 # ⚠️ 兩個容易讀反的地方，各記一次：
 #   1. `OS/2 fsType`（本三支為 0x0000 / 0x0008 / 0x0000）回答的是
@@ -53,8 +69,21 @@ Thumbs.db
 #   — 現行程式**沒有任何地方引用這個 family**（`uniSiddham` 那一組自 7a41442 起
 #     改用 `Siddam` 算圖），故它純粹是不該再出現的舊物，不是待接回的功能。
 #
-# ⚠️ NotoSansSiddham-Regular.woff2 **不在此列、照常收錄**：它 name13 寫明 SIL OFL 1.1、
-#    name14 指向 https://scripts.sil.org/OFL，並附 fonts/OFL.txt。可散布的長這樣。
-/public/apps/bonji/fonts/Mojikm13.TTF
-/public/apps/bonji/fonts/Siddham.ttf
-/public/apps/bonji/fonts/UniSiddham.ttf
+# 上面三支不必再逐條列——它們已被下面的 deny-by-default 蓋住。
+# 留著那幾段是為了「為什麼不收」的依據，**不是**因為規則靠它們生效。
+
+# 預設全擋（整個 repo）
+*.ttf
+*.otf
+*.ttc
+*.woff
+*.woff2
+*.eot
+
+# 放行清單：只放**授權明確允許再散布**的。
+# 加一支進來之前先問：它的 name13／name14（或隨附授權檔）有沒有明示授予散布權？
+# 答不出來就是 no——**沒有授權條款 ≠ 可以散布**。
+#
+# Noto Sans Siddham：name13 ＝ SIL OFL 1.1、name14 ＝ https://scripts.sil.org/OFL，
+# 並附 fonts/OFL.txt。**可散布的長這樣**——授權寫在字型自己身上。
+!/public/apps/bonji/fonts/NotoSansSiddham-Regular.woff2
