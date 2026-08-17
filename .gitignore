@@ -22,11 +22,11 @@ Thumbs.db
 # 「My Projects/Siddham/SIDDHAM_DOMAIN_GOVERNANCE.md」§9.2〔owner 2026-08-17 拍板〕。
 #
 # ⚠️ 兩個容易讀反的地方，各記一次：
-#   1. `OS/2 fsType`（本二支為 0x0000 / 0x0008）回答的是「能不能**嵌進文件／PDF**」，
-#      **不是散布許可**。
+#   1. `OS/2 fsType`（本三支為 0x0000 / 0x0008 / 0x0000）回答的是
+#      「能不能**嵌進文件／PDF**」，**不是散布許可**。
 #   2. **沒有授權條款 ≠ 可以散布。** 著作權預設保留，要有**明示授予**才有散布權。
 #      對照就是證據：可散布的字型會把授權寫在自己身上（Noto 的 name13／name14），
-#      這兩支沒有。**一個著作權人姓名不是一份授權。**
+#      這三支沒有。**一個著作權人姓名不是一份授權。**
 #
 # public/apps/bonji/fonts/Mojikm13.TTF（2.7MB，family `Mojikyo M119`）
 #   — 字型內 name0 ＝ `Copyright(c)1998-2010 AI-NET.Corporation.All rights reserved.`、
@@ -41,7 +41,20 @@ Thumbs.db
 #   — 改讀本機安裝版（`@font-face { src: local('Siddam') }`），**那正是 CBETA 自己的
 #     散布方式**：它的下載頁就是叫人裝進系統字型。
 #
+# public/apps/bonji/fonts/UniSiddham.ttf（3.5MB，family `UniSiddham`）
+#   — `Siddham.ttf` 的前身，早在 7a41442 就從工作樹換掉了，但**一直留在 git 歷史裡**，
+#     而且是前兩支清完之後最大的物件（2026-08-17 一併自歷史清除）。
+#   — 授權比另兩支更弱：**連 Copyright 欄都沒有**，無商標、無 name13／14，
+#     全部身家只有 `Version 6.02;;UniSiddham;2016;FL714`
+#     （`FL714` 與 `Siddam` 同一個產生器簽章，推測同屬 CBETA 一系——**推測，未經證實**）。
+#   — ⚠️ **這一行是補的，不是一開始就有的。** 前兩支是照著工作樹裡看得到的檔案列的，
+#     而它不在工作樹裡、只在歷史裡，於是第一輪整個漏掉——**「資料夾裡有什麼」
+#     不等於「這個 repo 散布過什麼」**。日後再有字型進來，要問的是後者。
+#   — 現行程式**沒有任何地方引用這個 family**（`uniSiddham` 那一組自 7a41442 起
+#     改用 `Siddam` 算圖），故它純粹是不該再出現的舊物，不是待接回的功能。
+#
 # ⚠️ NotoSansSiddham-Regular.woff2 **不在此列、照常收錄**：它 name13 寫明 SIL OFL 1.1、
 #    name14 指向 https://scripts.sil.org/OFL，並附 fonts/OFL.txt。可散布的長這樣。
 /public/apps/bonji/fonts/Mojikm13.TTF
 /public/apps/bonji/fonts/Siddham.ttf
+/public/apps/bonji/fonts/UniSiddham.ttf
