@@ -56,9 +56,15 @@
               <label for="bonji-title" data-i18n="input.titleLabel">標題</label>
             </div>
             <div class="input-field input-field-main">
-              <a href="#!" class="out-copy in-copy" id="copy-input" data-i18n-title="tool.copyInput" title="複製輸入">
-                <i class="material-icons">content_copy</i>
-              </a>
+              <!-- 輸入欄位右上角的行內動作：複製 ＋ 清除（清除原本在右側工具列，2026-08-22 移來與複製並排） -->
+              <span class="in-actions">
+                <a href="#!" class="out-copy" id="copy-input" data-i18n-title="tool.copyInput" title="複製輸入">
+                  <i class="material-icons">content_copy</i>
+                </a>
+                <a href="#!" class="out-copy in-clear" id="clear-input" data-i18n-title="tool.clear" title="清除輸入">
+                  <i class="material-icons">clear</i>
+                </a>
+              </span>
               <textarea id="bonji-input" class="materialize-textarea mono"
                 data-i18n-placeholder="input.placeholder" placeholder="siddha;m"></textarea>
               <label for="bonji-input" data-i18n="input.label">輸入（ASCII / IAST 羅馬轉寫）</label>
@@ -233,9 +239,6 @@
     </div>
     <div id="setting-download" class="side-tool" data-i18n-title="tool.download" title="下載悉曇文字">
       <i class="material-icons">file_download</i>
-    </div>
-    <div id="setting-clear" class="side-tool" data-i18n-title="tool.clear" title="清除輸入">
-      <i class="material-icons">clear</i>
     </div>
     <div id="setting-clear-downloads" class="side-tool" data-i18n-title="tool.clearDownloads" title="清空 /download/bonji/">
       <i class="material-icons">delete_sweep</i>

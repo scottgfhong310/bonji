@@ -261,7 +261,7 @@ import { SiddhamConverter } from "./siddham-converter.js";
     }
     if (window.M && M.updateTextFields) { try { M.updateTextFields(); } catch (e) {} }
     convert();
-    setIconDone(document.getElementById('setting-clear'));
+    setIconDone(document.getElementById('clear-input'));
     M.toast({ html: I18n.t('toast.cleared'), classes: 'grey' });
     $input.focus();
   }
@@ -445,10 +445,14 @@ import { SiddhamConverter } from "./siddham-converter.js";
       });
     });
 
-    // 輸入區的內嵌複製鈕
+    // 輸入區的行內動作鈕（複製 ／ 清除）
     document.getElementById('copy-input').addEventListener('click', function (e) {
       e.preventDefault();
       copyValue($input.value, this);
+    });
+    document.getElementById('clear-input').addEventListener('click', function (e) {
+      e.preventDefault();
+      clearAll();
     });
 
     // 點匯出檔清單項目 → 把該檔內容載入頁面（清單會重繪，故用委派）
@@ -473,7 +477,6 @@ import { SiddhamConverter } from "./siddham-converter.js";
     document.getElementById('setting-lang').addEventListener('click', cycleLang);
     document.getElementById('setting-export').addEventListener('click', exportJson);
     document.getElementById('setting-download').addEventListener('click', downloadJson);
-    document.getElementById('setting-clear').addEventListener('click', clearAll);
     document.getElementById('setting-clear-downloads').addEventListener('click', clearDownloads);
   }
 

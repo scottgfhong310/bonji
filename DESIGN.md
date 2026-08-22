@@ -181,7 +181,8 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 - **bonji 是家族首個實際採用共用 `materialize-dark.css` 的 app**，並於此踩到並收斂一個坑：它以 **`html.light-mode` class** 標記淺色，且未指定時會跟隨系統 `prefers-color-scheme: dark`。故只設 `data-theme="light"` 不夠——`applyTheme` 與防閃爍開機腳本須**同時** toggle `data-theme` 與 `light-mode`/`dark-mode` class。此發現已回灌家族 `DESIGN_GUIDELINES.md §5.1`。
 - **toast 文字色（僅淺色模式調整、底色不動）**：有色彩 class（green/teal/orange/red 以及中灰 `grey` `#9e9e9e`）→ **白字**；無色彩 class 的預設淺灰底（`#eee`，如語言切換）→ **深字**。深色模式維持 materialize-dark 現況。規則放在 `bonji.css`、以 `#toast-container .toast` 提高優先級。
-- **side-tools**：用 flex 容器 `.side-tools`（與 `tibetan-siddham` 對齊；**DOM 順序＝排列順序**，隱藏工具不留空位，故 `config.json` 關後端時隱藏三鈕也不錯位）。轉換頁九鈕：清單 `dehaze` · 主題 `dark_mode` · 語言 `translate` · 字元對照表 `table_chart` · 字型對照表 `menu_book` · 匯出 `data_object` · 下載 `download` · 清除輸入 `clear` · 清空匯出夾 `delete_sweep`。對照表頁三鈕：返回 `arrow_back` · 主題 · 語言。
+- **side-tools**：用 flex 容器 `.side-tools`（與 `tibetan-siddham` 對齊；**DOM 順序＝排列順序**，隱藏工具不留空位，故 `config.json` 關後端時隱藏三鈕也不錯位）。轉換頁九鈕（依 DOM 序）：清單 `dehaze` · 輔助輸入 `keyboard` · 字元對照表 `table_chart` · 字型對照表 `menu_book` · 匯出 `data_object` · 下載 `file_download` · 清空匯出夾 `delete_sweep` · 主題 `dark_mode` · 語言 `translate`。對照表頁三鈕：返回 `arrow_back` · 主題 · 語言。
+- **「清除輸入」不在側鍵列**（2026-08-22 移出）：它改住輸入欄位右上角、與「複製輸入」並排（`.in-actions`）——那兩個動作的對象都是**那一個輸入框**，放在框上比放在頁面邊緣的通用工具列更接近它作用的地方；側鍵列留下的 `#setting-clear-downloads`（清空匯出夾）對象是伺服器上的資料夾，不是輸入框，故留在原地。⚠️ 搬家後**警示紅要自己補**：共用 `side-tool.css` 的 `#setting-clear:hover{color:#ff6e6e}`（§5.5 警示鍵）是以 id 掛在側鍵上的，元素離開側鍵列後那條規則不再命中，`bonji.css` 的 `.in-clear:hover` 以**逐字相同的值**接手（共用件不動——那條規則對其他成員仍然有效）。⚠️ 選擇器要 **0,3,0**（`.in-actions .in-clear:hover`）：與 `.out-copy:hover`（轉 accent）同為 0,2,0 而後者在檔案更後面 ⇒ **同分後到者勝，紅色會安靜地不生效**（第一版實測 hover 是 accent 藍）。對比實測：**dark 5.95:1／light 2.72:1**——light 低於非文字元素的 3:1，**與側鍵原本的值一模一樣（同 app 的 `#setting-clear-downloads` 至今如此）**，故刻意沿用而不另挑一個紅；靜止色 `--muted` 兩個主題皆 6.39:1，紅只是 hover 的**附加**警示。要收緊的話 light 需另給約 `#d93636`（≈4.1:1），那是家族層級的決定，不該由這一支自己偏離。
 
 ---
 

@@ -132,12 +132,23 @@ main {
   position: relative;
 }
 
-/* 輸入區的內嵌複製鈕（輸入欄位右上角，沿用 .out-copy 樣式） */
-.in-copy {
+/* 輸入區的行內動作鈕（輸入欄位右上角：複製 ＋ 清除，沿用 .out-copy 樣式） */
+.in-actions {
   position: absolute;
   top: 0;
   right: 0;
   z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 清除是破壞性動作：hover 轉紅。值與共用 side-tool.css 的警示鍵（§5.5）逐字相同——
+   它原本就住在側鍵列、有那個記號；搬進行內不該把警示弄丟，也不該另發明一個顏色。
+   ⚠️ 選擇器要 0,3,0：`.in-clear:hover` 與底下的 `.out-copy:hover`（轉 accent）同為 0,2,0，
+   而後者在檔案更後面 ⇒ 同分後到者勝，紅色會安靜地不生效（實測 hover 時是 accent 藍）。 */
+.in-actions .in-clear:hover {
+  color: #ff6e6e;
 }
 
 #bonji-input {
