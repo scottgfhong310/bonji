@@ -32,6 +32,9 @@
   --warn: #ffb74d;
   --warn-bg: rgba(255, 183, 77, 0.10);
   --warn-border: rgba(255, 183, 77, 0.38);
+  /* 破壞性動作的 hover 警示色（見 .in-clear）。深色沿用共用 side-tool.css 警示鍵的值：
+   * 對 --surface-2（hover 底）5.95:1。 */
+  --danger: #ff6e6e;
 }
 
 [data-theme="light"] {
@@ -51,6 +54,9 @@
   --warn: #8a5a00;
   --warn-bg: rgba(138, 90, 0, 0.08);
   --warn-border: rgba(138, 90, 0, 0.34);
+  /* 淺色底下 #ff6e6e 只有 2.72:1（低於非文字元素的 3:1），故壓暗；
+   * 同 --warn 的處置：亮色被白色包圍會退成一片糊，暗一階才看得出是紅的。 */
+  --danger: #d93636;
 }
 
 html,
@@ -143,12 +149,15 @@ main {
   gap: 2px;
 }
 
-/* 清除是破壞性動作：hover 轉紅。值與共用 side-tool.css 的警示鍵（§5.5）逐字相同——
-   它原本就住在側鍵列、有那個記號；搬進行內不該把警示弄丟，也不該另發明一個顏色。
+/* 清除是破壞性動作：hover 轉紅（--danger）。它原本住在側鍵列、有共用 side-tool.css
+   §5.5 警示鍵那個記號；搬進行內不該把警示弄丟。
+   ⚠️ 深色沿用共用件的 #ff6e6e，淺色改用 #d93636〔owner 指示〕——共用件那個值在白底上
+   只有 2.72:1、過不了非文字元素的 3:1。⇒ 同一支 app 的側鍵 `#setting-clear-downloads`
+   在淺色下仍是共用件的值，兩者從此不同紅；那是共用件層級的事，本 app 不代它決定。
    ⚠️ 選擇器要 0,3,0：`.in-clear:hover` 與底下的 `.out-copy:hover`（轉 accent）同為 0,2,0，
    而後者在檔案更後面 ⇒ 同分後到者勝，紅色會安靜地不生效（實測 hover 時是 accent 藍）。 */
 .in-actions .in-clear:hover {
-  color: #ff6e6e;
+  color: var(--danger);
 }
 
 #bonji-input {
