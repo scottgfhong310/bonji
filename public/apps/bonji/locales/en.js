@@ -62,6 +62,8 @@ I18n.register('en', {
   'catalog.cat.ligature_u': 'Ligature · upper (上接續)',
   'catalog.cat.ligature_l': 'Ligature · lower (下接續)',
   'tool.assist': 'Input assist',
+  'tool.gotoTop': 'Back to top',
+  'tool.gotoLatin': 'Jump to transliteration',
   'assist.title': 'Input assist',
   'assist.search': 'Search notation…',
   'assist.cat.all': 'All',

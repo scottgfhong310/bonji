@@ -62,6 +62,8 @@ I18n.register('zh-Hant', {
   'catalog.cat.ligature_u': '上接續 ligature_u',
   'catalog.cat.ligature_l': '下接續 ligature_l',
   'tool.assist': '輔助輸入',
+  'tool.gotoTop': '回到頁首',
+  'tool.gotoLatin': '跳到拉丁轉寫',
   'assist.title': '輔助輸入',
   'assist.search': '搜尋記法…',
   'assist.cat.all': '全部',

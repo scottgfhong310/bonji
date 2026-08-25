@@ -248,6 +248,9 @@ code {
 /* ===== 輸出 ===== */
 .out-block {
   margin-bottom: 18px;
+  /* 側鍵「跳到拉丁轉寫」的落點留白（scrollIntoView block:'start' 會貼齊視窗上緣）。
+     值寫在這裡而不是 JS 裡算，日後若加固定頁首只要改這一處。 */
+  scroll-margin-top: 16px;
 }
 
 .out-block:last-child {

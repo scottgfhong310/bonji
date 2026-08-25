@@ -228,6 +228,16 @@
     <div id="setting-assist" class="side-tool" data-i18n-title="tool.assist" title="輔助輸入">
       <i class="material-icons">keyboard</i>
     </div>
+    <!-- 回到頁首：與下面那顆「跳到拉丁轉寫」同一類（頁內定位），排在它前面——
+         它比較通用，而 side-tool.js 的溢出收納是由下而上收，愈前面愈晚被收進 ⋮。 -->
+    <div id="setting-goto-top" class="side-tool" data-i18n-title="tool.gotoTop" title="回到頁首">
+      <i class="material-icons">vertical_align_top</i>
+    </div>
+    <!-- 捲到輸出區的「拉丁轉寫」那一段：悉曇輸出會隨字數長高（實測 40 行輸入時它高 1083px），
+         把拉丁轉寫推到第二個螢幕之外；這個動作在頁面上沒有常駐入口，故收進側鍵列（§10）。 -->
+    <div id="setting-goto-latin" class="side-tool" data-i18n-title="tool.gotoLatin" title="跳到拉丁轉寫">
+      <i class="material-icons">text_fields</i>
+    </div>
     <a id="setting-chart" class="side-tool" href="./chart.html" target="bonji-chart" rel="opener" data-i18n-title="tool.chart" title="字元對照表">
       <i class="material-icons">table_chart</i>
     </a>

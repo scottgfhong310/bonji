@@ -62,6 +62,8 @@ I18n.register('ja', {
   'catalog.cat.ligature_u': '上接続 ligature_u',
   'catalog.cat.ligature_l': '下接続 ligature_l',
   'tool.assist': '入力補助',
+  'tool.gotoTop': 'ページ先頭へ',
+  'tool.gotoLatin': 'ラテン翻字へ移動',
   'assist.title': '入力補助',
   'assist.search': '記法を検索…',
   'assist.cat.all': 'すべて',

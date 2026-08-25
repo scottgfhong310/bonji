@@ -478,6 +478,27 @@ import { SiddhamConverter } from "./siddham-converter.js";
     document.getElementById('setting-export').addEventListener('click', exportJson);
     document.getElementById('setting-download').addEventListener('click', downloadJson);
     document.getElementById('setting-clear-downloads').addEventListener('click', clearDownloads);
+    document.getElementById('setting-goto-top').addEventListener('click', gotoTop);
+    document.getElementById('setting-goto-latin').addEventListener('click', gotoLatin);
+  }
+
+  /* ---------- 頁內定位 ---------- */
+
+  // 側鍵：回到頁首。捲的是視窗（本頁沒有內部捲動區，整份文件就是捲動容器）。
+  function gotoTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ---------- 捲到「拉丁轉寫」 ---------- */
+
+  // 側鍵：把輸出區的拉丁轉寫那一段捲進畫面。
+  // ⚠️ 捲的是整個 .out-block 不是 #out-latin：標籤「拉丁轉寫」住在 .out-head，
+  //    只捲值的話落點會把標籤留在畫面外，看起來像捲錯地方。
+  // 上緣留白由 bonji.css 的 .out-block { scroll-margin-top } 給，不在這裡算數字
+  //    （日後若加固定頁首，改 CSS 一處即可）。
+  function gotoLatin() {
+    var block = document.getElementById('out-latin').closest('.out-block');
+    if (block) block.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   /* ---------- 設定（config.json：後端開關） ---------- */
