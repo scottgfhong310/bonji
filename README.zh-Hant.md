@@ -16,7 +16,7 @@
 - 選項：輸入法（ISO 15919 / Kyoto-Harvard）、拉丁轉寫（ISO 15919 / IAST）、忽略空格與連字號。
 - 內嵌 **Noto Sans Siddham** 字型（SIL OFL），無需系統字型也能顯示悉曇。
 - 三語介面（`zh-Hant` / `en` / `ja`，預設 `zh-Hant`）；light / dark 主題。
-- 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。
+- 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。輸入欄右上角另有**貼上**（＝覆蓋輸入）與**清除**；讀不到剪貼簿時會把輸入整段選起來，按 ⌘V／Ctrl+V 即可覆蓋。
 - **JSON 匯出** — 把目前結果存到伺服器 `/download/bonji/`，檔名 `bonji-yyyyMMddHHmmss.json`（含 `title`、`options`、輸入與三項輸出）；**下載**鈕會先匯出再下載該 JSON；**`dehaze` 側欄**以降冪列出匯出檔，`delete_sweep` 鈕可清空該夾。
 - **載回已存檔** — 點側欄中的項目可把該檔的 `title` / `options` / `input` 載回頁面（該檔的 `sourceFile` 會顯示在 options 下方）；調整後再匯出會產生新檔，並在 `sourceFile` 記下它的來源檔名。
 - **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo M119 · Siddam）。點格可複製記法。後兩者**讀你電腦上安裝的版本**、未隨程式散布，見〈字型〉。

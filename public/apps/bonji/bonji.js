@@ -250,6 +250,49 @@ import { SiddhamConverter } from "./siddham-converter.js";
     copyValue(el ? el.textContent : '', trigger);
   }
 
+  // 貼上＝覆蓋輸入（不是插入游標處）。
+  // ⚠️ 讀剪貼簿比寫嚴得多：寫只要使用者手勢，讀還要 secure context ＋ 權限，而且可能被
+  //    直接拒絕 ⇒ **退路不是選配**。讀不到就把輸入框整段選起來並聚焦，使用者按 ⌘V／Ctrl+V
+  //    就是覆蓋（選取狀態下貼上＝清除後貼上，與成功路徑同結果）。
+  // ⚠️ 剪貼簿是空的就什麼都不做——**不可以順手把欄位清掉**：那是隔壁那顆鈕的職責，
+  //    而且沒有人會預期按「貼上」把資料弄不見。
+  // ⚠️ 只動 #bonji-input，**不碰標題、也不清 loadedFrom／currentSource**：本 app 既有的
+  //    約定是「打字改輸入不會動到來源與標題」（只有 clearAll 會），貼上只是比較大的一次編輯。
+  function pasteInput() {
+    var btn = document.getElementById('paste-input');
+
+    function manual() {   // 退路：交還最後一步給使用者，而不是停在「貼上失敗」
+      $input.focus();
+      try { $input.select(); } catch (e) {}
+      M.toast({ html: I18n.t('toast.pasteManual'), classes: 'orange' });
+    }
+
+    function apply(text) {
+      if (!text) {
+        M.toast({ html: I18n.t('toast.pasteEmpty'), classes: 'orange' });
+        return;
+      }
+      $input.value = text;
+      // 程式設值 Materialize 不知道，要自己補呼叫（v1.63 在修正卡踩過同一個坑）。
+      // ⚠️ 實測：真正在做事的是 textareaAutoResize（不叫它 textarea 不會長高）；
+      //    updateTextFields 今天觀察不到差別——本欄有 placeholder，label 恆為 active。
+      //    留著是防守：哪天拿掉 placeholder，沒有它 label 就會壓在文字上。
+      if (window.M && M.textareaAutoResize) { try { M.textareaAutoResize($input); } catch (e) {} }
+      if (window.M && M.updateTextFields) { try { M.updateTextFields(); } catch (e) {} }
+      convert();
+      setIconDone(btn);
+      M.toast({ html: I18n.t('toast.pasted'), classes: 'teal' });
+      $input.focus();
+      try { $input.setSelectionRange(text.length, text.length); } catch (e) {}
+    }
+
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      navigator.clipboard.readText().then(apply).catch(manual);
+    } else {
+      manual();
+    }
+  }
+
   function clearAll() {
     loadedFrom = null;   // 清除後等同全新內容，下次匯出無來源
     currentSource = null;
@@ -449,6 +492,10 @@ import { SiddhamConverter } from "./siddham-converter.js";
     document.getElementById('copy-input').addEventListener('click', function (e) {
       e.preventDefault();
       copyValue($input.value, this);
+    });
+    document.getElementById('paste-input').addEventListener('click', function (e) {
+      e.preventDefault();
+      pasteInput();
     });
     document.getElementById('clear-input').addEventListener('click', function (e) {
       e.preventDefault();
