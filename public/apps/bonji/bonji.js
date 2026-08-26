@@ -264,7 +264,7 @@ import { SiddhamConverter } from "./siddham-converter.js";
     function manual() {   // 退路：交還最後一步給使用者，而不是停在「貼上失敗」
       $input.focus();
       try { $input.select(); } catch (e) {}
-      M.toast({ html: I18n.t('toast.pasteManual'), classes: 'orange' });
+      M.toast({ html: I18n.t('toast.pasteSelected'), classes: 'orange' });
     }
 
     function apply(text) {
