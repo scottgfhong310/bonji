@@ -117,6 +117,10 @@ body.assist-open.assist-tools .assist-panel {
   margin-bottom: 12px;
   flex: 0 0 auto;
 }
+/* 第一排（群）與第二排（類）是同一組篩選的兩個軸 ⇒ 間距收窄，看起來是一組不是兩塊 */
+.assist-groups {
+  margin-bottom: 6px;
+}
 .assist-cat {
   cursor: pointer;
   font-size: .76rem;
@@ -144,6 +148,21 @@ body.assist-open.assist-tools .assist-panel {
 .assist-section[hidden] {
   display: none;
 }
+/* 群標題（預設群 / Cbeta / Mojikyo 今昔）。比類標題重一級——它是上一層的分界，
+ * 兩者看起來一樣的話，讀的人要多花一次力氣才分得出哪個是群、哪個是類。 */
+.assist-group + .assist-group {
+  margin-top: 18px;
+}
+.assist-group-title {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .02em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 2px;
+}
+
 .assist-section-title {
   font-size: .72rem;
   color: var(--muted);
@@ -195,13 +214,17 @@ body.assist-open.assist-tools .assist-panel {
   font-size: 1.7rem;
   line-height: 1.35;
 }
-.ia-char.f-siddham {
+/* 字型 class 刻意**不綁在 .ia-char 上**：Composition 欄（.comp-ch，bonji.css）用的是
+ * 同一組 class、同一份 @font-face，綁死祖先就得再抄一份，而那正是「同一條規則兩份實作」。
+ * ⚠️ 這三條是 0,1,0；`body.font-missing-* .f-*`（bonji.css）只改 opacity/刪節線、不碰
+ * font-family，兩者不衝突。 */
+.f-siddham {
   font-family: 'Noto Sans Siddham', serif;
 }
-.ia-char.f-mojikyo {
+.f-mojikyo {
   font-family: 'Mojikyo M119', serif;
 }
-.ia-char.f-unisiddham {
+.f-unisiddham {
   font-family: 'Siddam', serif;
 }
 .ia-code {

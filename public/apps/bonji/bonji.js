@@ -299,6 +299,9 @@ import { SiddhamConverter } from "./siddham-converter.js";
     renderSource();
     $title.value = '';
     $input.value = '';
+    /* Composition 一起清：它記的是「這一次組出來的字」，留著就與清空後的輸入對不起來，
+     * 而畫面上看不出那是上一輪的殘留。⚠️ silent＝不另跳 toast，本函式尾端已經有一個。 */
+    if (window.BonjiComposition) BonjiComposition.clear({ silent: true });
     if (window.M && M.textareaAutoResize) {
       try { M.textareaAutoResize($title); M.textareaAutoResize($input); } catch (e) {}
     }

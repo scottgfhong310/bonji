@@ -21,7 +21,8 @@
 - **載回已存檔** — 點側欄中的項目可把該檔的 `title` / `options` / `input` 載回頁面（該檔的 `sourceFile` 會顯示在 options 下方）；調整後再匯出會產生新檔，並在 `sourceFile` 記下它的來源檔名。
 - **對照表頁**（側邊工具、開新分頁）：`table_chart` **字元對照表**（`chart.html`，由引擎導出：記法 → 悉曇 / 拉丁）與 `menu_book` **字型對照表**（`catalog.html`，依 `BonjiInput.xlsx`：母音 / 子音 / 異體字 / 符號 / 體文 / 接續 / 上下接續，每格依其來源字型顯示：Unicode 悉曇 · Mojikyo M119 · Siddam）。點格可複製記法。後兩者**讀你電腦上安裝的版本**、未隨程式散布，見〈字型〉。
 - **跳到拉丁轉寫**（`text_fields` 側邊工具）：把輸出區的「拉丁轉寫」那一段捲進畫面。悉曇輸出會隨字數長高（40 行輸入時它自己就有 1000px 以上），拉丁轉寫因此被推到好幾個螢幕之外；這顆鍵一下就到。旁邊的 `vertical_align_top` 則是**回到頁首**。
-- **輔助輸入**（`keyboard` 側邊工具）：**固定在右側**的字形選盤（可開關），與 `catalog.json` 同源——可依類別瀏覽或搜尋記法，點字形即把其 ASCII 記法插入游標處（即時重轉）。開啟時會隱藏側邊工具列、把面板貼齊右緣——採覆蓋、不擠動版面（輸入區位置不變）；面板上的 ⋮ 鈕可再叫出工具列，× 關閉；底部一排鈕可插入 空格 / 換行 / 連字號（`-` 為詞組分隔）。整理 / 比對文獻時，認出字形、點一下就好，省去背記法；兩個對照表字型讀本機安裝的版本，沒有東西要下載。
+- **輔助輸入**（`keyboard` 側邊工具）：**固定在右側**的字形選盤（可開關），**三個群共 612 格**——`預設群`（278 格，與 `catalog.json` 同源）、`Cbeta`（156 格）、`Mojikyo 今昔`（178 格）。後兩群的母音 / 子音 / 體文 / 上接續 / 下接續由 `db_siddham` 匯出，依 Unicode Siddham 的字母次第排列。兩排 chips 是**群 × 類兩個獨立的軸**，交集才顯示。可依類別瀏覽或搜尋記法，點字形即把其 ASCII 記法插入游標處（即時重轉）。開啟時會隱藏側邊工具列、把面板貼齊右緣——採覆蓋、不擠動版面（輸入區位置不變）；面板上的 ⋮ 鈕可再叫出工具列，× 關閉；底部一排鈕可插入 空格 / 換行 / 連字號（`-` 為詞組分隔）。整理 / 比對文獻時，認出字形、點一下就好，省去背記法；兩個對照表字型讀本機安裝的版本，沒有東西要下載。
+- **Composition 欄**（輸入欄下方）：在輔助輸入點 `Cbeta` / `Mojikyo 今昔` 的字格時，這裡會記下該格的**載體字**、記法則插進上面的輸入欄。⚠️ **逐格對映字型**（Cbeta → `Siddam`、Mojikyo → `Mojikyo M119`）——兩套造字共用 CJK 碼位，整欄設一個字型會讓一半的字被另一支接走、畫成別的悉曇字而看起來完全正常。唯讀，右上角有 複製 / 退一格 / 清除。
 
 > 轉換引擎完全在瀏覽器執行；JSON 匯出／列表用下方的 Node 後端，故這兩項功能需要伺服器（轉換本身不需要）。
 
@@ -113,7 +114,9 @@ bonji/
       ├─ catalog.html · catalog.css · catalog.js   # 字型對照表（依 BonjiInput.xlsx）
       ├─ siddham-converter.js                  # 防腐層（唯一對外悉曇介面）
       ├─ config.json                           # 後端開關 { backend: true|false }
-      ├─ data/{catalog.json, BonjiInput.xlsx}  # catalog 資料（catalog.json 由 xlsx 生成）
+      ├─ composition.js                        # Composition 欄（點造字字格會記下載體字）
+      ├─ data/{catalog.json, BonjiInput.xlsx}  # 預設群資料（catalog.json 由 xlsx 生成）
+      ├─ data/element-catalog.json             # Cbeta / Mojikyo 兩群（產物，由 db_siddham 匯出）
       ├─ vendor/bonji-input/{siddham.js, LICENSE, SOURCE.md}   # vendored 引擎（MIT，未改動）
       ├─ font-availability.js                 # 本機字型偵測＋缺字型說明（→ window.BonjiFonts）
       ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # 只收可散布的那一支（OFL，約 47 KB）

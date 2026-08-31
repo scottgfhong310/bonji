@@ -65,6 +65,7 @@ I18n.register('ja', {
   'catalog.cat.ligature': '接続 ligature',
   'catalog.cat.ligature_u': '上接続 ligature_u',
   'catalog.cat.ligature_l': '下接続 ligature_l',
+  'catalog.cat.ligature_ext': '接続拡張 ligature_ext',
   'tool.assist': '入力補助',
   'tool.gotoTop': 'ページ先頭へ',
   'tool.gotoLatin': 'ラテン翻字へ移動',
@@ -95,5 +96,19 @@ I18n.register('ja', {
   'toast.downloadsCleared': '{n} 件の書き出しを削除しました',
   'toast.clearDownloadsFail': '消去に失敗しました：{m}',
   'toast.loaded': '読み込みました：{n}',
-  'toast.loadFail': '読み込みに失敗しました：{m}'
+  'toast.loadFail': '読み込みに失敗しました：{m}',
+
+  // 2026-08-31：輔助輸入的兩個新群（Cbeta / Mojikyo 今昔）與 Composition 欄
+  'assist.group.default': '既定グループ',
+  'assist.group.cbeta': 'Cbeta',
+  'assist.group.mojikyo119': '今昔文字鏡',
+  'assist.nonotation': '出典に記法の指定がなく、挿入できません',
+  'comp.label': 'Composition',
+  'comp.empty': '入力補助の Cbeta / 今昔文字鏡 のセルをクリックすると、ここに対応する Char が記録され、記法は上の入力欄に挿入されます。',
+  'tool.copyComposition': 'Composition をコピー',
+  'tool.undoComposition': '1 つ戻す',
+  'tool.clearComposition': 'Composition をクリア',
+  'toast.compEmpty': 'Composition は空です',
+  'toast.compUndone': '1 つ戻しました（入力欄の記法も削除）',
+  'toast.compUndoneOnly': 'Composition のみ戻しました — 入力欄の末尾がその記法ではないため、手動で調整してください'
 }, '日本語');

@@ -118,7 +118,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 ## 7. 對照表頁（chart.html · catalog.html）
 
-兩支對照表頁，皆以新分頁開啟、樣式承襲轉換頁；**資料來源不同**：chart 由引擎即時導出，catalog 由策展的 `BonjiInput.xlsx` 而來。另外，轉換頁內嵌的「輔助輸入」面板（§7.4）也取用同一份 `catalog.json`。
+兩支對照表頁，皆以新分頁開啟、樣式承襲轉換頁；**資料來源不同**：chart 由引擎即時導出，catalog 由策展的 `BonjiInput.xlsx` 而來。另外，轉換頁內嵌的「輔助輸入」面板（§7.4）也取用同一份 `catalog.json`——但它自 2026-08-31 起**還有第二份資料** `element-catalog.json`（由 `db_siddham` 匯出，§7.5），catalog 頁不吃那一份。
 
 ### 7.1 chart.html — 字元對照表（引擎導出）
 
@@ -146,16 +146,52 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 轉換頁「對照表」鈕以 `window.open(href, '<name>')`（**具名、script 開啟**）開新分頁——具名可重用同一頁、script 開啟才能被自身 `close()`；子頁「返回」若有 `opener` 就 `focus()`＋`close()` 關回原分頁，否則就地導回 `index.html`。
 
-### 7.4 輔助輸入面板（index.html）— catalog.json 的第三個取用者
+### 7.4 輔助輸入面板（index.html）— 三個群、兩份資料
 
 整理 / 比對文獻時用的字形選盤，**嵌在轉換頁**（非獨立頁），由 `assist.js` + `assist.css` 實作。整理流程：看著來源字形、在面板認出它、點一下就把記法插進輸入框。
 
-- **同源不另存**：直接 fetch `data/catalog.json`（8 類、278 格），與 catalog 頁同資料、不經 converter。類別 chips ＋ 記法搜尋（依 `code` 子字串）過濾；異體字（無 `code`）標灰、僅供參考不可插入。
+- **三個群、兩份資料**（2026-08-31 起）：
+
+  | 群 | 資料 | 內容 |
+  | --- | --- | --- |
+  | 預設群 `default` | `data/catalog.json`（同 catalog 頁） | 8 類 **278** 格 |
+  | `Cbeta` | `data/element-catalog.json` | 母音 16 · 子音 35 · 體文 22 · 上接續 39 · 下接續 44 ＝ **156** 格 |
+  | `Mojikyo 今昔` | 同上 | 母音 16 · 子音 35 · 體文 34 · 上接續 47 · 下接續 44 · 接續擴充 2 ＝ **178** 格 |
+
+  合計 **612** 格。`assist.js` 把兩份來源正規化成同一個內部形狀（`groups[].cats[].entries[]`，**`font` 逐格帶著**），於是渲染、搜尋、字型偵測都只有一條路。
+- **兩排 chips ＝ 兩個獨立的軸**：第一排選群、第二排選類，交集才顯示（選 `Cbeta` ＋ `上接續` 就只看那 39 格）。整群都沒東西時**連群標題一起收**——留一個空標題會被讀成「這一群是空的」。
+- **`element-catalog.json` 是產物、不手改**：由 `db_siddham` 匯出，見 §7.5。
+- **同源不另存**：預設群直接 fetch `data/catalog.json`，與 catalog 頁同資料、不經 converter。記法搜尋（依 `code` 子字串）過濾；異體字（無 `code`）標灰、僅供參考不可插入。
+- ⚠️ **「不可插入」有兩種，訊息要分得開**：預設群的異體字（`assist.noinput`「此為異體字，無對應輸入記法」）與新兩群的 **記法未定**（`assist.nonotation`「來源未指明記法，無法插入」，全庫只有 M119 的 `暇` 一格）。併成一句的話，「來源沒說」與「這種字本來就沒有記法」就再也分不出來了。
 - **插入即重轉**：點一格 → 把其 `fd_code` 插入 `#bonji-input` 游標處 → **派發 `input` 事件**，`bonji.js` 既有的 `input` 監聽即時重轉（並順手 `M.textareaAutoResize` / `updateTextFields`）。
 - **底部輔助鈕**：dock 底固定一排（不隨字形捲動）空格 / 換行 / 連字號，分別插入 `' '` / `'\n'` / `'-'`（`-` 為詞組分隔、`' '` 為音節邊界，見 §5）。走同一條 `insertAtCursor` 路徑。
 - **與控制器解耦**：`assist.js` 是 classic IIFE、**不 import 任何模組**（用全域 I18n / M），只碰 `#bonji-input` 與 `#setting-assist`；與 ACL / `bonji.js` 零耦合，純靠 DOM 事件溝通。
 - **字型**：那兩支讀本機安裝的版本（§11），**沒有東西要下載**——舊版「面板未開＝不抓 TTF（lazy）」的說法已不成立、也不再需要。偵測不到時，說明區塊插在捲動區內的字形區之上（`#assist-font-notice`），受影響的字格加刪節線。⚠️ **這裡尤其要標**：面板的用途是「看著來源字形、在面板裡認出它」，而沒裝字型時那些格顯示的是一般漢字，認出來的會是**錯的字**。開關狀態存 `localStorage`（`bonji-assist-open`）。
 - **版面（固定在右側、覆蓋式）**：`position: fixed`、滿版高、內部捲動，由 `keyboard` 鈕開關、`localStorage` 記狀態。**不推主畫面**（覆蓋右側、輸入區位置不動）；開啟時隱藏 `side-tools`（`body.assist-open`）並貼齊右緣（`right: 12px`）。標題列兩顆鈕：**⋮ 切換工具列**（toggle `body.assist-tools` 顯示/隱藏 side-tools；顯示時 dock 自動讓到 `right: 70px` 以免被工具列蓋住）、**× 關閉**（side-tools 隱藏時仍能關閉面板）。
+
+### 7.5 `element-catalog.json` — 由 `db_siddham` 匯出
+
+`Cbeta` / `Mojikyo 今昔` 兩群的資料**不在本 repo 維護**，由 `My Projects/Siddham/export/bonji-element-export.js` 從 `db_siddham` 倒出來（`--check` 預設 / `--write` / `--help`，未知旗標 exit 2；同時寫獨立 repo 與 InProgress 鏡像）。**bonji 執行期不連任何 DB**——產物進版控、`clone` 下來就能跑，同家族五支色彩 registry 的先例。
+
+- **來源**：體文 / 上下接續 / 接續擴充 ← `rel_element_glyph`（`origin = authority`）＝ `體文接續-V1.xlsx` 的 `Cbeta` / `Mojikyo` 分頁；母音 / 子音 ← `vw_standard_glyph`（每個家族每個音節恰好一個標準字形，兩造各 51、音節集合逐一相同）。
+- **為什麼讀 DB 不讀 xlsx**：治理 v1.0 起 `db_siddham` 是 SoR、xlsx 不再是裁判。實查兩者 **232 = 232 列**，唯二差異正是治理 §10.9.32 那兩筆裁決（`科`→`jh`、`骸`→`r`）——DB ＝ xlsx ⊕ 裁決。⚠️ 匯出器**刻意不再實作一份 xlsx 解析**：那條路已由 `import-element.py` 與 `reconcile-mojikyo.py` 守著，再寫一份就是同一條規則的第二份實作。
+- **排序**〔owner：依 UnicodeSiddham 的順序〕：體文 / 上下接續 / 接續擴充用 `tb_siddham_element.fd_sort`（＝該分頁的 `#` 欄，1–52，接續擴充 53–58），同一記法多格時以 `rel_element_glyph.fd_sort`（該分頁列號）決勝。
+  ⚠️ **母音 / 子音那 51 個字母有 5 個不在該分頁裡**（`,l` `,ll` `a;m` `a.h` `lla;m`），排不完 ⇒ 改用 **CBETA 自己的 Big5 碼序**：實測它與該分頁的 46 個共有記法**零逆序**，且它就是古典字母次第，那 5 個因此有可交代的位置。
+  ⚠️⚠️ **兩群都用 CBETA 那一份名次**——M119 自己的碼序與 CBETA **51 個裡有 44 個名次不同**（它把 `lla;m` 排在子音第一、四個成音節流音排在 `a.h` 之後）。兩群並排時要對得起來，而家族既有的決定就是取 CBETA 次第。
+- **不含任何字型位元組**：產物只有 CJK 載體字碼位；`Siddam` / `Mojikyo M119` 一律讀本機安裝的版本（§11），本 repo 不散布——這一點不因本檔而改變。
+
+### 7.6 Composition 欄（index.html）
+
+輸入欄下方的一格，記的是**你在 `Cbeta` / `Mojikyo 今昔` 兩群點過哪些字**：每點一格，這裡追加該格的載體字（Char），同時 `assist.js` 把對應的記法（Notation）插進 `#bonji-input`——同一次點擊的兩個產物。由 `composition.js`（classic IIFE，`window.BonjiComposition`）實作。
+
+- ⚠️⚠️ **一格一個 `<span>`，字型逐格指定——不可以整欄設一個 `font-family`**。兩套造字都以 CJK 碼位當載體，而**同一個碼位在兩支字型裡多半都畫得出東西**（只是畫成不同的悉曇字）。整欄設 `font-family: 'Siddam','Mojikyo M119'` 的話，Mojikyo 那些字會被 Siddam 先接走 ⇒ **畫面上有字、而且看起來很正常，但那是別的字**。與 §11.2「沒裝字型時字格顯示一般漢字」是同一種壞法：不報錯、只是錯。
+  對映：`Cbeta` → `.f-unisiddham`（`Siddam`）／`Mojikyo 今昔` → `.f-mojikyo`（`Mojikyo M119`）。⚠️ 那三條 `.f-*` 規則在 `assist.css`，**刻意不綁在 `.ia-char` 祖先上**——本欄用的是同一組 class 與同一份 `@font-face`，綁死祖先就得再抄一份。
+- ⚠️ **本欄唯讀（不可鍵盤輸入）**，理由同上：字型是逐格記住的，手打進來的字沒有出身、對映不到任何一支。故 label 也不是 Materialize 的浮動 label 而是靜態一行，字級取 `.8rem`（實測 12px ＝ 上面兩個真欄位浮起後的字級，讓它看起來是同一層）。
+- **只有造字那兩群會寫進來**：預設群的 Unicode 悉曇字**沒有載體字這回事**（它的 `char` 本身就是悉曇字），點它只插記法。
+- **右上角三顆鈕**：複製 / **退一格** / 清除（形制同輸入欄的 `.in-actions`，清除沿用 `--danger` 警示色）。
+  ⚠️ **退一格會先確認「輸入欄結尾真的是那一格的記法」才動它**：手動改過輸入、或用範例 chip 覆蓋過，本欄就與輸入對不起來——那時**只退本欄並講出來**（`toast.compUndoneOnly`）。靜靜退掉一個對不上的東西比不退更糟。
+- **`clearAll()` 一併清空本欄**（`bonji.js`）：清除是整頁重置（標題 / 輸入 / 來源 / 全部輸出），留著 Composition 就與清空後的輸入對不起來，而畫面上看不出那是上一輪的殘留。
+- ⚠️ **本欄不進匯出 JSON**：`currentRecord()` 的形狀是既有的對外契約（`sourceFile / title / options / input / output`），本次未動。要收的話是另一個決定。
 
 ---
 

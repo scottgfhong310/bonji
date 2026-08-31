@@ -65,6 +65,7 @@ I18n.register('en', {
   'catalog.cat.ligature': 'Ligature (接續)',
   'catalog.cat.ligature_u': 'Ligature · upper (上接續)',
   'catalog.cat.ligature_l': 'Ligature · lower (下接續)',
+  'catalog.cat.ligature_ext': 'Ligature · extended (接續擴充)',
   'tool.assist': 'Input assist',
   'tool.gotoTop': 'Back to top',
   'tool.gotoLatin': 'Jump to transliteration',
@@ -95,5 +96,19 @@ I18n.register('en', {
   'toast.downloadsCleared': 'Removed {n} export(s)',
   'toast.clearDownloadsFail': 'Clear failed: {m}',
   'toast.loaded': 'Loaded: {n}',
-  'toast.loadFail': 'Load failed: {m}'
+  'toast.loadFail': 'Load failed: {m}',
+
+  // 2026-08-31：輔助輸入的兩個新群（Cbeta / Mojikyo 今昔）與 Composition 欄
+  'assist.group.default': 'Default set',
+  'assist.group.cbeta': 'Cbeta',
+  'assist.group.mojikyo119': 'Mojikyo',
+  'assist.nonotation': 'Source gives no notation — cannot insert',
+  'comp.label': 'Composition',
+  'comp.empty': 'Click a Cbeta / Mojikyo cell in the input assist: its Char is recorded here and its notation goes into the input above.',
+  'tool.copyComposition': 'Copy Composition',
+  'tool.undoComposition': 'Remove last',
+  'tool.clearComposition': 'Clear Composition',
+  'toast.compEmpty': 'Composition is empty',
+  'toast.compUndone': 'Removed the last glyph (and its notation from the input)',
+  'toast.compUndoneOnly': 'Removed from Composition only — the input no longer ends with that notation, please adjust it yourself'
 }, 'English');

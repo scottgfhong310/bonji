@@ -73,6 +73,27 @@
               <label for="bonji-input" data-i18n="input.label">輸入（ASCII / IAST 羅馬轉寫）</label>
             </div>
 
+            <!-- Composition：輔助輸入的 Cbeta / Mojikyo 今昔 兩群點過的載體字。
+                 ⚠️ 唯讀、且**逐格**指定字型（.comp-ch 各帶自己的 f-* class）——兩套造字共用
+                 CJK 碼位，整欄設一個 font-family 會讓 Mojikyo 那些字被 Siddam 接走、
+                 畫成別的悉曇字而看起來完全正常。理由見 composition.js 檔首。 -->
+            <div class="input-field input-field-comp">
+              <span class="in-actions">
+                <a href="#!" class="out-copy" id="copy-comp" data-i18n-title="tool.copyComposition" title="複製 Composition">
+                  <i class="material-icons">content_copy</i>
+                </a>
+                <a href="#!" class="out-copy" id="undo-comp" data-i18n-title="tool.undoComposition" title="退一格">
+                  <i class="material-icons">backspace</i>
+                </a>
+                <a href="#!" class="out-copy in-clear" id="clear-comp" data-i18n-title="tool.clearComposition" title="清除 Composition">
+                  <i class="material-icons">clear</i>
+                </a>
+              </span>
+              <span class="comp-label" data-i18n="comp.label">Composition</span>
+              <div id="bonji-composition" class="comp-box is-empty" aria-live="polite" aria-readonly="true"></div>
+              <p id="comp-empty" class="comp-empty" data-i18n="comp.empty">點輔助輸入的 Cbeta / Mojikyo 今昔 字格，這裡會記下對應的 Char。</p>
+            </div>
+
             <div class="hint" data-i18n-html="input.hint">
               以 <code>;m</code>=ṁ、<code>.h</code>=ḥ、<code>~m</code>=m̐、長母音 <code>aa</code>=ā 等記法輸入。
             </div>
@@ -202,6 +223,9 @@
     </div>
     <input id="assist-search" type="search" class="assist-search browser-default" autocomplete="off"
       data-i18n-placeholder="assist.search" data-filter-clear />
+    <!-- 兩排篩選：第一排「群」（預設群 / Cbeta / Mojikyo 今昔），第二排「類」。
+         兩軸各自獨立——選 Cbeta ＋ 上接續 就只看那一格。由 assist.js 填。 -->
+    <div id="assist-groups" class="assist-cats assist-groups"></div>
     <div id="assist-cats" class="assist-cats"></div>
     <div class="assist-scroll">
       <!-- 缺本機字型時的說明（由 assist.js 透過 BonjiFonts.noticeHtml 填入；有裝則保持空）。
@@ -281,6 +305,7 @@
   <script src="./font-availability.js"></script>
 
   <!-- 輔助輸入選盤（classic：用全域 I18n / M / BonjiFonts；操作 #bonji-input 並派發 input 事件，與 bonji.js 解耦） -->
+  <script src="./composition.js"></script>   <!-- Composition 欄；assist.js 會呼叫，故排在它之前 -->
   <script src="./assist.js"></script>
 
   <!-- 頁面控制器（ESM module：import SiddhamConverter 防腐層；module 天然 defer） -->

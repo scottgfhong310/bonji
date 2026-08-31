@@ -540,3 +540,50 @@ body.font-missing-siddam .f-unisiddham {
   text-decoration-color: var(--warn);
   text-decoration-thickness: 2px;
 }
+
+/* ===== Composition 欄（輸入欄下方；composition.js） =====
+ * 記的是輔助輸入 Cbeta / Mojikyo 今昔 兩群點過的載體字。
+ * ⚠️ **唯讀**（不是 <input>／<textarea>）——字型是逐格記住的，手打進來的字沒有出身、
+ *    對映不到任何一支字型。故 label 也不是 Materialize 的浮動 label，而是靜態一行；
+ *    字級刻意取 .8rem（＝11.2px，與 Materialize 浮起後的 1rem×scale(.8) 相同），
+ *    讓它與上面兩個真欄位的 label 看起來是同一層。 */
+.input-field-comp {
+  position: relative;
+  margin-top: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.comp-label {
+  display: block;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.comp-box {
+  min-height: 44px;
+  padding: 6px 78px 6px 0;   /* 右側留給 .in-actions 三顆鈕 */
+  border-bottom: 1px solid var(--border);
+  line-height: 1.9;
+  word-break: break-all;
+  cursor: default;
+}
+.comp-box.is-empty {
+  border-bottom-style: dashed;
+}
+
+/* 一格一個 span，字型逐格指定（.f-* 在 assist.css）。
+ * ⚠️ 不可以改成整欄一個 font-family——兩套造字共用 CJK 碼位，Mojikyo 的字會被
+ *    Siddam 先接走、畫成別的悉曇字而看起來完全正常。見 composition.js 檔首。 */
+.comp-ch {
+  font-size: 1.7rem;
+  vertical-align: middle;
+}
+
+.comp-empty {
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}

@@ -65,6 +65,7 @@ I18n.register('zh-Hant', {
   'catalog.cat.ligature': '接續 ligature',
   'catalog.cat.ligature_u': '上接續 ligature_u',
   'catalog.cat.ligature_l': '下接續 ligature_l',
+  'catalog.cat.ligature_ext': '接續擴充 ligature_ext',
   'tool.assist': '輔助輸入',
   'tool.gotoTop': '回到頁首',
   'tool.gotoLatin': '跳到拉丁轉寫',
@@ -95,5 +96,19 @@ I18n.register('zh-Hant', {
   'toast.downloadsCleared': '已清空 {n} 個匯出檔',
   'toast.clearDownloadsFail': '清空失敗：{m}',
   'toast.loaded': '已載入：{n}',
-  'toast.loadFail': '載入失敗：{m}'
+  'toast.loadFail': '載入失敗：{m}',
+
+  // 2026-08-31：輔助輸入的兩個新群（Cbeta / Mojikyo 今昔）與 Composition 欄
+  'assist.group.default': '預設群',
+  'assist.group.cbeta': 'Cbeta',
+  'assist.group.mojikyo119': 'Mojikyo 今昔',
+  'assist.nonotation': '來源未指明記法，無法插入',
+  'comp.label': 'Composition',
+  'comp.empty': '點輔助輸入的 Cbeta / Mojikyo 今昔 字格，這裡會記下對應的 Char，記法則插進上面的輸入欄。',
+  'tool.copyComposition': '複製 Composition',
+  'tool.undoComposition': '退一格',
+  'tool.clearComposition': '清除 Composition',
+  'toast.compEmpty': 'Composition 是空的',
+  'toast.compUndone': '已退一格（輸入欄的記法也一併退掉）',
+  'toast.compUndoneOnly': '只退了 Composition——輸入欄結尾已不是那一格的記法，請自行調整'
 }, '繁體中文');
