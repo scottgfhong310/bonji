@@ -24,12 +24,19 @@ bonji.js · chart.js                         ← 控制器（碰 DOM、事件、
 siddham-converter.js                        ← 防腐層 ACL：唯一對外轉換介面（純邏輯、不碰 DOM）
   │
 vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、原樣不改）
+
+旁掛（classic IIFE、不進上面那條 import 鏈）：
+  font-availability.js  → window.BonjiFonts        本機字型偵測 + 缺字型說明（§11.2）
+  composition.js        → window.BonjiComposition  Composition 欄（§7.6）
+  assist.js ─→ data/{catalog.json, element-catalog.json}   輔助輸入面板（§7.4 / §7.5）
 ```
 
 **邊界紀律（硬約束）**：
 
 - 轉換相關的程式（控制器 `bonji.js` / `chart.js`）**只** import `siddham-converter.js`，**絕不**直接 import `vendor/bonji-input/siddham.js`。`catalog.js` 連 converter 都不碰——它只 fetch `data/catalog.json`（純資料頁，§7.2）。
 - 升級 vendored 引擎 → 只動 wrapper（ACL）。引擎是外來的、會被整支替換；對 UI 應呈現**單一穩定介面**——這就是 ACL 的職責。
+- **那三支旁掛模組刻意是 classic IIFE、不進 ESM 鏈**：只用全域（`I18n` / `M` / `BonjiFonts` / `BonjiComposition`）與 DOM 事件溝通，與 ACL、控制器零耦合——所以它們**不需要**、也不可以 import `siddham-converter.js`（面板插的是記法字串，轉換由 `bonji.js` 既有的 `input` 監聽做）。
+  ⚠️ **載入順序是契約，寫在 `index.html` 的註解裡**：`font-availability.js` → `composition.js` → `assist.js`（後者呼叫前兩者），三者皆早於 `bonji.js` module。順序錯了不會報錯——`assist.js` 的 `if (!window.BonjiFonts) return` 會**安靜地略過字型偵測**，畫面看起來完全正常。
 - 釘選版本見 `vendor/bonji-input/SOURCE.md`（commit `0a7eadd…`）。更新＝對上游與釘選 commit 做 diff、只挑引擎相關修正套回 `vendor/`、重跑 `npm test`、更新 `SOURCE.md`。
 
 **`SiddhamConverter` 介面**：
@@ -316,8 +323,15 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 - ⚠️ **失敗模式比「豆腐字」嚴重，所以偵測不是裝飾。** 那兩支字型的 `fd_char` 是**真的 CJK 碼位**
   （乾 U+4E7E、侃 U+4F83、焐 U+7110…），只在該字型內才長成悉曇字形。沒裝時字格
   **不會**變成缺字方塊，而是顯示**一般漢字**——看起來完全正常、卻是錯的字。
-  故除了說明區塊，還把受影響的 **151 格**（mojikyo 149 ＋ uniSiddham 2）以
-  `body.font-missing-*` ＋ 刪節線標出來。
+  故除了說明區塊，還把受影響的字格以 `body.font-missing-*` ＋ 刪節線標出來。
+  ⚠️ **兩頁的格數不同**（`body.font-missing-*` 是 body 層的 class，命中該頁**所有**
+  `.f-mojikyo` / `.f-unisiddham`）：**catalog 頁 151 格**（mojikyo 149 ＋ uniSiddham 2）；
+  **轉換頁 497 格**——同一份 catalog 資料的 151 格，再加輔助輸入新兩群的
+  `Mojikyo 今昔` 190（`.f-mojikyo`）＋ `Cbeta` 156（`.f-unisiddham`），2026-08-31 起。
+  ⭐ **那條規則刻意不綁祖先**，於是 **Composition 欄的格子也一起被標**（同一組 class，§7.6）
+  ——那正是要的：沒裝字型時組出來的那一串載體字，畫面上顯示的是一般漢字、**組錯了也看不出來**。
+  ⚠️ 說明區塊裡那個數字**是執行期算的、不是寫死的**（`BonjiFonts.countByGroup()`，
+  `assist.js` 做一次形狀轉接餵它三個群）——所以資料長大它自己會跟上，**上面這兩個數字才是會過期的那個**。
 - ⚠️ **不可用 canvas 量寬度偵測**（常見手法，在這裡會**靜默給出錯的答案**）：漢字字形幾乎
   一律全形（advance ＝ 1em），同一個 CJK 碼位在 `Mojikyo M119` 與在任何後備漢字字型裡
   量到的寬度**相同**，於是「沒裝」會被判成「有裝」。改用 `FontFace` ＋ `local()`：

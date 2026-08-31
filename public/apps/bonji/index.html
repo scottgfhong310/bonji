@@ -207,8 +207,9 @@
     </div>
   </main>
 
-  <!-- 輔助輸入：固定在右側的字形選盤（依 catalog.json）；點字 → 把其 ASCII 記法插入輸入框游標處。
-       由 keyboard 側邊工具開關，開啟時主內容往左讓位（assist.css / assist.js） -->
+  <!-- 輔助輸入：固定在右側的字形選盤（三個群、兩份資料：catalog.json ＋ element-catalog.json）。
+       點字 → 把其 ASCII 記法插入輸入框游標處；後兩群另把載體字記進 Composition 欄。
+       由 keyboard 側邊工具開關，**覆蓋式、不推主畫面**（assist.css / assist.js；DESIGN §7.4） -->
   <section id="assist-panel" class="card assist-panel" hidden>
     <div class="assist-head">
       <span class="assist-title" data-i18n="assist.title">輔助輸入</span>
