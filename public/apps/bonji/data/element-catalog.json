@@ -307,6 +307,11 @@
     {
      "id": "ligature_u",
      "entries": [
+      { "code": "k", "char": "塩" },
+      { "code": "k", "char": "汚" },
+      { "code": "kh", "char": "甥" },
+      { "code": "g", "char": "央" },
+      { "code": "gh", "char": "往" },
       { "code": ";n", "char": "黄" },
       { "code": ";n", "char": "岡" },
       { "code": ";nk", "char": "赫" },
@@ -359,9 +364,13 @@
     {
      "id": "ligature_l",
      "entries": [
+      { "code": "k", "char": "於" },
       { "code": "k", "char": "馨" },
       { "code": "kv", "char": "較" },
       { "code": "ktr", "char": "郭" },
+      { "code": "kh", "char": "凹" },
+      { "code": "g", "char": "奥" },
+      { "code": "gh", "char": "応" },
       { "code": ";n", "char": "沖" },
       { "code": "c", "char": "億" },
       { "code": "ch", "char": "憶" },
