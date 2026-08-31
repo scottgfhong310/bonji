@@ -40,7 +40,30 @@ router.post('/export', (req, res) => {
     const sourceFile = (typeof body.sourceFile === 'string' && body.sourceFile)
       ? path.basename(body.sourceFile) : null;
 
-    if (!input && !(output.siddham || output.latin || output.codepoints)) {
+    /* Composition（DESIGN §7.6／§9）：一格一筆 { char, font, family, code }。
+     * ⚠️ **本 route 是逐欄重建 record 的（白名單）**——前端多送一個鍵，這裡沒接就會
+     *    **安靜地被丟掉，而畫面上匯出是成功的**。加欄位時兩邊都要改。
+     * ⚠️ 這是 request body ＝ 外部輸入且會寫進磁碟 ⇒ 逐筆檢型別：沒有 `char` 的丟掉、
+     *    其餘欄位不是字串一律存 null。**不設筆數上限**——靜默截斷會讓匯出檔看起來完整；
+     *    大小由 app 層的 `express.json({ limit })` 擋。
+     * ⚠️ **`font` 不在這裡比對白名單**：route 不認得字型，而它存的是「當時畫面上是什麼」。
+     *    認不認得是前端渲染時的事（見 composition.js 的 `set()`）。 */
+    const composition = Array.isArray(body.composition)
+      ? body.composition.reduce((acc, e) => {
+          if (!e || typeof e !== 'object' || typeof e.char !== 'string' || e.char === '') return acc;
+          acc.push({
+            char: e.char,
+            font: typeof e.font === 'string' ? e.font : null,
+            family: typeof e.family === 'string' ? e.family : null,
+            code: typeof e.code === 'string' ? e.code : null
+          });
+          return acc;
+        }, [])
+      : [];
+
+    // ⚠️ 與前端 hasContent() 同一組條件——只組了 Composition 而沒打字也算有內容，
+    //    不然那條路會拿到一個說不出理由的 400。
+    if (!input && !(output.siddham || output.latin || output.codepoints) && !composition.length) {
       return res.status(400).json({ ok: false, error: 'Nothing to export' });
     }
 
@@ -67,7 +90,9 @@ router.post('/export', (req, res) => {
         siddham: output.siddham || '',
         latin: output.latin || '',
         codepoints: output.codepoints || ''
-      }
+      },
+      // 沒組字時給 []（不是 null）——「這次沒組字」與「舊版沒有這個欄位」要分得出來
+      composition: composition
     };
 
     fs.writeFileSync(abs, JSON.stringify(record, null, 2), 'utf8');

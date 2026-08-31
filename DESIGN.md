@@ -199,13 +199,18 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 - **右上角三顆鈕**：複製 / **退一格** / 清除（形制同輸入欄的 `.in-actions`，清除沿用 `--danger` 警示色）。
   ⚠️ **退一格會先確認「輸入欄結尾真的是那一格的記法」才動它**：手動改過輸入、或用範例 chip 覆蓋過，本欄就與輸入對不起來——那時**只退本欄並講出來**（`toast.compUndoneOnly`）。靜靜退掉一個對不上的東西比不退更糟。
 - **`clearAll()` 一併清空本欄**（`bonji.js`）：清除是整頁重置（標題 / 輸入 / 來源 / 全部輸出），留著 Composition 就與清空後的輸入對不起來，而畫面上看不出那是上一輪的殘留。
-- ⚠️ **本欄不進匯出 JSON**：`currentRecord()` 的形狀是既有的對外契約（`sourceFile / title / options / input / output`），本次未動。要收的話是另一個決定。
+- **進匯出 JSON**〔owner 2026-08-31 拍板；原本刻意不收，見 §9〕：`composition: [{ char, font, family, code }]`，順序＝畫面順序，沒組字時給 `[]`（**不是 `null`**——「這次沒組字」與「舊版沒有這個欄位」要分得出來）。
+  ⚠️⚠️ **一定要逐格帶 `font`**：光有那串載體字，拿去別的地方用單一字型重畫，`Siddam` 會把 Mojikyo 那些字接走、畫成別的悉曇字**而看起來完全正常**。`family` 是 `@font-face` 的宣告名，取自 `font-availability.js` 的 `FONTS`（**不在 `composition.js` 另抄一份對照表**——抄了兩邊遲早各自漂，而漂掉的那一邊照樣印得出一個很像的名字）；查不到回 `null`，**不猜一個名字**。
+  ⚠️⚠️ **`routes/bonji.js` 的 `POST /export` 是逐欄重建 record 的（白名單）**——前端多送一個鍵，後端沒接就會**被安靜地丟掉，而畫面上匯出是成功的**（本次實際踩到：前端改完、匯出檔裡沒有 `composition`）。**加欄位時兩邊都要改，而且要拿磁碟上那個檔驗收，不是驗 `currentRecord()`。**
+  ⚠️ route 端逐筆檢型別（外部輸入且會寫進磁碟）：沒有 `char` 的丟掉、其餘欄位非字串一律存 `null`；**不設筆數上限**（靜默截斷會讓匯出檔看起來完整），大小由 `express.json({ limit })` 擋。
+  ⚠️ **`font` 不在 route 比對白名單**：route 不認得字型，它存的是「當時畫面上是什麼」；認不認得是前端渲染時的事。
+- **載回時一併還原**（`loadFile`）：**不還原的話它會被安靜地弄丟**——載回來的畫面 Composition 是空的，而使用者再按一次匯出就把原檔那一段覆蓋掉了。舊檔沒有這個鍵 ⇒ 走 `|| []`（清空，與該檔內容一致），不是「保留現況」。`BonjiComposition.set()` 對外部輸入逐筆檢型別；**`font` 認不得時照實留著、不猜**——留著至少 `title` 講得出它的記法，而猜一個會用別支字型畫出一個看起來完全正常的字。
 
 ---
 
 ## 8. 後端與 `config.json`（backend 開關）
 
-- **API**（`routes/bonji.js`，`{ ok }` 信封）：`POST /export`（存 `bonji-yyyyMMddHHmmss.json`，檔名 server 產生）、`GET /downloads`（降冪列出）、`POST /clear`（清空，目標寫死 server）。匯出檔以 `/download/bonji/<file>` 靜態提供。安全：目標目錄寫死、`startsWith(DATA_DIR+sep)` 落點檢查、`sourceFile` 以 `basename` 消毒後才存、前端 `confirm()`。
+- **API**（`routes/bonji.js`，`{ ok }` 信封）：`POST /export`（存 `bonji-yyyyMMddHHmmss.json`，檔名 server 產生；⚠️ **逐欄重建 record ＝ 白名單，前端多送的鍵不會自己流進去**，見 §7.6）、`GET /downloads`（降冪列出）、`POST /clear`（清空，目標寫死 server）。匯出檔以 `/download/bonji/<file>` 靜態提供。安全：目標目錄寫死、`startsWith(DATA_DIR+sep)` 落點檢查、`sourceFile` 以 `basename` 消毒後才存、前端 `confirm()`。
 - **下載＝先匯出再下載**：側邊「下載」鈕（後端開啟時）先 `POST /export`、再下載剛產生的 JSON；「匯出」鈕只存伺服器、不下載。
 - **血緣（lineage）**：前端以 `loadedFrom` 記「目前內容來自哪個匯出檔」；點清單載回會設 `loadedFrom`、並把載入檔的 `sourceFile` 顯示在 `#source-row`；再匯出時把 `loadedFrom` 寫進新檔的 `sourceFile`。
 - **`config.json`（後端開關，沿用 tibetan-siddham 做法）**：`{ "backend": true | false }`，前端 `loadConfig()` 在 `init` 讀。
@@ -217,7 +222,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 ## 9. 資料結構（Data structures）
 
-兩份對外 JSON 的完整結構見 `README.md`「JSON shapes」一節：(1) `convert()` 回傳 `{ input, ascii, siddham, latin, codepoints }`（`input` 為原始輸入、`ascii` 為正規化記法）、(2) 匯出檔 `bonji-yyyyMMddHHmmss.json`（`app / exportedAt / sourceFile / title / options{…} / input / output{ siddham, latin, codepoints }`）。**匯出檔的 `input` 一律存正規化 ASCII 記法**（即 `convert()` 的 `ascii`，如 ṁ/ṃ → ;m），故不另存 `output.ascii`。純前端模式的 Blob 下載與匯出檔同形狀。
+兩份對外 JSON 的完整結構見 `README.md`「JSON shapes」一節：(1) `convert()` 回傳 `{ input, ascii, siddham, latin, codepoints }`（`input` 為原始輸入、`ascii` 為正規化記法）、(2) 匯出檔 `bonji-yyyyMMddHHmmss.json`（`app / exportedAt / sourceFile / title / options{…} / input / output{ siddham, latin, codepoints } / composition[{ char, font, family, code }]`）。⚠️ **`composition` 自 2026-08-31 起才有**——更早的檔沒有這個鍵，載回時本欄清空。**匯出檔的 `input` 一律存正規化 ASCII 記法**（即 `convert()` 的 `ascii`，如 ṁ/ṃ → ;m），故不另存 `output.ascii`。純前端模式的 Blob 下載與匯出檔同形狀。
 
 ---
 

@@ -182,12 +182,20 @@ import { SiddhamConverter } from "./siddham-converter.js";
         siddham: outEls.siddham.textContent,
         latin: outEls.latin.textContent,
         codepoints: outEls.codepoints.textContent
-      }
+      },
+      /* Composition：一格一筆 `{ char, font, family, code }`（DESIGN §7.6／§9）。
+       * ⚠️ **一定要逐格帶 font**——兩套造字共用 CJK 碼位，光有 `text` 那串字，
+       *    拿去別的地方渲染時 `Siddam` 會把 Mojikyo 那些字接走、畫成別的悉曇字
+       *    而看起來完全正常。`family` 是 `@font-face` 的宣告名，讓收檔的人畫得出來。
+       * ⚠️ 沒有東西時給 `[]` 不給 `null`——**「這次沒組字」與「這個版本沒有這個欄位」
+       *    要分得出來**（舊檔沒有 `composition` 這個鍵，載回時走 `|| []`）。 */
+      composition: window.BonjiComposition ? BonjiComposition.entries() : []
     };
   }
 
   function hasContent(rec) {
-    return !!(rec.input || rec.output.siddham || rec.output.latin || rec.output.codepoints);
+    return !!(rec.input || rec.output.siddham || rec.output.latin || rec.output.codepoints ||
+      (rec.composition && rec.composition.length));
   }
 
   // 顯示 / 隱藏「來源檔」列（options 下方）
@@ -434,6 +442,10 @@ import { SiddhamConverter } from "./siddham-converter.js";
         if (M.updateTextFields) M.updateTextFields();
         M.textareaAutoResize($title);
         M.textareaAutoResize($input);
+        /* Composition 一併還原。⚠️ **不還原的話它會被安靜地弄丟**：載回來的畫面
+         * Composition 是空的，而使用者再按一次匯出就把原檔那一段覆蓋掉了。
+         * ⚠️ 舊檔沒有這個鍵 ⇒ `|| []`（清空，與該檔的內容一致），不是「保留現況」。 */
+        if (window.BonjiComposition) BonjiComposition.set(rec.composition || []);
         loadedFrom = name;          // 之後再匯出會把這個檔名記成 sourceFile
         currentSource = rec.sourceFile || null;   // 顯示這個載入檔的 sourceFile
         renderSource();

@@ -92,9 +92,20 @@ npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼�
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
     "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
-  }
+  },
+  "composition": [                          // Composition 欄，一格一筆（沒組字時為 []）
+    { "char": "玸", "font": "uniSiddham", "family": "Siddam",       "code": "ka" },
+    { "char": "黄", "font": "mojikyo119", "family": "Mojikyo M119", "code": ";n" }
+  ]
 }
 ```
+
+> ⚠️ **`composition` 逐格帶字型，而那不是選配的。** 兩套造字都以 CJK 碼位當載體，
+> 同一個字**在兩支字型裡多半都畫得出東西**——只是畫成不同的悉曇字。拿光禿禿的那串字
+> 用單一字型重畫，會得到一個**看起來完全正常、而且是錯的**結果。
+> `family` 是 `@font-face` 的宣告名（收檔的人照它就畫得出來），`code` 是這一次點擊插進
+> `input` 的那個記法。**2026-08-31 之前匯出的檔沒有 `composition` 這個鍵**——載回時
+> 本欄會被清空（那與該檔的內容一致）。
 
 > 匯出檔的 **`input` 一律存成正規化 ASCII 記法**（如打 `siddhaṃ` 會存成 `siddha;m`），便於攜帶與重打。`output` 是三項輸出（`siddham` / `latin` / `codepoints`）；`app`、`exportedAt`、`sourceFile`、`title`、`options` 是匯出 metadata。（library 的 `convert()` 則回傳原始 `input`，另以 `ascii` 欄提供 ASCII。）
 

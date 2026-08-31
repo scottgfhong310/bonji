@@ -56,6 +56,25 @@
   /** 這一欄的純文字（＝載體字串，不含任何標記）。 */
   function text() { return stack.map(function (it) { return it.char; }).join(''); }
 
+  /**
+   * 這一欄的字型家族名（`@font-face` 宣告的那個真名）。
+   * ⚠️ **不在本檔另抄一份對照表**——權威在 `font-availability.js` 的 `FONTS`
+   *    （那份的 `css` 就是宣告名，並註明「檔名會誤導」：`Siddham.ttf` 的 family 是 `Siddam`）。
+   *    抄一份的話兩邊遲早各自漂，而漂掉的那一邊照樣印得出一個看起來很像的名字。
+   * @returns {string|null} 查不到回 null——**不要猜一個名字**，那會讓匯出檔說一件假話。
+   */
+  function familyOf(font) {
+    var F = window.BonjiFonts && BonjiFonts.FONTS;
+    return (F && F[font] && F[font].css) || null;
+  }
+
+  /** 匯出用：一格一筆 `{ char, font, family, code }`（順序 ＝ 畫面順序）。 */
+  function entries() {
+    return stack.map(function (it) {
+      return { char: it.char, font: it.font, family: familyOf(it.font), code: it.code };
+    });
+  }
+
   var API = {
     /**
      * 追加一格。
@@ -97,7 +116,28 @@
       return had;
     },
 
+    /**
+     * 由匯出檔還原（`loadFile`）。**整批取代，不是追加。**
+     * ⚠️ 這是**外部輸入**（使用者手上的 JSON 可以是任何東西）⇒ 逐筆檢查：
+     *    沒有 `char` 的丟掉、`code` 不是字串一律當 null。
+     * ⚠️ **`font` 認不得時照實留著、不猜一個**——留著至少 `title` 還講得出它的記法，
+     *    而猜一個會讓那一格用**別支字型**畫出一個看起來完全正常的字（本檔開頭那件事）。
+     *    `render()` 對認不得的 font 不掛 class，於是它會用預設字型畫、看得出來不一樣。
+     * @returns {number} 實際收下的格數（**與傳進來的長度不一定相等**，差額就是被丟掉的）
+     */
+    set: function (list) {
+      stack = (Array.isArray(list) ? list : []).reduce(function (acc, e) {
+        if (!e || typeof e.char !== 'string' || e.char === '') return acc;
+        acc.push({ char: e.char, font: e.font, code: typeof e.code === 'string' ? e.code : null });
+        return acc;
+      }, []);
+      render();
+      return stack.length;
+    },
+
     text: text,
+    entries: entries,
+    familyOf: familyOf,
     count: function () { return stack.length; },
     isEmpty: function () { return stack.length === 0; }
   };

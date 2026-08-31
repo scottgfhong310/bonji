@@ -92,9 +92,22 @@ npm test                          # vendored エンジンを検証（5 ケース
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
     "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
-  }
+  },
+  "composition": [                          // Composition 欄。1 セル 1 件（未使用なら []）
+    { "char": "玸", "font": "uniSiddham", "family": "Siddam",       "code": "ka" },
+    { "char": "黄", "font": "mojikyo119", "family": "Mojikyo M119", "code": ";n" }
+  ]
 }
 ```
+
+> ⚠️ **`composition` はセル単位でフォントを持ちます。これは省略可能な情報ではありません。**
+> 両者とも CJK コードポイント上にあるため、同じ文字が**両方のフォントで描けてしまう**
+> ——ただし別の悉曇字として。文字列だけを単一フォントで描き直すと、
+> **一見まったく正常で、しかも誤った**結果になります。
+> `family` は `@font-face` の宣言名（受け取った側はこれで描画できます）、
+> `code` はそのクリックが `input` に挿入した記法です。
+> **2026-08-31 より前に書き出したファイルに `composition` キーはありません**
+> ——読み込むと本欄はクリアされます（そのファイルの内容と一致します）。
 
 > 書き出しは **`input` を正規化 ASCII 表記で保存**（例：`siddhaṃ` と打っても `siddha;m` で保存）し、可搬・再入力しやすくします。`output` は 3 出力（`siddham` / `latin` / `codepoints`）；`app`・`exportedAt`・`sourceFile`・`title`・`options` は書き出しメタデータ。（ライブラリの `convert()` は生の `input` を返し、ASCII は別途 `ascii` で提供。）
 

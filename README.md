@@ -92,9 +92,20 @@ Two JSON structures appear in this project.
     "siddham":    "𑖭𑖰𑖟𑖿𑖠𑖽",
     "latin":      "siddhaṃ",
     "codepoints": "U+115AD U+115B0 U+1159F U+115BF U+115A0 U+115BD"
-  }
+  },
+  "composition": [                          // the Composition field, one cell per entry ([] if unused)
+    { "char": "玸", "font": "uniSiddham", "family": "Siddam",        "code": "ka" },
+    { "char": "黄", "font": "mojikyo119", "family": "Mojikyo M119",  "code": ";n" }
+  ]
 }
 ```
+
+> **`composition` carries the font per cell, and that is not optional.** Both encodings sit on
+> CJK code points, so the same character usually renders in *both* fonts — just as a different
+> Siddhaṁ letter. Re-rendering the bare string with one font would produce something that looks
+> perfectly fine and is wrong. `family` is the `@font-face` family name, so a consumer can draw it;
+> `code` is the notation that this click inserted into `input`. Files written before 2026-08-31
+> have no `composition` key — loading one clears the field (that matches the file's contents).
 
 > The export stores **`input` as the normalized ASCII notation** (e.g. a typed `siddhaṃ` is saved as `siddha;m`), so the file is portable and re-typeable. `output` holds the three outputs `siddham` / `latin` / `codepoints`; `app`, `exportedAt`, `sourceFile`, `title` and `options` are export metadata. (The library's `convert()` instead echoes the raw `input` and exposes the ASCII separately as `ascii`.)
 
