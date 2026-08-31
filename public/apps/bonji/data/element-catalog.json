@@ -298,7 +298,10 @@
       { "code": "au", "char": "洩" },
       { "code": "au", "char": "瑛" },
       { "code": "au", "char": "鉛" },
-      { "code": ";m", "char": "閲" }
+      { "code": "~m", "char": "謁" },
+      { "code": ";m", "char": "悦" },
+      { "code": ";m", "char": "閲" },
+      { "code": ".h", "char": "越" }
      ]
     },
     {
@@ -306,12 +309,14 @@
      "entries": [
       { "code": ";n", "char": "黄" },
       { "code": ";n", "char": "岡" },
+      { "code": ";nk", "char": "赫" },
       { "code": "c", "char": "荻" },
       { "code": "ch", "char": "屋" },
       { "code": "j", "char": "臆" },
       { "code": "j", "char": "乙" },
       { "code": "jh", "char": "伽" },
       { "code": "jh", "char": "科" },
+      { "code": null, "char": "暇" },
       { "code": "~n", "char": "佳" },
       { "code": "~n", "char": "果" },
       { "code": "~n", "char": "架" },
@@ -348,15 +353,15 @@
       { "code": "s", "char": "核" },
       { "code": "h", "char": "獲" },
       { "code": "h", "char": "確" },
-      { "code": "k.s", "char": "楽" },
-      { "code": ";nk", "char": "赫" },
-      { "code": null, "char": "暇" }
+      { "code": "k.s", "char": "楽" }
      ]
     },
     {
      "id": "ligature_l",
      "entries": [
       { "code": "k", "char": "馨" },
+      { "code": "kv", "char": "較" },
+      { "code": "ktr", "char": "郭" },
       { "code": ";n", "char": "沖" },
       { "code": "c", "char": "億" },
       { "code": "ch", "char": "憶" },
@@ -374,6 +379,7 @@
       { "code": ".n", "char": "菓" },
       { "code": "t", "char": "課" },
       { "code": "t", "char": "画" },
+      { "code": "tr", "char": "蛙" },
       { "code": "th", "char": "芽" },
       { "code": "d", "char": "賀" },
       { "code": "dh", "char": "駕" },
@@ -396,17 +402,14 @@
       { "code": ".s", "char": "格" },
       { "code": "s", "char": "殻" },
       { "code": "h", "char": "穫" },
-      { "code": "k.s", "char": "額" },
-      { "code": "tr", "char": "蛙" },
-      { "code": "kv", "char": "較" },
-      { "code": "ktr", "char": "郭" }
+      { "code": "k.s", "char": "額" }
      ]
     },
     {
      "id": "ligature_ext",
      "entries": [
-      { "code": "y_u", "char": "浬" },
-      { "code": "t,r", "char": "角" }
+      { "code": "t,r", "char": "角" },
+      { "code": "y_u", "char": "浬" }
      ]
     }
    ]
