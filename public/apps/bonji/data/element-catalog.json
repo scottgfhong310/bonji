@@ -316,7 +316,7 @@
       { "code": "j", "char": "乙" },
       { "code": "jh", "char": "伽" },
       { "code": "jh", "char": "科" },
-      { "code": null, "char": "暇" },
+      { "code": "jh", "char": "暇" },
       { "code": "~n", "char": "佳" },
       { "code": "~n", "char": "果" },
       { "code": "~n", "char": "架" },
