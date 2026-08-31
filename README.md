@@ -125,6 +125,7 @@ bonji/
       ├─ catalog.html · catalog.css · catalog.js   # font catalog (from BonjiInput.xlsx)
       ├─ siddham-converter.js                  # anti-corruption layer (the ONLY Siddhaṁ interface)
       ├─ config.json                           # backend toggle { backend: true|false }
+      ├─ assist.js · assist.css                # input-assist glyph palette (three sets; embedded in the converter page)
       ├─ composition.js                        # Composition field (records the carrier char you click)
       ├─ data/{catalog.json, BonjiInput.xlsx}  # default-set data (catalog.json generated from the xlsx)
       ├─ data/element-catalog.json             # Cbeta / Mojikyo sets (generated from db_siddham)
@@ -132,7 +133,9 @@ bonji/
       ├─ font-availability.js                 # local-font detection + missing-font notice (→ window.BonjiFonts)
       ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # only the redistributable one (OFL, ~47 KB)
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
-      └─ side-tool.css · materialize-dark.css
+      ├─ side-tool.css · side-tool.js           # family shared: side-tool rail
+      ├─ filter-clear.css · filter-clear.js     # family shared: search-box clear button
+      └─ materialize-dark.css                   # family shared: Materialize dark theme
 ```
 
 ## Using the core (`SiddhamConverter`)

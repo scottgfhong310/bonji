@@ -29,6 +29,7 @@ public/apps/bonji/                  # 前端（服務於 /apps/bonji/）
 ├─ font-availability.js                       # 本機字型偵測＋缺字型說明（classic → window.BonjiFonts）
 ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}       # 只收可散布的那一支（OFL）；Mojikyo/Siddam 讀本機安裝，見 DESIGN §11
 ├─ side-tool.css · side-tool.js · materialize-dark.css   # 家族共用側鍵（樣式＋setIconDone 行為；權威版＝家族 repo，§5.5）
+├─ filter-clear.css · filter-clear.js         # 家族共用：搜尋框清除鈕（權威版不在家族 repo 根，見 SHARED_LIBRARY_GUIDELINES §4）
 └─ i18n.js · locales/{zh-Hant,en,ja}.js
 ```
 

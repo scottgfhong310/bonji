@@ -127,6 +127,7 @@ bonji/
       ├─ catalog.html · catalog.css · catalog.js   # 字形対照表（BonjiInput.xlsx 準拠）
       ├─ siddham-converter.js                  # 防腐層（唯一の悉曇インターフェース）
       ├─ config.json                           # バックエンド切替 { backend: true|false }
+      ├─ assist.js · assist.css                # 入力補助の字形パレット（3 グループ；変換ページに内蔵）
       ├─ composition.js                        # Composition 欄（クリックした外字の載体字を記録）
       ├─ data/{catalog.json, BonjiInput.xlsx}  # 既定グループのデータ（catalog.json は xlsx から生成）
       ├─ data/element-catalog.json             # Cbeta / 今昔文字鏡（db_siddham から出力）
@@ -134,7 +135,9 @@ bonji/
       ├─ font-availability.js                 # ローカルフォント検出＋不足時の案内（→ window.BonjiFonts）
       ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # 再配布可能なもののみ同梱（OFL、約 47 KB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
-      └─ side-tool.css · materialize-dark.css
+      ├─ side-tool.css · side-tool.js           # ファミリー共有：サイドツール列
+      ├─ filter-clear.css · filter-clear.js     # ファミリー共有：検索欄クリアボタン
+      └─ materialize-dark.css                   # ファミリー共有：Materialize ダークテーマ
 ```
 
 ## コア（`SiddhamConverter`）の利用

@@ -125,6 +125,7 @@ bonji/
       ├─ catalog.html · catalog.css · catalog.js   # 字型對照表（依 BonjiInput.xlsx）
       ├─ siddham-converter.js                  # 防腐層（唯一對外悉曇介面）
       ├─ config.json                           # 後端開關 { backend: true|false }
+      ├─ assist.js · assist.css                # 輔助輸入字形選盤（三個群；嵌在轉換頁）
       ├─ composition.js                        # Composition 欄（點造字字格會記下載體字）
       ├─ data/{catalog.json, BonjiInput.xlsx}  # 預設群資料（catalog.json 由 xlsx 生成）
       ├─ data/element-catalog.json             # Cbeta / Mojikyo 兩群（產物，由 db_siddham 匯出）
@@ -132,7 +133,9 @@ bonji/
       ├─ font-availability.js                 # 本機字型偵測＋缺字型說明（→ window.BonjiFonts）
       ├─ fonts/{NotoSansSiddham-Regular.woff2 + OFL.txt}      # 只收可散布的那一支（OFL，約 47 KB）
       ├─ i18n.js · locales/{zh-Hant,en,ja}.js
-      └─ side-tool.css · materialize-dark.css
+      ├─ side-tool.css · side-tool.js           # 家族共用：側鍵列
+      ├─ filter-clear.css · filter-clear.js     # 家族共用：搜尋框清除鈕
+      └─ materialize-dark.css                   # 家族共用：Materialize 深色主題
 ```
 
 ## 使用核心（`SiddhamConverter`）
