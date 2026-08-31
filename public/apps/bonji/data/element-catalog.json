@@ -84,8 +84,12 @@
       { "code": "ii", "char": "揌" },
       { "code": "u", "char": "揕" },
       { "code": "u", "char": "摡" },
+      { "code": "_u", "char": "揟" },
       { "code": "uu", "char": "掾" },
       { "code": "uu", "char": "揝" },
+      { "code": "_uu", "char": "揜" },
+      { "code": "_uu", "char": "揄" },
+      { "code": "_uu", "char": "揘" },
       { "code": ",r", "char": "揰" },
       { "code": ",rr", "char": "揗" },
       { "code": "e", "char": "揓" },
@@ -95,11 +99,7 @@
       { "code": "~m", "char": "揈" },
       { "code": ";m", "char": "揲" },
       { "code": ".h", "char": "揵" },
-      { "code": ":-", "char": "狟" },
-      { "code": "_u", "char": "揟" },
-      { "code": "_uu", "char": "揜" },
-      { "code": "_uu", "char": "揄" },
-      { "code": "_uu", "char": "揘" }
+      { "code": ":-", "char": "狟" }
      ]
     },
     {
@@ -276,9 +276,14 @@
       { "code": "u", "char": "韻" },
       { "code": "u", "char": "渦" },
       { "code": "u", "char": "苑" },
+      { "code": "_u", "char": "吋" },
       { "code": "uu", "char": "嘘" },
       { "code": "uu", "char": "唄" },
       { "code": "uu", "char": "鰻" },
+      { "code": "_uu", "char": "碓" },
+      { "code": "_uu", "char": "臼" },
+      { "code": "_uu", "char": "欝" },
+      { "code": "_uu", "char": "蔚" },
       { "code": "e", "char": "営" },
       { "code": "e", "char": "嬰" },
       { "code": "ai", "char": "影" },
@@ -293,12 +298,7 @@
       { "code": "au", "char": "洩" },
       { "code": "au", "char": "瑛" },
       { "code": "au", "char": "鉛" },
-      { "code": ";m", "char": "閲" },
-      { "code": "_u", "char": "吋" },
-      { "code": "_uu", "char": "碓" },
-      { "code": "_uu", "char": "臼" },
-      { "code": "_uu", "char": "欝" },
-      { "code": "_uu", "char": "蔚" }
+      { "code": ";m", "char": "閲" }
      ]
     },
     {
