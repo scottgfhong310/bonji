@@ -110,5 +110,6 @@ I18n.register('ja', {
   'tool.clearComposition': 'Composition をクリア',
   'toast.compEmpty': 'Composition は空です',
   'toast.compUndone': '1 つ戻しました（入力欄の記法も削除）',
-  'toast.compUndoneOnly': 'Composition のみ戻しました — 入力欄の末尾がその記法ではないため、手動で調整してください'
+  'toast.compUndoneOnly': 'Composition のみ戻しました — 入力欄の末尾がその記法ではないため、手動で調整してください',
+  'toast.compCleared': 'Composition をクリアしました（入力欄も一緒にクリア）'
 }, '日本語');

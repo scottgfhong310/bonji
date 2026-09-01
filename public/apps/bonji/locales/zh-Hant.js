@@ -110,5 +110,6 @@ I18n.register('zh-Hant', {
   'tool.clearComposition': '清除 Composition',
   'toast.compEmpty': 'Composition 是空的',
   'toast.compUndone': '已退一格（輸入欄的記法也一併退掉）',
-  'toast.compUndoneOnly': '只退了 Composition——輸入欄結尾已不是那一格的記法，請自行調整'
+  'toast.compUndoneOnly': '只退了 Composition——輸入欄結尾已不是那一格的記法，請自行調整',
+  'toast.compCleared': '已清除 Composition（輸入欄也一併清空）'
 }, '繁體中文');

@@ -96,11 +96,7 @@
       var input = document.getElementById('bonji-input');
       if (last.code && input && input.value.slice(-last.code.length) === last.code) {
         input.value = input.value.slice(0, -last.code.length);
-        if (window.M) {
-          if (M.textareaAutoResize) M.textareaAutoResize(input);
-          if (M.updateTextFields) M.updateTextFields();
-        }
-        input.dispatchEvent(new Event('input', { bubbles: true })); // → bonji.js 重轉
+        syncInput(input);
         toast('toast.compUndone', 'grey');
       } else {
         // 輸入框已被手動改過（或那一格本來就沒有記法）⇒ 只退本欄，並講出來
@@ -142,6 +138,20 @@
     isEmpty: function () { return stack.length === 0; }
   };
 
+  /**
+   * 改完 `#bonji-input.value` 之後一定要做的三件事，`undo()` 與清除鈕共用。
+   * ⚠️ 缺 `dispatchEvent` 的話值變了而**輸出停在上一次的轉換結果**——畫面看起來完全正常；
+   *    缺 `textareaAutoResize` 則 textarea 維持原高、`updateTextFields` 則 label 停在浮起狀態。
+   */
+  function syncInput(input) {
+    if (!input) return;
+    if (window.M) {
+      if (M.textareaAutoResize) M.textareaAutoResize(input);
+      if (M.updateTextFields) M.updateTextFields();
+    }
+    input.dispatchEvent(new Event('input', { bubbles: true })); // → bonji.js 重轉
+  }
+
   function copy() {
     var s = text();
     if (!s) { toast('toast.nothingToCopy', 'grey'); return; }
@@ -176,7 +186,21 @@
     var u = document.getElementById('undo-comp');
     if (u) u.addEventListener('click', function (e) { e.preventDefault(); API.undo(); });
     var x = document.getElementById('clear-comp');
-    if (x) x.addEventListener('click', function (e) { e.preventDefault(); API.clear(); });
+    if (x) x.addEventListener('click', function (e) {
+      e.preventDefault();
+      /* ⚠️ 「連輸入欄一起清」寫在**這顆鈕的處理器**、不寫進 `clear()`：
+       *    `clear()` 有兩個呼叫端，而 `bonji.js` 的 `clearAll()` 是在**自己清完輸入之後**
+       *    才呼叫它（`silent`）——放進 `clear()` 的話那條路會多派發一次 `input`、
+       *    在 `clearAll()` 還沒收尾時多跑一次 `convert()`。`undo()` 可以直接碰輸入，
+       *    是因為它只有這一個呼叫端；`clear()` 沒有那個條件。 */
+      var had = API.clear({ silent: true });
+      /* ⚠️ 本欄是空的就**什麼都不做**，不可以順手把輸入清掉——使用者按的是 Composition 的鈕，
+       *    而那些字與本欄無關（同 `undo()` 那條：靜靜清掉一個對不上的東西比不清更糟）。 */
+      if (!had) { toast('toast.compEmpty', 'grey'); return; }
+      var input = document.getElementById('bonji-input');
+      if (input) { input.value = ''; syncInput(input); }
+      toast('toast.compCleared', 'grey');
+    });
   }
 
   window.BonjiComposition = API;

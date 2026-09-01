@@ -110,5 +110,6 @@ I18n.register('en', {
   'tool.clearComposition': 'Clear Composition',
   'toast.compEmpty': 'Composition is empty',
   'toast.compUndone': 'Removed the last glyph (and its notation from the input)',
-  'toast.compUndoneOnly': 'Removed from Composition only — the input no longer ends with that notation, please adjust it yourself'
+  'toast.compUndoneOnly': 'Removed from Composition only — the input no longer ends with that notation, please adjust it yourself',
+  'toast.compCleared': 'Composition cleared (the input was cleared too)'
 }, 'English');
