@@ -333,6 +333,7 @@
       { "code": ".dh", "char": "花" },
       { "code": ".n", "char": "茄" },
       { "code": ".n", "char": "荷" },
+      { "code": ".n", "char": "空" },
       { "code": "t", "char": "蝦" },
       { "code": "th", "char": "臥" },
       { "code": "d", "char": "蛾" },
