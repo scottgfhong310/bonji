@@ -226,6 +226,14 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
   ⚠️ 改完 `input.value` 之後那三件事（`textareaAutoResize`／`updateTextFields`／派發 `input`）
   抽成 `syncInput()`，**`undo()` 與本鈕共用**——各寫一份的話一開始一模一樣、然後其中一邊
   漏掉 `dispatchEvent`，而那時**值變了而輸出停在上一次的轉換結果**，畫面看起來完全正常。
+  ✅ **已由 owner 在 3001 看過**（2026-09-01，未指明瀏覽器，故不寫）。
+  ⚠️ **這一輪特別要先量「送出的是不是新的那一份」**——本 app 的 `index.html` **沒有任何 `?v=`**
+  （實查 0 處），開著的分頁會拿到快取裡的舊 `composition.js`，而那時「沒問題」指的是舊行為。
+  實測 3001：`composition.js` **HTTP 200／10,111 bytes／與已提交的逐位元組相同**
+  （`syncInput` 3 處、`compCleared` 1 處、`if (!had)` 守衛 1 處），三語 locale 皆有新 key。
+  ⚠️ **而他看到的與我量到的仍不是同一級**：我量的是**值與事件**（輸入／Composition／悉曇輸出
+  三者的前後、`clearAll()` 期間 `input` 事件數 ＝ 0、退一格三條路不變）；
+  **按起來合不合手、那句 toast 讀不讀得懂只有真人看得到**。
 - **`clearAll()` 一併清空本欄**（`bonji.js`）：清除是整頁重置（標題 / 輸入 / 來源 / 全部輸出），留著 Composition 就與清空後的輸入對不起來，而畫面上看不出那是上一輪的殘留。
 - **進匯出 JSON**〔owner 2026-08-31 拍板；原本刻意不收，見 §9〕：`composition: [{ char, font, family, code }]`，順序＝畫面順序，沒組字時給 `[]`（**不是 `null`**——「這次沒組字」與「舊版沒有這個欄位」要分得出來）。
   ⚠️⚠️ **一定要逐格帶 `font`**：光有那串載體字，拿去別的地方用單一字型重畫，`Siddam` 會把 Mojikyo 那些字接走、畫成別的悉曇字**而看起來完全正常**。`family` 是 `@font-face` 的宣告名，取自 `font-availability.js` 的 `FONTS`（**不在 `composition.js` 另抄一份對照表**——抄了兩邊遲早各自漂，而漂掉的那一邊照樣印得出一個很像的名字）；查不到回 `null`，**不猜一個名字**。
