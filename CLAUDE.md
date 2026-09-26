@@ -33,6 +33,16 @@ public/apps/bonji/                  # 前端（服務於 /apps/bonji/）
 └─ i18n.js · locales/{zh-Hant,en,ja}.js
 ```
 
+## Claude Artifacts 版（2026-09-27）
+
+同一支前端另發佈在 **<https://claude.ai/artifact/VkJvfgZCh77ykzK7MVBPfJ>**（private，宣告 `downloads` capability）。
+**由 `python3 artifact/build.py` 組出**（產物在 `artifact/dist/`，不進版控）：建置時從 `public/apps/bonji/` 現抓、
+**不存複製件**，差異全寫在 `build.py` 的 `PATCHES`（錨點須恰好命中一次，否則 exit 1）——
+`backend:false`／自帶 `materialize.min.css`（CSP 擋 cdnjs 樣式表且不報錯）／下載走 `downloads` capability／
+兩張對照表改同框架換頁（⚠️ 回來時輸入不保留）／不帶 `BonjiInput.xlsx`。
+⚠️ **字型禁令照舊**：只附 Noto Sans Siddham，`Mojikyo M119`／`Siddam` 仍走 `local()`，建置最後一步擋著。
+**改了前端要更新 Artifacts 版**：重跑 `build.py`，再以 Artifact 工具帶 `url` 重新發佈 `artifact/dist/` 整包（先 `read` 一次）。
+
 ## 執行 / 驗證
 
 ```bash

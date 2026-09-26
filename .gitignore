@@ -87,3 +87,4 @@ Thumbs.db
 # Noto Sans Siddham：name13 ＝ SIL OFL 1.1、name14 ＝ https://scripts.sil.org/OFL，
 # 並附 fonts/OFL.txt。**可散布的長這樣**——授權寫在字型自己身上。
 !/public/apps/bonji/fonts/NotoSansSiddham-Regular.woff2
+artifact/dist/
