@@ -139,7 +139,7 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 ### 7.2 catalog.html — 字型對照表（依 BonjiInput.xlsx）
 
 - **定位**：策展的字元目錄，含 chart 沒有的**異體字 / 上接續 / 下接續**，且**跨三種字型**。八類（一類一欄）：母音 vowel · 子音 consonant · 異體字 variant · 符號 symbol · 體文 bindu · 接續 ligature · 上接續 ligature_u · 下接續 ligature_l。每格＝**字 ＋ 輸入記法 ＋ 字型標**。
-- **資料管線**：`BonjiInput.xlsx`（source of truth，8 個 sheet ＝ 8 類；欄位 `fd_idx / fd_catalog / fd_group / fd_code / fd_char`）→ 以 Python stdlib（zip + xml，無 openpyxl）抽出 → `data/catalog.json`（`{categories:[{id, entries:[{code, char, group}]}]}`）。`catalog.js` fetch 此 JSON 渲染（純資料、**不經 converter**）。改資料＝改 xlsx → 重生 catalog.json。`data/BonjiInput.xlsx` 一併附在 repo 作來源。
+- **資料管線**：`BonjiInput.xlsx`（source of truth，8 個 sheet ＝ 8 類；欄位 `fd_idx / fd_catalog / fd_group / fd_code / fd_char`）→ **`scripts/build-catalog.py`**（Python stdlib，zip + xml，無 openpyxl；不帶旗標＝比對、`--write` 寫出）→ `data/catalog.json`（`{categories:[{id, entries:[{code, char, group}]}]}`）。`catalog.js` fetch 此 JSON 渲染（純資料、**不經 converter**）。改資料＝改 xlsx → 重生 catalog.json。`data/BonjiInput.xlsx` 一併附在 repo 作來源。
 - **多字型渲染（關鍵）**：`fd_group` 決定字型 ——
   - `siddham` → `Noto Sans Siddham`（Unicode U+115xx）；
   - `mojikyo119` → **`Mojikyo M119`**（**`fd_char` 是 CJK 碼位**，在此字型內顯示為悉曇字形，**非**漢字）；
@@ -161,14 +161,15 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
   | 群 | 資料 | 內容 |
   | --- | --- | --- |
-  | 預設群 `default` | `data/catalog.json`（同 catalog 頁） | 8 類 **278** 格 |
+  | 預設群 `default` | `data/catalog.json`（同 catalog 頁） | 8 類 **282** 格 |
   | `Cbeta` | `data/element-catalog.json` | 母音 16 · 子音 35 · 體文 22 · 上接續 39 · 下接續 44 ＝ **156** 格 |
   | `Mojikyo 今昔` | 同上 | 母音 16 · 子音 35 · 體文 **37** · 上接續 **53** · 下接續 **48** · 接續擴充 2 ＝ **191** 格 |
 
-  合計 **625** 格。`assist.js` 把兩份來源正規化成同一個內部形狀（`groups[].cats[].entries[]`，**`font` 逐格帶著**），於是渲染、搜尋、字型偵測都只有一條路。
+  合計 **629** 格。`assist.js` 把兩份來源正規化成同一個內部形狀（`groups[].cats[].entries[]`，**`font` 逐格帶著**），於是渲染、搜尋、字型偵測都只有一條路。
 - **兩排 chips ＝ 兩個獨立的軸**：第一排選群、第二排選類，交集才顯示（選 `Cbeta` ＋ `上接續` 就只看那 39 格）。整群都沒東西時**連群標題一起收**——留一個空標題會被讀成「這一群是空的」。
 - **`element-catalog.json` 是產物、不手改**：由 `db_siddham` 匯出，見 §7.5。
-- **同源不另存**：預設群直接 fetch `data/catalog.json`，與 catalog 頁同資料、不經 converter。記法搜尋（依 `code` 子字串）過濾；異體字（無 `code`）標灰、僅供參考不可插入。
+- **同源不另存**：預設群直接 fetch `data/catalog.json`，與 catalog 頁同資料、不經 converter。記法搜尋（依 `code` 子字串）過濾；異體字裡**無 `code` 的**（Mojikyo 3 格）標灰、僅供參考不可插入；Unicode 悉曇的 4 格（`__i` 𑗘／`_i` 𑗙／`_ii` 𑗚／`__u` 𑗛，2026-10-08 由 owner 加進 xlsx）有記法、可插入。
+  ⚠️ **`__u` 不是引擎的記法**：引擎的 u 異體是 `_u`，而本 app 的轉換層把 `_u` 定義成替代母音符號 𑗜（§4.1）、蓋掉了引擎原意；`__u` 能轉出 𑗛，是轉換層處理 `_u` 時留下前面那個 `_` 的結果。`bonji-mobile` 的契約檢查盯著它（第 ② 條，記法 → 字形逐一相同）。
 - ⚠️ **「不可插入」有兩種，訊息要分得開**：預設群的異體字（`assist.noinput`「此為異體字，無對應輸入記法」）與新兩群的 **記法未定**（`assist.nonotation`「來源未指明記法，無法插入」）。⚠️ **現況 0 格**——`暇` 自 2026-08-31 起由 owner 裁定為 `jh`。**那條路刻意留著**：它是資料的一種合法狀態（來源沒說），今天到不了不代表以後到不了，而**到得了的那天沒有它，畫面就會顯示一個字面的空記法**。。併成一句的話，「來源沒說」與「這種字本來就沒有記法」就再也分不出來了。
 - **插入即重轉**：點一格 → 把其 `fd_code` 插入 `#bonji-input` 游標處 → **派發 `input` 事件**，`bonji.js` 既有的 `input` 監聽即時重轉（並順手 `M.textareaAutoResize` / `updateTextFields`）。
 - **底部輔助鈕**：dock 底固定一排（不隨字形捲動）空格 / 換行 / 連字號，分別插入 `' '` / `'\n'` / `'-'`（`-` 為詞組分隔、`' '` 為音節邊界，見 §5）。走同一條 `insertAtCursor` 路徑。
