@@ -53,6 +53,7 @@ npm test                            # 驗證 vendored 引擎（5 筆 OK + 碼位
 
 ## 本 app 的 canon 重點 / 注意
 
+- ⚠️ **下游複製點：[`bonji-mobile`](https://github.com/scottgfhong310/bonji-mobile)**（2026-10-08，本 app 的手機版）——`siddham-converter.js`、`vendor/bonji-input/*`、`fonts/NotoSansSiddham-Regular.woff2`＋`OFL.txt`、**`data/catalog.json`**（那邊記號列的體文／接續由它推出）在那邊是**本 repo 的 byte-identical 複製件**。**改了這幾個檔要複製過去**（含兩邊的 InProgress 鏡像），再在那邊跑 `npm run verify`（第 ⑱ 條比 md5）；本 repo 沒有東西會推、漏了也不會在這裡報錯。登記見家族 `SHARED_LIBRARY_GUIDELINES.md` §4（C 類）。
 - **可嵌入 lib = `siddham-converter.js`**：`SiddhamConverter`（anti-corruption layer），純邏輯不碰 DOM；`bonji.js` 才是碰 DOM 的控制器。**邊界紀律**：app 其餘程式只 import `siddham-converter.js`，**絕不**直接 import `vendor/bonji-input/siddham.js`；升級引擎只動 wrapper。`convert()` 另在此層補上引擎未涵蓋的符號（章節符號 `*1…`、virama `:-`→`◌𑖿`、替代母音符號 `_u`/`_uu`）——用 PUA sentinel 前後處理、不改引擎（DESIGN §4.1）。
 - **原生 ESM、零 build**：引擎是純 ESM（`export`），canon 硬約束「不修改 siddham.js」，故 `siddham-converter.js` 與 `bonji.js` 以 `<script type="module">` 載入（仍 zero-build、CDN-first）。這偏離家族 §4.2 的 IIFE→`window.XxxLib` 字面，但守其精神（純核心、零依賴、不碰 DOM）。jQuery / Materialize / Lodash / I18n 仍是 classic CDN globals。
 - **主題（重要）**：CSS 變數 light/dark，預設 dark；**materialize-dark.css 以 `html.light-mode` class 標記淺色**（否則系統偏好為深色時會強制深色）。`applyTheme` 同時設 `data-theme` **與** `light-mode`/`dark-mode` class；防閃爍開機腳本也要一起設 class。bonji 是家族首個實際採用共用 `materialize-dark.css` 的 app。
