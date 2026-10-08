@@ -249,6 +249,11 @@
   </section>
 
   <!-- ===== 右側工具列（flex 自動堆疊） ===== -->
+  <!-- 手機：右上角開關右側工具列（只在窄螢幕出現，見 bonji.css／tools-toggle.js） -->
+  <div id="tools-toggle" class="tools-toggle" role="button" tabindex="0" data-i18n-title="tool.toggleTools" title="工具列開關">
+    <i class="material-icons">more_vert</i>
+  </div>
+
   <div class="side-tools">
     <div id="setting-downloads" class="side-tool" data-i18n-title="tool.downloads" title="匯出檔清單">
       <i class="material-icons">dehaze</i>
@@ -311,6 +316,7 @@
 
   <!-- 頁面控制器（ESM module：import SiddhamConverter 防腐層；module 天然 defer） -->
   <script src="./side-tool.js"></script>   <!-- 共用 utility：側鍵「已執行」微回饋 -->
+  <script src="./tools-toggle.js"></script>   <!-- 手機右上角的工具列開關（要在 side-tool.js 之後） -->
   <script type="module" src="./bonji.js"></script>
 </body>
 

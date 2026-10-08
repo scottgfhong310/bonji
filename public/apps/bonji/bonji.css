@@ -440,6 +440,54 @@ html.light-mode #toast-container .toast.grey,
   #toast-container { display: none !important; }
 }
 
+/* ===== 手機：右上角的工具列開關（tools-toggle.js） =====
+ * 形制照 xlsx-viewer 的 .tools-toggle（無外框、純 icon；active＝側鍵顯示中）。
+ * ⚠️ 「只在手機」只寫在這裡：鈕在桌機上不出現，body.tools-hidden 也只在這個 media query 裡生效
+ *    ⇒ 手機上收起後把視窗拉寬，側鍵照樣在。600px＝Materialize 的 small 斷點。
+ * 不改共用 side-tool.css（複製件）。 */
+.tools-toggle {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .tools-toggle {
+    position: fixed;
+    top: env(safe-area-inset-top, 0px);
+    right: 4px;
+    z-index: 1003;          /* 高於 .side-tools（side-tool.css 1002） */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;            /* 觸控目標 */
+    height: 44px;
+    cursor: pointer;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color .15s, transform .1s, opacity .15s;
+  }
+  .tools-toggle:active { transform: scale(.92); }
+  .tools-toggle.active { color: var(--accent); }
+  .tools-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 8px; }
+  .tools-toggle i.material-icons { font-size: 24px; }
+
+  body.tools-hidden .side-tools { display: none; }
+
+  /* 匯出檔側欄開著時一起淡出（比照 side-tool.css 對 .side-tools 的處理）；
+     輔助輸入面板開著時也收起——面板標題列有它自己的「工具列」鈕，兩顆會疊在右上角。 */
+  body.sidenav-open .tools-toggle,
+  body.assist-open .tools-toggle {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media print {
+  .tools-toggle { display: none !important; }
+}
+
 /* ===== 缺本機字型的說明區塊（catalog.html / 輔助輸入面板共用） =====
  * markup 由 font-availability.js 的 noticeHtml() 產生（純字串），兩處插入點不同、樣式同一份。
  * 只有「確定沒裝」才會出現；測不出來（無 FontFace API）不出——見該檔 probe() 的三態說明。 */

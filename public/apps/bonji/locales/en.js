@@ -22,6 +22,7 @@ I18n.register('en', {
   'tool.copyInput': 'Copy input',
   'tool.mode': 'Toggle light / dark',
   'tool.lang': 'Language',
+  'tool.toggleTools': 'Toggle the tool rail',
   'tool.more': 'More tools',
   'tool.clearFilter': 'Clear',
   'toast.lang': 'Switched to {name}',

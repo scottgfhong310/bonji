@@ -41,6 +41,11 @@
   </main>
 
   <!-- ===== 右側工具列（flex 自動堆疊） ===== -->
+  <!-- 手機：右上角開關右側工具列（只在窄螢幕出現，見 bonji.css／tools-toggle.js） -->
+  <div id="tools-toggle" class="tools-toggle" role="button" tabindex="0" data-i18n-title="tool.toggleTools" title="工具列開關">
+    <i class="material-icons">more_vert</i>
+  </div>
+
   <div class="side-tools">
     <a id="setting-home" class="side-tool" href="./" data-i18n-title="tool.home" title="回轉換器">
       <i class="material-icons">arrow_back</i>
@@ -59,6 +64,7 @@
   <script src="./locales/en.js"></script>
   <script src="./locales/ja.js"></script>
   <script src="./side-tool.js"></script>   <!-- 共用 utility：側鍵行為（check 微回饋＋溢出收納） -->
+  <script src="./tools-toggle.js"></script>   <!-- 手機右上角的工具列開關（要在 side-tool.js 之後） -->
   <script src="./font-availability.js"></script>   <!-- 本機字型偵測 + 缺字型說明（classic → window.BonjiFonts） -->
   <script type="module" src="./catalog.js"></script>
 </body>

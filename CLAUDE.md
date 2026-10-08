@@ -20,6 +20,7 @@ public/apps/bonji/                  # 前端（服務於 /apps/bonji/）
 ├─ catalog.html · catalog.css · catalog.js    # 字型對照表（依 BonjiInput.xlsx；DESIGN §7.2）
 ├─ assist.js · assist.css                     # 輔助輸入字形選盤（嵌轉換頁、三個群；DESIGN §7.4）
 ├─ composition.js                             # Composition 欄（classic → window.BonjiComposition；DESIGN §7.6）
+├─ tools-toggle.js                            # 手機右上角的工具列開關（三頁共用；只在 ≤600px 出現，DESIGN §10）
 ├─ siddham-converter.js                       # 防腐層：唯一對外悉曇介面（ESM、不碰 DOM）
 ├─ config.json                                # 後端開關 { backend: true|false }
 ├─ data/{catalog.json, BonjiInput.xlsx}       # 預設群資料（catalog.json 由 xlsx 生成、xlsx 為來源）
