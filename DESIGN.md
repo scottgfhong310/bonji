@@ -161,14 +161,16 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
   | 群 | 資料 | 內容 |
   | --- | --- | --- |
-  | 預設群 `default` | `data/catalog.json`（同 catalog 頁） | 8 類 **282** 格 |
+  | 預設群 `default` | `data/catalog.json`（同 catalog 頁） | 8 類 **288** 格 |
   | `Cbeta` | `data/element-catalog.json` | 母音 16 · 子音 35 · 體文 22 · 上接續 39 · 下接續 44 ＝ **156** 格 |
   | `Mojikyo 今昔` | 同上 | 母音 16 · 子音 35 · 體文 **37** · 上接續 **53** · 下接續 **48** · 接續擴充 2 ＝ **191** 格 |
 
-  合計 **629** 格。`assist.js` 把兩份來源正規化成同一個內部形狀（`groups[].cats[].entries[]`，**`font` 逐格帶著**），於是渲染、搜尋、字型偵測都只有一條路。
+  合計 **635** 格。`assist.js` 把兩份來源正規化成同一個內部形狀（`groups[].cats[].entries[]`，**`font` 逐格帶著**），於是渲染、搜尋、字型偵測都只有一條路。
 - **兩排 chips ＝ 兩個獨立的軸**：第一排選群、第二排選類，交集才顯示（選 `Cbeta` ＋ `上接續` 就只看那 39 格）。整群都沒東西時**連群標題一起收**——留一個空標題會被讀成「這一群是空的」。
 - **`element-catalog.json` 是產物、不手改**：由 `db_siddham` 匯出，見 §7.5。
 - **同源不另存**：預設群直接 fetch `data/catalog.json`，與 catalog 頁同資料、不經 converter。記法搜尋（依 `code` 子字串）過濾；異體字裡**無 `code` 的**（Mojikyo 3 格）標灰、僅供參考不可插入；Unicode 悉曇的 4 格（`__i` 𑗘／`_i` 𑗙／`_ii` 𑗚／`__u` 𑗛，2026-10-08 由 owner 加進 xlsx）有記法、可插入。
+  **接續**另有 6 格 CBETA 字形（`uniSiddham` 群，2026-10-09 由 owner 加進 xlsx，各自緊接在同音的 Unicode 那一格之後）：`.t` 盄／`.th` 眈／`.dh` 眄／`th` 盷／`n` 矧／`lla;m` 祋（接在 `h` 之後）——
+  ⚠️ 它們在 `db_siddham` 裡是 CBETA 的**子音**字形（`.ta`／`.tha`／`.dha`／`tha`／`na`／`lla;m`），放進接續、插入去尾 `a` 的記法是 owner 的設計；盷 原清單寫 `.th`，與 after 欄及資料庫（齒音 tha）不符，**owner 裁定 `th`**。
   ⚠️ **`__u` 不是引擎的記法**：引擎的 u 異體是 `_u`，而本 app 的轉換層把 `_u` 定義成替代母音符號 𑗜（§4.1）、蓋掉了引擎原意；`__u` 能轉出 𑗛，是轉換層處理 `_u` 時留下前面那個 `_` 的結果。`bonji-mobile` 的契約檢查盯著它（第 ② 條，記法 → 字形逐一相同）。
 - ⚠️ **「不可插入」有兩種，訊息要分得開**：預設群的異體字（`assist.noinput`「此為異體字，無對應輸入記法」）與新兩群的 **記法未定**（`assist.nonotation`「來源未指明記法，無法插入」）。⚠️ **現況 0 格**——`暇` 自 2026-08-31 起由 owner 裁定為 `jh`。**那條路刻意留著**：它是資料的一種合法狀態（來源沒說），今天到不了不代表以後到不了，而**到得了的那天沒有它，畫面就會顯示一個字面的空記法**。。併成一句的話，「來源沒說」與「這種字本來就沒有記法」就再也分不出來了。
 - **插入即重轉**：點一格 → 把其 `fd_code` 插入 `#bonji-input` 游標處 → **派發 `input` 事件**，`bonji.js` 既有的 `input` 監聽即時重轉（並順手 `M.textareaAutoResize` / `updateTextFields`）。
@@ -354,9 +356,10 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
   **不會**變成缺字方塊，而是顯示**一般漢字**——看起來完全正常、卻是錯的字。
   故除了說明區塊，還把受影響的字格以 `body.font-missing-*` ＋ 刪節線標出來。
   ⚠️ **兩頁的格數不同**（`body.font-missing-*` 是 body 層的 class，命中該頁**所有**
-  `.f-mojikyo` / `.f-unisiddham`）：**catalog 頁 151 格**（mojikyo 149 ＋ uniSiddham 2）；
-  **轉換頁 497 格**——同一份 catalog 資料的 151 格，再加輔助輸入新兩群的
-  `Mojikyo 今昔` 190（`.f-mojikyo`）＋ `Cbeta` 156（`.f-unisiddham`），2026-08-31 起。
+  `.f-mojikyo` / `.f-unisiddham`）：**catalog 頁 157 格**（mojikyo 149 ＋ uniSiddham 8）；
+  **轉換頁 504 格**——同一份 catalog 資料的 157 格，再加輔助輸入新兩群的
+  `Mojikyo 今昔` 191（`.f-mojikyo`）＋ `Cbeta` 156（`.f-unisiddham`）。〔2026-10-09 在 3001 實數 DOM：接續加 6 格 Siddam（owner 加進 xlsx）後 157／504；
+  ⚠️ 原記的 497 在那之前就已經落後 1——Mojikyo 群 2026-09-01 補了 `空`（190 → 191）而這一格沒跟上〕
   ⭐ **那條規則刻意不綁祖先**，於是 **Composition 欄的格子也一起被標**（同一組 class，§7.6）
   ——那正是要的：沒裝字型時組出來的那一串載體字，畫面上顯示的是一般漢字、**組錯了也看不出來**。
   ⚠️ 說明區塊裡那個數字**是執行期算的、不是寫死的**（`BonjiFonts.countByGroup()`，
