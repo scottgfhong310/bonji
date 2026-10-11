@@ -14,6 +14,7 @@ Part of the **nodeapp WebApp family** — shared conventions and workflow live a
 - Two-column layout: input on the left, output on the right (stacks on narrow screens).
 - An optional **title** field plus the input text (both copyable); live conversion as you type — five copyable outputs: Siddhaṁ script · Latin transliteration · ASCII notation (e.g. ṁ/ṃ → `;m`) · Unicode code points · an **HTML snippet** (`<span class="siddham" data-latin="{latin}">{siddham}</span>`, one per line — for typesetting scriptural texts).
 - Options: input method (ISO 15919 / Kyoto-Harvard), transliteration (ISO 15919 / IAST), ignore spaces & hyphens.
+- **Three spaces = one full-width space**: type three consecutive spaces and the Siddhaṁ output gets one ideographic space (U+3000), whether or not "ignore spaces" is on. The Latin and ASCII outputs keep the three spaces as typed.
 - Bundled **Noto Sans Siddham** webfont (SIL OFL) so the script renders without a system font.
 - Trilingual UI (`zh-Hant` / `en` / `ja`, default `zh-Hant`); light / dark theme.
 - Per-field copy buttons (title input + each output); example chips. The input field also has **paste** (replaces the input) and **clear**; if the clipboard cannot be read, the input is selected for you so ⌘V / Ctrl+V replaces it.
@@ -40,7 +41,7 @@ e.g. `siddha;m` → 𑖭𑖰𑖟𑖿𑖠𑖽 (`siddhaṁ`), `na ma.h` → 𑖡�
 
 ```bash
 npm install && npm start          # → http://localhost:3000/apps/bonji/
-npm test                          # verify the vendored engine (5 cases + code points)
+npm test                          # verify the engine and the wrapper (5 conversions + 16 spacing cases + code points)
 ```
 
 `PORT` env var overrides the default `3000`.

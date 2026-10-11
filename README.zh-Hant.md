@@ -14,6 +14,7 @@
 - 兩欄版面：左欄輸入、右欄輸出（窄螢幕自動疊起）。
 - 可填**標題**＋輸入文字（皆可複製）；邊打邊轉，五項可複製輸出：悉曇文字 · 拉丁轉寫 · ASCII 記法（如 ṁ/ṃ → `;m`）· Unicode 碼位 · **HTML 片段**（`<span class="siddham" data-latin="{latin}">{siddham}</span>`，每行一個，供經文典籍整理）。
 - 選項：輸入法（ISO 15919 / Kyoto-Harvard）、拉丁轉寫（ISO 15919 / IAST）、忽略空格與連字號。
+- **三個半形空格＝一個全形空格**：連打三個空格，悉曇輸出就多一個全形空格（U+3000）；不論「忽略空格」開或關。拉丁與 ASCII 記法保留原本的三個空格。
 - 內嵌 **Noto Sans Siddham** 字型（SIL OFL），無需系統字型也能顯示悉曇。
 - 三語介面（`zh-Hant` / `en` / `ja`，預設 `zh-Hant`）；light / dark 主題。
 - 各欄位獨立複製鈕（標題、輸入、各輸出）；範例 chips。輸入欄右上角另有**貼上**（＝覆蓋輸入）與**清除**；讀不到剪貼簿時會把輸入整段選起來，按 ⌘V／Ctrl+V 即可覆蓋。
@@ -40,7 +41,7 @@
 
 ```bash
 npm install && npm start          # → http://localhost:3000/apps/bonji/
-npm test                          # 驗證 vendored 引擎（5 筆案例 + 碼位）
+npm test                          # 驗證引擎與防腐層（5 筆轉換 + 16 筆空格案例 + 碼位）
 ```
 
 以 `PORT` 環境變數覆寫預設的 `3000`。
