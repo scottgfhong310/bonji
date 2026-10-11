@@ -7,7 +7,7 @@ I18n.register('zh-Hant', {
   'input.titlePlaceholder': '為這次轉換命名（選填）',
   'input.label': '輸入（ASCII / IAST 羅馬轉寫）',
   'input.placeholder': '例如：siddha;m',
-  'input.hint': '記法：<code>;m</code>＝ṁ、<code>.h</code>＝ḥ、<code>~m</code>＝m̐、長母音 <code>aa</code>＝ā、<code>ii</code>＝ī、<code>uu</code>＝ū。',
+  'input.hint': '記法：<code>;m</code>＝ṁ、<code>.h</code>＝ḥ、<code>~m</code>＝m̐、長母音 <code>aa</code>＝ā、<code>ii</code>＝ī、<code>uu</code>＝ū。連打三個空格＝一個全形空格。',
   'examples.label': '範例：',
   'opt.inputMethod': '輸入法',
   'opt.translit': '拉丁轉寫',
