@@ -7,7 +7,7 @@ I18n.register('ja', {
   'input.titlePlaceholder': 'この変換に名前を付ける（任意）',
   'input.label': '入力（ASCII / IAST ローマ字転写）',
   'input.placeholder': '例：siddha;m',
-  'input.hint': '記法：<code>;m</code>＝ṁ、<code>.h</code>＝ḥ、<code>~m</code>＝m̐、長母音 <code>aa</code>＝ā、<code>ii</code>＝ī、<code>uu</code>＝ū。スペース3回で全角スペース 1 つ。',
+  'input.hint': '記法：<code>;m</code>＝ṁ、<code>.h</code>＝ḥ、<code>~m</code>＝m̐、長母音 <code>aa</code>＝ā、<code>ii</code>＝ī、<code>uu</code>＝ū。スペースを無視する場合、スペース2回でスペース 1 つ；3回で全角スペース 1 つ。',
   'examples.label': '例：',
   'opt.inputMethod': '入力方式',
   'opt.translit': 'ラテン翻字',

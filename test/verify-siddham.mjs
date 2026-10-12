@@ -26,8 +26,15 @@ const sp = (n) => " ".repeat(n)
 const spaceCases = [
   // [輸入, 忽略空格, 悉曇]；拉丁與 ascii 一律要與輸入相同（不動）
   ["ka" + sp(1) + "ma",      true,  KA + MA],                 // 一個：照舊（對照組）
-  ["ka" + sp(2) + "ma",      true,  KA + MA],                 // 兩個：照舊
-  ["ka" + sp(2) + "ma",      false, KA + sp(2) + MA],         // 兩個：照舊（保留字面）
+  ["ka" + sp(2) + "ma",      true,  KA + sp(1) + MA],         // 兩個（忽略＝開）→ 一個半形空格（DESIGN §5.5）
+  ["ka" + sp(2) + "ma",      false, KA + sp(2) + MA],         // 兩個（忽略＝關）：照舊保留字面，不套用
+  ["n" + sp(2) + "a",        true,  NA + VIRAMA + sp(1) + A], // 兩個：兩側各自成組（不併成 na）
+  [sp(2) + "ka",             true,  KA],                      // 兩個貼著行首：不輸出（它是「字間」的空格）
+  ["ka" + sp(2),             true,  KA],                      // 兩個貼著行尾：不輸出
+  ["ka-" + sp(2) + "ma",     true,  KA + sp(1) + MA],         // 兩個貼著連字號：仍只有一個空格
+  ["ka:" + sp(2) + "ma",     true,  KA + ":" + sp(1) + MA],   // 冒號後面是空白 ⇒ 仍是字面冒號
+  ["ka" + sp(5) + "ma",      true,  KA + W + sp(1) + MA],     // 五個＝一組全形＋剩兩個 → 全形＋一個半形
+  ["ka" + sp(2) + "\nma",    true,  KA + "\n" + MA],         // 兩個貼著換行：不輸出、換行還在
   ["ka" + sp(3) + "ma",      true,  KA + W + MA],             // 三個 → 全形
   ["ka" + sp(3) + "ma",      false, KA + W + MA],             // 不論忽略與否
   ["ka" + sp(4) + "ma",      true,  KA + W + MA],             // 四個＝一組＋剩一個（照舊被忽略）

@@ -7,7 +7,7 @@ I18n.register('en', {
   'input.titlePlaceholder': 'Name this conversion (optional)',
   'input.label': 'Input (ASCII / IAST romanization)',
   'input.placeholder': 'e.g. siddha;m',
-  'input.hint': 'Notation: <code>;m</code>=ṁ, <code>.h</code>=ḥ, <code>~m</code>=m̐, long vowels <code>aa</code>=ā, <code>ii</code>=ī, <code>uu</code>=ū. Three spaces give one full-width space.',
+  'input.hint': 'Notation: <code>;m</code>=ṁ, <code>.h</code>=ḥ, <code>~m</code>=m̐, long vowels <code>aa</code>=ā, <code>ii</code>=ī, <code>uu</code>=ū. When ignoring spaces, two spaces give one space; three spaces give one full-width space.',
   'examples.label': 'Examples:',
   'opt.inputMethod': 'Input method',
   'opt.translit': 'Transliteration',
