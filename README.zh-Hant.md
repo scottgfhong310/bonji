@@ -41,7 +41,7 @@
 
 ```bash
 npm install && npm start          # → http://localhost:3000/apps/bonji/
-npm test                          # 驗證引擎與防腐層（5 筆轉換 + 16 筆空格案例 + 碼位）
+npm test                          # 驗證引擎與防腐層（5 筆轉換 + 16 筆空格案例 + 8 筆換行案例 + 碼位）
 ```
 
 以 `PORT` 環境變數覆寫預設的 `3000`。

@@ -48,6 +48,26 @@ for (const [inp, ignore, eS] of spaceCases) {
   pass = pass && ok
   console.log(`${ok ? "OK  " : "FAIL"} ${JSON.stringify(inp)} (ignore=${ignore}) -> ${JSON.stringify(r.siddham)}`)
 }
+// ── 換行永遠留著：悉曇的行數＝輸入的行數（逐行轉；DESIGN §5.4）──────────────────────────
+// 改前是整段一起轉，trim() 會把貼著「-」或整段頭尾的換行吃掉。
+const lineCases = [
+  // [輸入, 忽略空格, 悉曇]
+  ["ka-\nma",     true,  KA + "\n" + MA],             // 一行以 - 結尾：換行不可以不見（行尾的 - 不補空格）
+  ["ka-\nma",     false, KA + "\n" + MA],
+  ["ka\n-ma",     true,  KA + "\n" + MA],             // 下一行以 - 開頭
+  ["ka-ma\nka",   true,  KA + sp(1) + MA + "\n" + KA], // 行內的 - 照舊補一個空格
+  ["ka-\n\nma",   true,  KA + "\n\n" + MA],          // 空行也留著
+  ["\nka",        true,  "\n" + KA],                  // 開頭的空行（少了它，HTML 片段的悉曇與拉丁會整段錯位一行）
+  ["ka\n",        true,  KA + "\n"],                  // 結尾的換行
+  ["ka \nma",     false, KA + "\n" + MA],             // 每一行各自 trim：行尾的空格不輸出（忽略＝關也一樣）
+]
+for (const [inp, ignore, eS] of lineCases) {
+  const r = new SiddhamConverter({ ignoreSpacesAndHyphens: ignore }).convert(inp)
+  const lines = (t) => t.split("\n").length
+  const ok = r.siddham === eS && r.latin === inp && lines(r.siddham) === lines(inp) && lines(r.codepoints) === lines(inp)
+  pass = pass && ok
+  console.log(`${ok ? "OK  " : "FAIL"} ${JSON.stringify(inp)} (ignore=${ignore}) -> ${JSON.stringify(r.siddham)}`)
+}
 // 碼位欄看得到那個全形空格
 {
   const cp = c.convert("ka" + sp(3) + "ma").codepoints

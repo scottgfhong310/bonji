@@ -41,7 +41,7 @@
 
 ```bash
 npm install && npm start          # → http://localhost:3000/apps/bonji/
-npm test                          # エンジンと変換層を検証（変換 5 件 + スペース 16 件 + コードポイント）
+npm test                          # エンジンと変換層を検証（変換 5 件 + スペース 16 件 + 改行 8 件 + コードポイント）
 ```
 
 `PORT` 環境変数で既定の `3000` を上書きできます。

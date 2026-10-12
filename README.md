@@ -41,7 +41,7 @@ e.g. `siddha;m` → 𑖭𑖰𑖟𑖿𑖠𑖽 (`siddhaṁ`), `na ma.h` → 𑖡�
 
 ```bash
 npm install && npm start          # → http://localhost:3000/apps/bonji/
-npm test                          # verify the engine and the wrapper (5 conversions + 16 spacing cases + code points)
+npm test                          # verify the engine and the wrapper (5 conversions + 16 spacing cases + 8 line-break cases + code points)
 ```
 
 `PORT` env var overrides the default `3000`.
