@@ -121,7 +121,8 @@ for (const [inp, ignore, eS] of lineCases) {
   const errs = []
   if (!read("index.html").includes('id="out-align"')) errs.push("index.html 缺 id=\"out-align\"")
   if (!/converter\.segments\(/.test(read("bonji.js"))) errs.push("bonji.js 沒有呼叫 converter.segments()")
-  for (const l of ["zh-Hant", "en", "ja"]) if (!/'out\.align':/.test(read(`locales/${l}.js`))) errs.push(`${l} 缺 out.align`)
+  // ⚠️ 不要把三個語系寫成陣列字面值：bonji-mobile 的 verify ① 把本檔每一個「三個字串的陣列」當成轉換向量讀走
+  for (const l of "zh-Hant en ja".split(" ")) if (!/'out\.align':/.test(read(`locales/${l}.js`))) errs.push(`${l} 缺 out.align`)
   const ok = !errs.length
   pass = pass && ok
   console.log(`${ok ? "OK  " : "FAIL"} 對照的接線${ok ? "" : "：" + errs.join("；")}`)
