@@ -82,5 +82,49 @@ for (const [inp, ignore, eS] of lineCases) {
   pass = pass && ok
   console.log(`${ok ? "OK  " : "FAIL"} codepoints("ka   ma"): ${cp}`)
 }
+// ── 對照的每一格（DESIGN §15）：位置對得回輸入、各格接起來＝整段轉換的結果（拿掉空白之後）────────
+// 期望值取自整段的 convert()，不取自 segments() 自己。語料：藥師長咒原文（owner 2026-10-23 校對時「對不準」的那一段）、
+// 範例、IAST、補充符號、連字號、空格與換行的組合、預設群 catalog.json 的每一個記法；兩種輸入法 × 忽略空格開／關。
+{
+  const { readFileSync } = await import("node:fs")
+  const catalog = JSON.parse(readFileSync(new URL("../public/apps/bonji/data/catalog.json", import.meta.url), "utf8"))
+  const codes = catalog.categories.flatMap((c) => c.entries.map((e) => e.code).filter(Boolean))
+  const corpus = [
+    "~~ ~~ ||   da tya  thaa |   ghu  me  ghu  me |   e  me  ne  me  he  ma  de  ma  de  su bda  da  ta  ga  da |   sa  maa  dhya  dhi  .s.the  de  a  de  ma  de |   paa  le  paa  pa;m  ;sao  dta ne |   sa  rbba  saa  pa;m  naa  sha  ya  ma  ma  bu ddhi  bu ddho  dda  me |   u  me  ku  me |   bu dbha  k.se",
+    "siddha;m", "na ma.h sa ma nta bu ddhaa naa;m", "oṃ maṇi padme hūṃ", "oM maNi padme hUM",
+    "n a", "ka-ma  ga", "ka:   ma", "*1 ka _u ma :-", "   ka   ma  ", "ka  ma\nga  da\n\n  ha |",
+    codes.join("  "), codes.join(" "),
+  ]
+  const strip = (t) => t.replace(/\s/g, "")
+  let n = 0, bad = 0
+  for (const inp of corpus) for (const inputMethod of ["ISO15919", "KH"]) for (const ignore of [true, false]) {
+    const conv = new SiddhamConverter({ inputMethod, ignoreSpacesAndHyphens: ignore })
+    const segs = conv.segments(inp), whole = conv.convert(inp)
+    const tag = `${JSON.stringify(inp.length > 30 ? inp.slice(0, 30) + "…" : inp)} (${inputMethod}, ignore=${ignore})`
+    const errs = []
+    if (/\S/.test(inp) && !segs.length) errs.push("沒有任何一格")
+    for (const sg of segs) if (inp.slice(sg.start, sg.end) !== sg.text || /\s/.test(sg.text) || !sg.text) errs.push(`格 ${JSON.stringify(sg.text)} 的位置 ${sg.start}–${sg.end} 對不回輸入`)
+    if (segs.map((sg) => sg.gap + sg.text).join("") !== inp.replace(/\s+$/, "")) errs.push("各格與空白接回去不是原本的輸入")
+    if (strip(segs.map((sg) => sg.siddham).join("")) !== strip(whole.siddham)) errs.push("悉曇：各格接起來與整段不同")
+    if (strip(segs.map((sg) => sg.latin).join("")) !== strip(whole.latin)) errs.push("拉丁：各格接起來與整段不同")
+    n += segs.length
+    if (errs.length) { bad++; pass = false; console.log(`FAIL 對照 ${tag}: ${errs.slice(0, 3).join("；")}`) }
+  }
+  const ok = !bad && n > 0
+  pass = pass && ok
+  console.log(`${ok ? "OK  " : "FAIL"} 對照：${corpus.length} 段 × 2 輸入法 × 2 忽略空格，共 ${n} 格，各格接起來＝整段`)
+}
+// 對照檢視的接線：頁面有 #out-align、控制器向防腐層要 segments()（格子不是自己切的）、三語都有 out.align
+{
+  const { readFileSync } = await import("node:fs")
+  const read = (f) => readFileSync(new URL("../public/apps/bonji/" + f, import.meta.url), "utf8")
+  const errs = []
+  if (!read("index.html").includes('id="out-align"')) errs.push("index.html 缺 id=\"out-align\"")
+  if (!/converter\.segments\(/.test(read("bonji.js"))) errs.push("bonji.js 沒有呼叫 converter.segments()")
+  for (const l of ["zh-Hant", "en", "ja"]) if (!/'out\.align':/.test(read(`locales/${l}.js`))) errs.push(`${l} 缺 out.align`)
+  const ok = !errs.length
+  pass = pass && ok
+  console.log(`${ok ? "OK  " : "FAIL"} 對照的接線${ok ? "" : "：" + errs.join("；")}`)
+}
 if (!pass) { console.error("VERIFY FAILED"); process.exit(1) }
 console.log("VERIFY PASS")

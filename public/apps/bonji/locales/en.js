@@ -15,6 +15,8 @@ I18n.register('en', {
   'source.label': 'Source file',
   'out.siddham': 'Siddhaṁ',
   'out.latin': 'Transliteration',
+  'out.align': 'Aligned: Siddhaṁ | Latin',
+  'out.alignHint': 'Click a cell to select its part of the input',
   'out.ascii': 'ASCII notation',
   'out.codepoints': 'Unicode code points',
   'out.html': 'HTML snippet',

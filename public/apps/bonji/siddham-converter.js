@@ -137,6 +137,32 @@ export class SiddhamConverter {
     }
 
     /**
+     * 給「對照」檢視用（DESIGN §15）：把輸入依空白切成一格一格，每一格各自轉換。
+     *
+     * 一格＝輸入裡一段不含空白的記法；start／end 是它在**原始輸入**裡的位置（不是 ascii 裡的——
+     * latin2ascii 會改變長度，ā → aa），控制器拿它去選取輸入框。
+     * 各格各自轉得出與整段相同的結果，是因為 toSiddham 在「忽略空格」開時本來就以空白切塊、一塊一塊轉，
+     * 關的時候引擎也不跨過空格接字；空白只決定塊與塊之間接什麼（一個＝直接相接、兩個＝半形空格、三個＝全形空格）。
+     * test/verify-siddham.mjs 的「對照」那一段拿整段的 convert() 去對，不信這段話。
+     *
+     * @param {string} input
+     * @returns {Array<{ text: string, start: number, end: number, gap: string, siddham: string, latin: string }>}
+     *   gap：這一格前面的空白原文（第一格是行首的空白，可能是空字串）——怎麼畫由控制器決定
+     */
+    segments(input) {
+        const text = String(input ?? "")
+        const out = []
+        let last = 0
+        for (const m of text.matchAll(/\S+/g)) {
+            const start = /** @type {number} */ (m.index)
+            const r = this.convert(m[0])
+            out.push({ text: m[0], start, end: start + m[0].length, gap: text.slice(last, start), siddham: r.siddham, latin: r.latin.trim() })
+            last = start + m[0].length
+        }
+        return out
+    }
+
+    /**
      * ascii → 悉曇字串（引擎本身不修改，邊界語意在此層處理）。
      *
      * - 逐行轉：每一行都當成單獨輸入的一行，下面三條都是「一行之內」的規則。換行永遠原樣留著，

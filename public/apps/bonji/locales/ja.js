@@ -15,6 +15,8 @@ I18n.register('ja', {
   'source.label': 'ソースファイル',
   'out.siddham': '悉曇 Siddhaṁ',
   'out.latin': 'ラテン翻字',
+  'out.align': '対照：悉曇｜ラテン',
+  'out.alignHint': 'セルをクリックすると入力の該当箇所を選択',
   'out.ascii': 'ASCII 表記',
   'out.codepoints': 'Unicode コードポイント',
   'out.html': 'HTML スニペット',

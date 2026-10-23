@@ -15,6 +15,8 @@ I18n.register('zh-Hant', {
   'source.label': '來源檔',
   'out.siddham': '悉曇 Siddhaṁ',
   'out.latin': '拉丁轉寫',
+  'out.align': '對照：悉曇｜拉丁',
+  'out.alignHint': '點一格，選取輸入裡的那一段',
   'out.ascii': 'ASCII 記法',
   'out.codepoints': 'Unicode 碼位',
   'out.html': 'HTML 片段',

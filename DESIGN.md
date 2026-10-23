@@ -466,6 +466,18 @@ vendor/bonji-input/siddham.js               ← vendored 悉曇引擎（MIT、�
 
 悉曇引擎 vendored 自 [mandel59/bonji-input](https://github.com/mandel59/bonji-input)（commit `0a7eadd75ee475902879245ace39379bca820d36`，2023-01-13），原樣不改；本機鏡像見 `parallelmediator/public/Siddham/bonji-input-main/`。bonji 走家族 WORKFLOW 的 **Path A**（GitHub-first → 回灌 InProgress）。
 
+## 15. 對照檢視（校對用）〔owner 2026-10-23〕
+
+**緣起**：與 `tibetan-siddham` 同一天、同一個需求（owner 拿藥師長咒說明「內容多的時候對不準」），owner 指示「`bonji` 也增加與 `tibetan-siddham` 一樣的編輯模式」。輸出卡在「悉曇」之下多一塊**對照**：輸入的每一格各一張卡，**悉曇在上、拉丁在下**；**點一張卡 → 輸入欄選取那一段**，直接打字就是取代它。形制、行為與 `tibetan-siddham` 的 DESIGN §14 相同（那一支是先做的）；第二階段（卡片就地編輯）兩支都還沒做。
+
+- **一格＝輸入裡一段不含空白的記法**，由防腐層的 `segments(input)` 切出來，回 `{ text, start, end, gap, siddham, latin }`。`start`／`end` 是在**原始輸入**裡的位置（`ā` → `aa` 會改變長度），控制器拿它 `setSelectionRange`。
+- **為什麼一格一格轉得出與整段相同的結果**：`toSiddham` 在「忽略空格」開時本來就以空白切塊、一塊一塊轉（§5），關的時候引擎也不跨過空格接字；空白只決定塊與塊之間接什麼。
+  ⚠️ 動手前實測過才做：藥師長咒等 13 段 × 兩種輸入法 × 忽略空格開／關，悉曇與拉丁都對得上。**`test/verify-siddham.mjs` 的「對照」那一段不信這段話**——拿整段的 `convert()` 去對（拿掉空白後逐字比），語料含預設群 `catalog.json` 的每一個記法，共 2,708 格；位置錯一格、悉曇少一個字各試過，都會紅。
+  另有一段「接線」：頁面有 `#out-align`、`bonji.js` 向防腐層要 `segments()`、三語都有 `out.align`。
+- **與 `tibetan-siddham` 不同的一點：組與組之間只留間距**（悉曇沒有 tsheg）。分行、分組的規則相同：含換行或三個以上空格 → 新的一行；「忽略空格」開時只隔一個空格 → 同一組、卡貼在一起（悉曇欄裡它們相接，`na ma.h` → 𑖡𑖦𑖾）；其餘 → 新的一組。連字號在一格之內（`ka-ma` 是一張卡）。
+- **選取與卡片雙向**：輸入欄有焦點時，與目前選取（或游標）重疊的卡標成 `active`；按下卡片時 `preventDefault` 不搶焦點；選取的那一行不在畫面上時捲到視窗上方三分之一（鏡像 div 量位置；「減少動態」時瞬移）。輔助輸入、Composition 退一格都是改輸入欄再派發 `input`，對照會跟著重畫。
+- 卡片是 `<button type="button">`；卡上的 `title` 是那一格的記法原文；悉曇字用隨附的 Noto Sans Siddham（與悉曇輸出欄同一支）。
+
 ---
 
 *MIT © 2026 Scott G.F. Hong — 隨 app 成長持續修訂。*
